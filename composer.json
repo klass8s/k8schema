@@ -1,0 +1,28 @@
+{
+    "name": "tequila/k8s-schema",
+    "description": "PHP class definitions of Kubernetes API resources",
+    "type": "library",
+    "license": "proprietary",
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "require": {
+        "php": ">=8.5",
+        "ext-json": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Tequila\\K8sSchema\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "petr-buchin",
+            "email": "petrbuchyn@gmail.com"
+        }
+    ],
+    "scripts": {
+        "cs": "./tools/php-cs-fixer/vendor/bin/php-cs-fixer fix",
+        "cs-check": "./tools/php-cs-fixer/vendor/bin/php-cs-fixer check",
+        "tools-update": "composer update -d tools/php-cs-fixer --no-scripts"
+    }
+}
