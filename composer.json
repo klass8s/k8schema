@@ -1,5 +1,5 @@
 {
-    "name": "tequila/k8s-schema",
+    "name": "tequila/k8schema",
     "description": "PHP class definitions of Kubernetes API resources",
     "type": "library",
     "license": "proprietary",
@@ -11,7 +11,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Tequila\\K8sSchema\\": "src/"
+            "Tequila\\K8Schema\\": "src/"
         }
     },
     "authors": [
@@ -23,6 +23,14 @@
     "scripts": {
         "cs": "./tools/php-cs-fixer/vendor/bin/php-cs-fixer fix",
         "cs-check": "./tools/php-cs-fixer/vendor/bin/php-cs-fixer check",
-        "tools-update": "composer update -d tools/php-cs-fixer --no-scripts"
-    }
+        "tools-update": "composer update -d tools/php-cs-fixer --no-scripts",
+        "generate": "./bin/generate",
+        "push-to-branch": "./bin/push-to-branch"
+    },
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "https://composer.tequila.dev/"
+        }
+    ]
 }

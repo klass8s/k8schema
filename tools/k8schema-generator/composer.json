@@ -1,0 +1,20 @@
+{
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "https://composer.tequila.dev/"
+        }
+    ],
+    "require": {
+        "tequila/k8schema-generator": "dev-main"
+    },
+    "config": {
+        "allow-plugins": {
+            "php-http/discovery": true,
+            "symfony/runtime": true,
+            "symfony/flex": true
+        }
+    }
+}

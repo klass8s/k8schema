@@ -1,0 +1,35 @@
+#!/bin/bash
+
+set -e
+
+# Get the absolute path to the directory containing this script
+SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &> /dev/null && pwd)
+PROJECT_ROOT_DIR=$(dirname "$SCRIPT_DIR")
+
+if [ -z "$1" ]; then
+  echo "Usage: $0 <K8S_API_VERSION> # major and minor version, e.g 'v1.34'"
+  exit 1
+fi
+
+K8S_API_VERSION=$1
+
+cd "$PROJECT_ROOT_DIR" || exit 1
+CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+
+if [ "$CURRENT_BRANCH" != "main" ]; then
+  echo "Error: You must be on the 'main' branch to release. Current branch: $CURRENT_BRANCH"
+  exit 1
+fi
+
+if [ -n "$(git status --porcelain)" ]; then
+  echo "Error: Working directory is not clean. Please commit or stash your changes."
+  exit 1
+fi
+
+bin/generate "$K8S_API_VERSION"
+
+echo "Creating a new branch $K8S_API_VERSION"
+git switch -C "$K8S_API_VERSION"
+git add .
+git commit -m "feat: PHP definitions for Kubernetes API $K8S_API_VERSION"
+git push -u origin "$K8S_API_VERSION"

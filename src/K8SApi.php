@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tequila\K8sSchema;
+namespace Tequila\K8Schema;
 
 final readonly class K8SApi
 {

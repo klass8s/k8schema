@@ -1,0 +1,38 @@
+#!/bin/bash
+
+set -e
+
+# Get the absolute path to the directory containing this script
+SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &> /dev/null && pwd)
+PROJECT_ROOT_DIR=$(dirname "$SCRIPT_DIR")
+BINARY_PATH="$PROJECT_ROOT_DIR/tools/k8schema-generator/vendor/bin/k8schema-generator"
+
+if [ -z "$1" ]; then
+  echo "Usage: $0 <K8S_API_VERSION> # major and minor version, e.g 'v1.34'"
+  exit 1
+fi
+
+K8S_API_VERSION=$1
+SCHEMA_FILE="$PROJECT_ROOT_DIR/var/$K8S_API_VERSION.json"
+
+"$BINARY_PATH" schema:fetch "$K8S_API_VERSION" "$SCHEMA_FILE"
+
+"$BINARY_PATH" generate "$SCHEMA_FILE" --namespace-prefix='Tequila\K8Schema' --output-dir="$PROJECT_ROOT_DIR/src"
+
+cd "$PROJECT_ROOT_DIR" || exit 1
+
+# Determine sed in-place flag based on OS
+if [[ "$OSTYPE" == "darwin"* ]]; then
+  SED_I=(-i '')
+else
+  SED_I=(-i)
+fi
+
+sed "${SED_I[@]}" "s/SetMe/$K8S_API_VERSION/" src/K8SApi.php
+
+echo "Fixing code style..."
+
+composer cs > /dev/null 2>&1 || {
+  echo "Code style fixer not found. Please install it via Composer."
+  exit 1
+}
