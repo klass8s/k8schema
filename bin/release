@@ -28,6 +28,7 @@ done
 # 1. Run push-to-branch unless skipped
 if [ "$SKIP_PUSH" = false ]; then
   ./bin/push-to-branch "$K8S_API_VERSION"
+  git checkout "$K8S_API_VERSION"
 else
   echo "Skipping push-to-branch..."
   # Ensure we are on the correct branch to determine tags correctly
