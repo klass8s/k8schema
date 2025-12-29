@@ -1,0 +1,114 @@
+<?php
+
+declare(strict_types=1);
+
+namespace K8Schema\Api\Authorization\V1;
+
+use JsonSerializable;
+use K8Schema\Collection\StringList;
+use K8Schema\Collection\StringListMap;
+
+/**
+ * SubjectAccessReviewSpec is a description of the access request.  Exactly one of
+ * ResourceAuthorizationAttributes and NonResourceAuthorizationAttributes must be
+ * set
+ */
+class SubjectAccessReviewSpec implements JsonSerializable
+{
+    /**
+     * Extra corresponds to the user.Info.GetExtra() method from the authenticator.
+     * Since that is input to the authorizer it needs a reflection here.
+     */
+    private StringListMap $extra;
+
+    /**
+     * Groups is the groups you're testing for.
+     */
+    private StringList $groups;
+
+    /**
+     * NonResourceAttributes describes information for a non-resource access request
+     */
+    private NonResourceAttributes $nonResourceAttributes;
+
+    /**
+     * ResourceAuthorizationAttributes describes information for a resource access
+     * request
+     */
+    private ResourceAttributes $resourceAttributes;
+
+    /**
+     * UID information about the requesting user.
+     */
+    private string|null $uid = null;
+
+    /**
+     * User is the user you're testing for. If you specify "User" but not "Groups",
+     * then is it interpreted as "What if User were not a member of any groups
+     */
+    private string|null $user = null;
+
+    public function __construct()
+    {
+        $this->extra = new StringListMap();
+        $this->groups = new StringList();
+        $this->nonResourceAttributes = new NonResourceAttributes();
+        $this->resourceAttributes = new ResourceAttributes();
+    }
+
+    public function extra(): StringListMap
+    {
+        return $this->extra;
+    }
+
+    public function getUid(): string|null
+    {
+        return $this->uid;
+    }
+
+    public function getUser(): string|null
+    {
+        return $this->user;
+    }
+
+    public function groups(): StringList
+    {
+        return $this->groups;
+    }
+
+    public function nonResourceAttributes(): NonResourceAttributes
+    {
+        return $this->nonResourceAttributes;
+    }
+
+    public function resourceAttributes(): ResourceAttributes
+    {
+        return $this->resourceAttributes;
+    }
+
+    public function setUid(string $uid): self
+    {
+        $this->uid = $uid;
+
+        return $this;
+    }
+
+    public function setUser(string $user): self
+    {
+        $this->user = $user;
+
+        return $this;
+    }
+
+    public function jsonSerialize(): array
+    {
+        return [
+            'extra' => $this->extra,
+            'groups' => $this->groups,
+            'nonResourceAttributes' => $this->nonResourceAttributes,
+            'resourceAttributes' => $this->resourceAttributes,
+            'uid' => $this->uid,
+            'user' => $this->user,
+        ];
+    }
+}
