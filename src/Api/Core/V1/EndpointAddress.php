@@ -1,0 +1,93 @@
+<?php
+
+declare(strict_types=1);
+
+namespace K8Schema\Api\Core\V1;
+
+use JsonSerializable;
+
+/**
+ * EndpointAddress is a tuple that describes single IP address.
+ */
+class EndpointAddress implements JsonSerializable
+{
+    /**
+     * The Hostname of this endpoint
+     */
+    private string|null $hostname = null;
+
+    /**
+     * The IP of this endpoint. May not be loopback (127.0.0.0/8 or ::1), link-local
+     * (169.254.0.0/16 or fe80::/10), or link-local multicast (224.0.0.0/24 or
+     * ff02::/16).
+     */
+    private string $ip;
+
+    /**
+     * Optional: Node hosting this endpoint. This can be used to determine endpoints
+     * local to a node.
+     */
+    private string|null $nodeName = null;
+
+    /**
+     * Reference to object providing the endpoint.
+     */
+    private ObjectReference $targetRef;
+
+    public function __construct(string $ip)
+    {
+        $this->ip = $ip;
+        $this->targetRef = new ObjectReference();
+    }
+
+    public function getHostname(): string|null
+    {
+        return $this->hostname;
+    }
+
+    public function getIp(): string
+    {
+        return $this->ip;
+    }
+
+    public function getNodeName(): string|null
+    {
+        return $this->nodeName;
+    }
+
+    public function setHostname(string $hostname): self
+    {
+        $this->hostname = $hostname;
+
+        return $this;
+    }
+
+    public function setIp(string $ip): self
+    {
+        $this->ip = $ip;
+
+        return $this;
+    }
+
+    public function setNodeName(string $nodeName): self
+    {
+        $this->nodeName = $nodeName;
+
+        return $this;
+    }
+
+    public function targetRef(): ObjectReference
+    {
+        return $this->targetRef;
+    }
+
+    public function jsonSerialize(): array
+    {
+        return [
+            'hostname' => $this->hostname,
+            'ip' => $this->ip,
+            'nodeName' => $this->nodeName,
+            'targetRef' => $this->targetRef,
+        ];
+    }
+}
