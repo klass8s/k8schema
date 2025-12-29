@@ -25,7 +25,8 @@
         "cs-check": "./tools/php-cs-fixer/vendor/bin/php-cs-fixer check",
         "tools-update": "composer update -d tools/php-cs-fixer --no-scripts",
         "generate": "./bin/generate",
-        "push-to-branch": "./bin/push-to-branch"
+        "push-to-branch": "./bin/push-to-branch",
+        "release": "./bin/release"
     },
     "repositories": [
         {
