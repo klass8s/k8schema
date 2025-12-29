@@ -1,0 +1,56 @@
+<?php
+
+declare(strict_types=1);
+
+namespace K8Schema\Api\Authentication\V1;
+
+use K8Schema\APIResourceInterface;
+use K8Schema\Apimachinery\Pkg\Apis\Meta\V1\ObjectMeta;
+
+/**
+ * TokenReview attempts to authenticate a token to a known user. Note: TokenReview
+ * requests may be cached by the webhook token authenticator plugin in the
+ * kube-apiserver.
+ */
+class TokenReview implements APIResourceInterface
+{
+    public const string API_VERSION = 'authentication.k8s.io/v1';
+    public const string KIND = 'TokenReview';
+
+    /**
+     * Standard object's metadata. More info:
+     * https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
+     */
+    private ObjectMeta $metadata;
+
+    /**
+     * Spec holds information about the request being evaluated
+     */
+    private TokenReviewSpec $spec;
+
+    public function __construct()
+    {
+        $this->metadata = new ObjectMeta();
+        $this->spec = new TokenReviewSpec();
+    }
+
+    public function metadata(): ObjectMeta
+    {
+        return $this->metadata;
+    }
+
+    public function spec(): TokenReviewSpec
+    {
+        return $this->spec;
+    }
+
+    public function jsonSerialize(): array
+    {
+        return [
+            'apiVersion' => self::API_VERSION,
+            'kind' => self::KIND,
+            'metadata' => $this->metadata,
+            'spec' => $this->spec,
+        ];
+    }
+}

@@ -6,5 +6,5 @@ namespace K8Schema;
 
 final readonly class K8SApi
 {
-    public const string VERSION = 'SetMe';
+    public const string VERSION = 'v1.35';
 }
