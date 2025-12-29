@@ -1,0 +1,68 @@
+#!/bin/bash
+
+set -e
+
+if [ -z "$1" ]; then
+  echo "Usage: $0 <K8S_API_VERSION> # e.g 'v1.32'"
+  exit 1
+fi
+
+K8S_API_VERSION=$1
+
+SKIP_PUSH=false
+# Parse arguments
+while [[ $# -gt 0 ]]; do
+  case $1 in
+    --skip-push)
+      SKIP_PUSH=true
+      shift
+      ;;
+    *)
+      K8S_API_VERSION=$1
+      shift
+      ;;
+  esac
+done
+
+
+# 1. Run push-to-branch unless skipped
+if [ "$SKIP_PUSH" = false ]; then
+  ./bin/push-to-branch "$K8S_API_VERSION"
+else
+  echo "Skipping push-to-branch..."
+  # Ensure we are on the correct branch to determine tags correctly
+  git checkout "$K8S_API_VERSION"
+fi
+
+# 2. Determine the next patch version
+# Find the latest tag matching the version (e.g., v1.32.*)
+LATEST_TAG=$(git tag -l "${K8S_API_VERSION}.*" --sort=-v:refname | head -n 1)
+
+if [ -z "$LATEST_TAG" ]; then
+  PATCH_VERSION=0
+else
+  # Extract the number after the last dot and increment it
+  LAST_PATCH=$(echo "$LATEST_TAG" | awk -F. '{print $3}')
+  PATCH_VERSION=$((LAST_PATCH + 1))
+fi
+
+NEW_TAG="${K8S_API_VERSION}.${PATCH_VERSION}"
+
+echo "Releasing version $NEW_TAG..."
+
+# 3. Create and push the tag
+git tag "$NEW_TAG"
+git push origin "$NEW_TAG"
+
+# 4. Create the GitHub release (requires GitHub CLI 'gh')
+# If you don't use 'gh', you can stop at the tag push above.
+if command -v gh &> /dev/null; then
+  gh release create "$NEW_TAG" \
+    --title "Release $NEW_TAG" \
+    --notes "PHP definitions for Kubernetes API $K8S_API_VERSION" \
+    --target "$K8S_API_VERSION"
+else
+  echo "Warning: GitHub CLI (gh) not found. Tag $NEW_TAG was pushed, but no GitHub release was created."
+fi
+
+echo "Successfully released $NEW_TAG"

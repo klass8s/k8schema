@@ -17,7 +17,7 @@ SCHEMA_FILE="$PROJECT_ROOT_DIR/var/$K8S_API_VERSION.json"
 
 "$BINARY_PATH" schema:fetch "$K8S_API_VERSION" "$SCHEMA_FILE"
 
-"$BINARY_PATH" generate "$SCHEMA_FILE" --namespace-prefix='Tequila\K8Schema' --output-dir="$PROJECT_ROOT_DIR/src"
+"$BINARY_PATH" generate "$SCHEMA_FILE" --namespace-prefix='K8Schema' --output-dir="$PROJECT_ROOT_DIR/src"
 
 cd "$PROJECT_ROOT_DIR" || exit 1
 
