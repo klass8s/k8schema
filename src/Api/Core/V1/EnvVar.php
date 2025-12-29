@@ -1,0 +1,80 @@
+<?php
+
+declare(strict_types=1);
+
+namespace K8Schema\Api\Core\V1;
+
+use JsonSerializable;
+
+/**
+ * EnvVar represents an environment variable present in a Container.
+ */
+class EnvVar implements JsonSerializable
+{
+    /**
+     * Name of the environment variable. May consist of any printable ASCII characters
+     * except '='.
+     */
+    private string $name;
+
+    /**
+     * Variable references $(VAR_NAME) are expanded using the previously defined
+     * environment variables in the container and any service environment variables. If
+     * a variable cannot be resolved, the reference in the input string will be
+     * unchanged. Double $$ are reduced to a single $, which allows for escaping the
+     * $(VAR_NAME) syntax: i.e. "$$(VAR_NAME)" will produce the string literal
+     * "$(VAR_NAME)". Escaped references will never be expanded, regardless of whether
+     * the variable exists or not. Defaults to "".
+     */
+    private string|null $value = null;
+
+    /**
+     * Source for the environment variable's value. Cannot be used if value is not
+     * empty.
+     */
+    private EnvVarSource $valueFrom;
+
+    public function __construct(string $name)
+    {
+        $this->name = $name;
+        $this->valueFrom = new EnvVarSource();
+    }
+
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
+    public function getValue(): string|null
+    {
+        return $this->value;
+    }
+
+    public function setName(string $name): self
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    public function setValue(string $value): self
+    {
+        $this->value = $value;
+
+        return $this;
+    }
+
+    public function valueFrom(): EnvVarSource
+    {
+        return $this->valueFrom;
+    }
+
+    public function jsonSerialize(): array
+    {
+        return [
+            'name' => $this->name,
+            'value' => $this->value,
+            'valueFrom' => $this->valueFrom,
+        ];
+    }
+}

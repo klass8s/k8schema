@@ -1,0 +1,36 @@
+<?php
+
+declare(strict_types=1);
+
+namespace K8Schema\Api\Core\V1;
+
+use JsonSerializable;
+
+/**
+ * VolumeNodeAffinity defines constraints that limit what nodes this volume can be
+ * accessed from.
+ */
+class VolumeNodeAffinity implements JsonSerializable
+{
+    /**
+     * required specifies hard node constraints that must be met.
+     */
+    private NodeSelector $required;
+
+    public function __construct()
+    {
+        $this->required = new NodeSelector();
+    }
+
+    public function required(): NodeSelector
+    {
+        return $this->required;
+    }
+
+    public function jsonSerialize(): array
+    {
+        return [
+            'required' => $this->required,
+        ];
+    }
+}

@@ -1,0 +1,471 @@
+<?php
+
+declare(strict_types=1);
+
+namespace K8Schema\Api\Core\V1;
+
+use JsonSerializable;
+use K8Schema\Collection\StringList;
+
+/**
+ * A single application container that you want to run within a pod.
+ */
+class Container implements JsonSerializable
+{
+    /**
+     * Arguments to the entrypoint. The container image's CMD is used if this is not
+     * provided. Variable references $(VAR_NAME) are expanded using the container's
+     * environment. If a variable cannot be resolved, the reference in the input string
+     * will be unchanged. Double $$ are reduced to a single $, which allows for
+     * escaping the $(VAR_NAME) syntax: i.e. "$$(VAR_NAME)" will produce the string
+     * literal "$(VAR_NAME)". Escaped references will never be expanded, regardless of
+     * whether the variable exists or not. Cannot be updated. More info:
+     * https://kubernetes.io/docs/tasks/inject-data-application/define-command-argument-container/#running-a-command-in-a-shell
+     */
+    private StringList $args;
+
+    /**
+     * Entrypoint array. Not executed within a shell. The container image's ENTRYPOINT
+     * is used if this is not provided. Variable references $(VAR_NAME) are expanded
+     * using the container's environment. If a variable cannot be resolved, the
+     * reference in the input string will be unchanged. Double $$ are reduced to a
+     * single $, which allows for escaping the $(VAR_NAME) syntax: i.e. "$$(VAR_NAME)"
+     * will produce the string literal "$(VAR_NAME)". Escaped references will never be
+     * expanded, regardless of whether the variable exists or not. Cannot be updated.
+     * More info:
+     * https://kubernetes.io/docs/tasks/inject-data-application/define-command-argument-container/#running-a-command-in-a-shell
+     */
+    private StringList $command;
+
+    /**
+     * List of environment variables to set in the container. Cannot be updated.
+     */
+    private EnvVarList $env;
+
+    /**
+     * List of sources to populate environment variables in the container. The keys
+     * defined within a source may consist of any printable ASCII characters except
+     * '='. When a key exists in multiple sources, the value associated with the last
+     * source will take precedence. Values defined by an Env with a duplicate key will
+     * take precedence. Cannot be updated.
+     */
+    private EnvFromSourceList $envFrom;
+
+    /**
+     * Container image name. More info:
+     * https://kubernetes.io/docs/concepts/containers/images This field is optional to
+     * allow higher level config management to default or override container images in
+     * workload controllers like Deployments and StatefulSets.
+     */
+    private string|null $image = null;
+
+    /**
+     * Image pull policy. One of Always, Never, IfNotPresent. Defaults to Always if
+     * :latest tag is specified, or IfNotPresent otherwise. Cannot be updated. More
+     * info: https://kubernetes.io/docs/concepts/containers/images#updating-images
+     */
+    private string|null $imagePullPolicy = null;
+
+    /**
+     * Actions that the management system should take in response to container
+     * lifecycle events. Cannot be updated.
+     */
+    private Lifecycle $lifecycle;
+
+    /**
+     * Periodic probe of container liveness. Container will be restarted if the probe
+     * fails. Cannot be updated. More info:
+     * https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle#container-probes
+     */
+    private Probe $livenessProbe;
+
+    /**
+     * Name of the container specified as a DNS_LABEL. Each container in a pod must
+     * have a unique name (DNS_LABEL). Cannot be updated.
+     */
+    private string $name;
+
+    /**
+     * List of ports to expose from the container. Not specifying a port here DOES NOT
+     * prevent that port from being exposed. Any port which is listening on the default
+     * "0.0.0.0" address inside a container will be accessible from the network.
+     * Modifying this array with strategic merge patch may corrupt the data. For more
+     * information See https://github.com/kubernetes/kubernetes/issues/108255. Cannot
+     * be updated.
+     */
+    private ContainerPortList $ports;
+
+    /**
+     * Periodic probe of container service readiness. Container will be removed from
+     * service endpoints if the probe fails. Cannot be updated. More info:
+     * https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle#container-probes
+     */
+    private Probe $readinessProbe;
+
+    /**
+     * Resources resize policy for the container.
+     */
+    private ContainerResizePolicyList $resizePolicy;
+
+    /**
+     * Compute Resources required by this container. Cannot be updated. More info:
+     * https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
+     */
+    private ResourceRequirements $resources;
+
+    /**
+     * RestartPolicy defines the restart behavior of individual containers in a pod.
+     * This overrides the pod-level restart policy. When this field is not specified,
+     * the restart behavior is defined by the Pod's restart policy and the container
+     * type. Additionally, setting the RestartPolicy as "Always" for the init container
+     * will have the following effect: this init container will be continually
+     * restarted on exit until all regular containers have terminated. Once all regular
+     * containers have completed, all init containers with restartPolicy "Always" will
+     * be shut down. This lifecycle differs from normal init containers and is often
+     * referred to as a "sidecar" container. Although this init container still starts
+     * in the init container sequence, it does not wait for the container to complete
+     * before proceeding to the next init container. Instead, the next init container
+     * starts immediately after this init container is started, or after any
+     * startupProbe has successfully completed.
+     */
+    private string|null $restartPolicy = null;
+
+    /**
+     * Represents a list of rules to be checked to determine if the container should be
+     * restarted on exit. The rules are evaluated in order. Once a rule matches a
+     * container exit condition, the remaining rules are ignored. If no rule matches
+     * the container exit condition, the Container-level restart policy determines the
+     * whether the container is restarted or not. Constraints on the rules: - At most
+     * 20 rules are allowed. - Rules can have the same action. - Identical rules are
+     * not forbidden in validations. When rules are specified, container MUST set
+     * RestartPolicy explicitly even it if matches the Pod's RestartPolicy.
+     */
+    private ContainerRestartRuleList $restartPolicyRules;
+
+    /**
+     * SecurityContext defines the security options the container should be run with.
+     * If set, the fields of SecurityContext override the equivalent fields of
+     * PodSecurityContext. More info:
+     * https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
+     */
+    private SecurityContext $securityContext;
+
+    /**
+     * StartupProbe indicates that the Pod has successfully initialized. If specified,
+     * no other probes are executed until this completes successfully. If this probe
+     * fails, the Pod will be restarted, just as if the livenessProbe failed. This can
+     * be used to provide different probe parameters at the beginning of a Pod's
+     * lifecycle, when it might take a long time to load data or warm a cache, than
+     * during steady-state operation. This cannot be updated. More info:
+     * https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle#container-probes
+     */
+    private Probe $startupProbe;
+
+    /**
+     * Whether this container should allocate a buffer for stdin in the container
+     * runtime. If this is not set, reads from stdin in the container will always
+     * result in EOF. Default is false.
+     */
+    private bool|null $stdin = null;
+
+    /**
+     * Whether the container runtime should close the stdin channel after it has been
+     * opened by a single attach. When stdin is true the stdin stream will remain open
+     * across multiple attach sessions. If stdinOnce is set to true, stdin is opened on
+     * container start, is empty until the first client attaches to stdin, and then
+     * remains open and accepts data until the client disconnects, at which time stdin
+     * is closed and remains closed until the container is restarted. If this flag is
+     * false, a container processes that reads from stdin will never receive an EOF.
+     * Default is false
+     */
+    private bool|null $stdinOnce = null;
+
+    /**
+     * Optional: Path at which the file to which the container's termination message
+     * will be written is mounted into the container's filesystem. Message written is
+     * intended to be brief final status, such as an assertion failure message. Will be
+     * truncated by the node if greater than 4096 bytes. The total message length
+     * across all containers will be limited to 12kb. Defaults to /dev/termination-log.
+     * Cannot be updated.
+     */
+    private string|null $terminationMessagePath = null;
+
+    /**
+     * Indicate how the termination message should be populated. File will use the
+     * contents of terminationMessagePath to populate the container status message on
+     * both success and failure. FallbackToLogsOnError will use the last chunk of
+     * container log output if the termination message file is empty and the container
+     * exited with an error. The log output is limited to 2048 bytes or 80 lines,
+     * whichever is smaller. Defaults to File. Cannot be updated.
+     */
+    private string|null $terminationMessagePolicy = null;
+
+    /**
+     * Whether this container should allocate a TTY for itself, also requires 'stdin'
+     * to be true. Default is false.
+     */
+    private bool|null $tty = null;
+
+    /**
+     * volumeDevices is the list of block devices to be used by the container.
+     */
+    private VolumeDeviceList $volumeDevices;
+
+    /**
+     * Pod volumes to mount into the container's filesystem. Cannot be updated.
+     */
+    private VolumeMountList $volumeMounts;
+
+    /**
+     * Container's working directory. If not specified, the container runtime's default
+     * will be used, which might be configured in the container image. Cannot be
+     * updated.
+     */
+    private string|null $workingDir = null;
+
+    public function __construct(string $name)
+    {
+        $this->args = new StringList();
+        $this->command = new StringList();
+        $this->env = new EnvVarList();
+        $this->envFrom = new EnvFromSourceList();
+        $this->lifecycle = new Lifecycle();
+        $this->livenessProbe = new Probe();
+        $this->name = $name;
+        $this->ports = new ContainerPortList();
+        $this->readinessProbe = new Probe();
+        $this->resizePolicy = new ContainerResizePolicyList();
+        $this->resources = new ResourceRequirements();
+        $this->restartPolicyRules = new ContainerRestartRuleList();
+        $this->securityContext = new SecurityContext();
+        $this->startupProbe = new Probe();
+        $this->volumeDevices = new VolumeDeviceList();
+        $this->volumeMounts = new VolumeMountList();
+    }
+
+    public function args(): StringList
+    {
+        return $this->args;
+    }
+
+    public function command(): StringList
+    {
+        return $this->command;
+    }
+
+    public function env(): EnvVarList
+    {
+        return $this->env;
+    }
+
+    public function envFrom(): EnvFromSourceList
+    {
+        return $this->envFrom;
+    }
+
+    public function getImage(): string|null
+    {
+        return $this->image;
+    }
+
+    public function getImagePullPolicy(): string|null
+    {
+        return $this->imagePullPolicy;
+    }
+
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
+    public function getRestartPolicy(): string|null
+    {
+        return $this->restartPolicy;
+    }
+
+    public function getStdin(): bool|null
+    {
+        return $this->stdin;
+    }
+
+    public function getStdinOnce(): bool|null
+    {
+        return $this->stdinOnce;
+    }
+
+    public function getTerminationMessagePath(): string|null
+    {
+        return $this->terminationMessagePath;
+    }
+
+    public function getTerminationMessagePolicy(): string|null
+    {
+        return $this->terminationMessagePolicy;
+    }
+
+    public function getTty(): bool|null
+    {
+        return $this->tty;
+    }
+
+    public function getWorkingDir(): string|null
+    {
+        return $this->workingDir;
+    }
+
+    public function lifecycle(): Lifecycle
+    {
+        return $this->lifecycle;
+    }
+
+    public function livenessProbe(): Probe
+    {
+        return $this->livenessProbe;
+    }
+
+    public function ports(): ContainerPortList
+    {
+        return $this->ports;
+    }
+
+    public function readinessProbe(): Probe
+    {
+        return $this->readinessProbe;
+    }
+
+    public function resizePolicy(): ContainerResizePolicyList
+    {
+        return $this->resizePolicy;
+    }
+
+    public function resources(): ResourceRequirements
+    {
+        return $this->resources;
+    }
+
+    public function restartPolicyRules(): ContainerRestartRuleList
+    {
+        return $this->restartPolicyRules;
+    }
+
+    public function securityContext(): SecurityContext
+    {
+        return $this->securityContext;
+    }
+
+    public function setImage(string $image): self
+    {
+        $this->image = $image;
+
+        return $this;
+    }
+
+    public function setImagePullPolicy(string $imagePullPolicy): self
+    {
+        $this->imagePullPolicy = $imagePullPolicy;
+
+        return $this;
+    }
+
+    public function setName(string $name): self
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    public function setRestartPolicy(string $restartPolicy): self
+    {
+        $this->restartPolicy = $restartPolicy;
+
+        return $this;
+    }
+
+    public function setStdin(bool $stdin): self
+    {
+        $this->stdin = $stdin;
+
+        return $this;
+    }
+
+    public function setStdinOnce(bool $stdinOnce): self
+    {
+        $this->stdinOnce = $stdinOnce;
+
+        return $this;
+    }
+
+    public function setTerminationMessagePath(string $terminationMessagePath): self
+    {
+        $this->terminationMessagePath = $terminationMessagePath;
+
+        return $this;
+    }
+
+    public function setTerminationMessagePolicy(string $terminationMessagePolicy): self
+    {
+        $this->terminationMessagePolicy = $terminationMessagePolicy;
+
+        return $this;
+    }
+
+    public function setTty(bool $tty): self
+    {
+        $this->tty = $tty;
+
+        return $this;
+    }
+
+    public function setWorkingDir(string $workingDir): self
+    {
+        $this->workingDir = $workingDir;
+
+        return $this;
+    }
+
+    public function startupProbe(): Probe
+    {
+        return $this->startupProbe;
+    }
+
+    public function volumeDevices(): VolumeDeviceList
+    {
+        return $this->volumeDevices;
+    }
+
+    public function volumeMounts(): VolumeMountList
+    {
+        return $this->volumeMounts;
+    }
+
+    public function jsonSerialize(): array
+    {
+        return [
+            'args' => $this->args,
+            'command' => $this->command,
+            'env' => $this->env,
+            'envFrom' => $this->envFrom,
+            'image' => $this->image,
+            'imagePullPolicy' => $this->imagePullPolicy,
+            'lifecycle' => $this->lifecycle,
+            'livenessProbe' => $this->livenessProbe,
+            'name' => $this->name,
+            'ports' => $this->ports,
+            'readinessProbe' => $this->readinessProbe,
+            'resizePolicy' => $this->resizePolicy,
+            'resources' => $this->resources,
+            'restartPolicy' => $this->restartPolicy,
+            'restartPolicyRules' => $this->restartPolicyRules,
+            'securityContext' => $this->securityContext,
+            'startupProbe' => $this->startupProbe,
+            'stdin' => $this->stdin,
+            'stdinOnce' => $this->stdinOnce,
+            'terminationMessagePath' => $this->terminationMessagePath,
+            'terminationMessagePolicy' => $this->terminationMessagePolicy,
+            'tty' => $this->tty,
+            'volumeDevices' => $this->volumeDevices,
+            'volumeMounts' => $this->volumeMounts,
+            'workingDir' => $this->workingDir,
+        ];
+    }
+}
