@@ -67,3 +67,5 @@ else
 fi
 
 echo "Successfully released $NEW_TAG"
+
+git checkout main || exit 1
