@@ -4,14 +4,15 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Resource\V1beta2;
 
+use ArrayObject;
 use JsonSerializable;
 
 class DeviceCapacityMap implements JsonSerializable
 {
     /**
-     * @var DeviceCapacity[]
+     * @var ArrayObject<string, DeviceCapacity>
      */
-    private array $items = [];
+    private ArrayObject $items;
 
     public function __construct()
     {
@@ -25,11 +26,6 @@ class DeviceCapacityMap implements JsonSerializable
         return $this;
     }
 
-    /**
-     * @var DeviceCapacity[] $items
-     *
-     * @return self
-     */
     public function addAll(array $items): self
     {
         foreach ($items as $key => $value) {
@@ -40,16 +36,16 @@ class DeviceCapacityMap implements JsonSerializable
     }
 
     /**
-     * @return DeviceCapacity[]
+     * @return ArrayObject<string, DeviceCapacity>
      */
-    public function all(): array
+    public function all(): ArrayObject
     {
         return $this->items;
     }
 
     public function clear(): self
     {
-        $this->items = [];
+        $this->items = new ArrayObject();
 
         return $this;
     }
@@ -66,17 +62,17 @@ class DeviceCapacityMap implements JsonSerializable
 
     public function has(string $name): bool
     {
-        return array_key_exists($name, $this->items);
+        return $this->items->offsetExists($name);
     }
 
     public function remove(string $name): self
     {
-        unset($this->items[$name]);
+        $this->items->offsetUnset($name);
 
         return $this;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
         return $this->items;
     }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Core\V1;
 
+use ArrayObject;
 use JsonSerializable;
 use K8Schema\Collection\StringList;
 use K8Schema\Collection\StringOrFloatMap;
@@ -54,7 +55,7 @@ class PersistentVolumeSpec implements JsonSerializable
      * Deprecated: CephFS is deprecated and the in-tree cephfs type is no longer
      * supported.
      */
-    private CephFSPersistentVolumeSource $cephfs;
+    private CephFSPersistentVolumeSource|null $cephfs = null;
 
     /**
      * cinder represents a cinder volume attached and mounted on kubelets host machine.
@@ -70,7 +71,7 @@ class PersistentVolumeSpec implements JsonSerializable
      * the authoritative bind between PV and PVC. More info:
      * https://kubernetes.io/docs/concepts/storage/persistent-volumes#binding
      */
-    private ObjectReference $claimRef;
+    private ObjectReference|null $claimRef = null;
 
     /**
      * csi represents storage that is handled by an external CSI driver.
@@ -81,7 +82,7 @@ class PersistentVolumeSpec implements JsonSerializable
      * fc represents a Fibre Channel resource that is attached to a kubelet's host
      * machine and then exposed to the pod.
      */
-    private FCVolumeSource $fc;
+    private FCVolumeSource|null $fc = null;
 
     /**
      * flexVolume represents a generic volume resource that is provisioned/attached
@@ -96,7 +97,7 @@ class PersistentVolumeSpec implements JsonSerializable
      * being running. Deprecated: Flocker is deprecated and the in-tree flocker type is
      * no longer supported.
      */
-    private FlockerVolumeSource $flocker;
+    private FlockerVolumeSource|null $flocker = null;
 
     /**
      * gcePersistentDisk represents a GCE Disk resource that is attached to a kubelet's
@@ -152,7 +153,7 @@ class PersistentVolumeSpec implements JsonSerializable
      * accessed from. This field influences the scheduling of pods that use this
      * volume.
      */
-    private VolumeNodeAffinity $nodeAffinity;
+    private VolumeNodeAffinity|null $nodeAffinity = null;
 
     /**
      * persistentVolumeReclaimPolicy defines what happens to a persistent volume when
@@ -212,7 +213,7 @@ class PersistentVolumeSpec implements JsonSerializable
      * in-tree storageos type is no longer supported. More info:
      * https://examples.k8s.io/volumes/storageos/README.md
      */
-    private StorageOSPersistentVolumeSource $storageos;
+    private StorageOSPersistentVolumeSource|null $storageos = null;
 
     /**
      * Name of VolumeAttributesClass to which this persistent volume belongs. Empty
@@ -244,13 +245,7 @@ class PersistentVolumeSpec implements JsonSerializable
     {
         $this->accessModes = new StringList();
         $this->capacity = new StringOrFloatMap();
-        $this->cephfs = new CephFSPersistentVolumeSource();
-        $this->claimRef = new ObjectReference();
-        $this->fc = new FCVolumeSource();
-        $this->flocker = new FlockerVolumeSource();
         $this->mountOptions = new StringList();
-        $this->nodeAffinity = new VolumeNodeAffinity();
-        $this->storageos = new StorageOSPersistentVolumeSource();
     }
 
     public function accessModes(): StringList
@@ -265,22 +260,22 @@ class PersistentVolumeSpec implements JsonSerializable
 
     public function cephfs(): CephFSPersistentVolumeSource
     {
-        return $this->cephfs;
+        return $this->cephfs ??= new CephFSPersistentVolumeSource();
     }
 
     public function claimRef(): ObjectReference
     {
-        return $this->claimRef;
+        return $this->claimRef ??= new ObjectReference();
     }
 
     public function fc(): FCVolumeSource
     {
-        return $this->fc;
+        return $this->fc ??= new FCVolumeSource();
     }
 
     public function flocker(): FlockerVolumeSource
     {
-        return $this->flocker;
+        return $this->flocker ??= new FlockerVolumeSource();
     }
 
     public function getAwsElasticBlockStore(): AWSElasticBlockStoreVolumeSource|null
@@ -400,7 +395,7 @@ class PersistentVolumeSpec implements JsonSerializable
 
     public function nodeAffinity(): VolumeNodeAffinity
     {
-        return $this->nodeAffinity;
+        return $this->nodeAffinity ??= new VolumeNodeAffinity();
     }
 
     public function setAwsElasticBlockStore(AWSElasticBlockStoreVolumeSource $awsElasticBlockStore): self
@@ -559,12 +554,12 @@ class PersistentVolumeSpec implements JsonSerializable
 
     public function storageos(): StorageOSPersistentVolumeSource
     {
-        return $this->storageos;
+        return $this->storageos ??= new StorageOSPersistentVolumeSource();
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'accessModes' => $this->accessModes,
             'awsElasticBlockStore' => $this->awsElasticBlockStore,
             'azureDisk' => $this->azureDisk,
@@ -596,6 +591,6 @@ class PersistentVolumeSpec implements JsonSerializable
             'volumeAttributesClassName' => $this->volumeAttributesClassName,
             'volumeMode' => $this->volumeMode,
             'vsphereVolume' => $this->vsphereVolume,
-        ];
+        ]);
     }
 }

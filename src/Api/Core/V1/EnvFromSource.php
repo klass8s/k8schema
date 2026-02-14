@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Core\V1;
 
+use ArrayObject;
 use JsonSerializable;
 
 /**
@@ -14,7 +15,7 @@ class EnvFromSource implements JsonSerializable
     /**
      * The ConfigMap to select from
      */
-    private ConfigMapEnvSource $configMapRef;
+    private ConfigMapEnvSource|null $configMapRef = null;
 
     /**
      * Optional text to prepend to the name of each environment variable. Must be a
@@ -25,17 +26,15 @@ class EnvFromSource implements JsonSerializable
     /**
      * The Secret to select from
      */
-    private SecretEnvSource $secretRef;
+    private SecretEnvSource|null $secretRef = null;
 
     public function __construct()
     {
-        $this->configMapRef = new ConfigMapEnvSource();
-        $this->secretRef = new SecretEnvSource();
     }
 
     public function configMapRef(): ConfigMapEnvSource
     {
-        return $this->configMapRef;
+        return $this->configMapRef ??= new ConfigMapEnvSource();
     }
 
     public function getPrefix(): string|null
@@ -45,7 +44,7 @@ class EnvFromSource implements JsonSerializable
 
     public function secretRef(): SecretEnvSource
     {
-        return $this->secretRef;
+        return $this->secretRef ??= new SecretEnvSource();
     }
 
     public function setPrefix(string $prefix): self
@@ -55,12 +54,12 @@ class EnvFromSource implements JsonSerializable
         return $this;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'configMapRef' => $this->configMapRef,
             'prefix' => $this->prefix,
             'secretRef' => $this->secretRef,
-        ];
+        ]);
     }
 }

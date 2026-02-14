@@ -11,7 +11,7 @@ class NonResourcePolicyRuleList implements JsonSerializable
     /**
      * @var NonResourcePolicyRule[]
      */
-    private array $items = [];
+    private array $items;
 
     public function __construct()
     {
@@ -25,11 +25,6 @@ class NonResourcePolicyRuleList implements JsonSerializable
         return $this;
     }
 
-    /**
-     * @var NonResourcePolicyRule[] $items
-     *
-     * @return self
-     */
     public function addAll(array $items): self
     {
         foreach ($items as $value) {

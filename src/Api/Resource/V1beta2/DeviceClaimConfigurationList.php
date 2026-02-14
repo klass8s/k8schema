@@ -11,7 +11,7 @@ class DeviceClaimConfigurationList implements JsonSerializable
     /**
      * @var DeviceClaimConfiguration[]
      */
-    private array $items = [];
+    private array $items;
 
     public function __construct()
     {
@@ -25,11 +25,6 @@ class DeviceClaimConfigurationList implements JsonSerializable
         return $this;
     }
 
-    /**
-     * @var DeviceClaimConfiguration[] $items
-     *
-     * @return self
-     */
     public function addAll(array $items): self
     {
         foreach ($items as $value) {

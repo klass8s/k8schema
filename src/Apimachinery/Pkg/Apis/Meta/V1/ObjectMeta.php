@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Apimachinery\Pkg\Apis\Meta\V1;
 
+use ArrayObject;
 use JsonSerializable;
 use K8Schema\Collection\StringList;
 use K8Schema\Collection\StringMap;
@@ -189,9 +190,9 @@ class ObjectMeta implements JsonSerializable
         return $this;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'annotations' => $this->annotations,
             'deletionGracePeriodSeconds' => $this->deletionGracePeriodSeconds,
             'finalizers' => $this->finalizers,
@@ -201,6 +202,6 @@ class ObjectMeta implements JsonSerializable
             'name' => $this->name,
             'namespace' => $this->namespace,
             'ownerReferences' => $this->ownerReferences,
-        ];
+        ]);
     }
 }

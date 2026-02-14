@@ -11,7 +11,7 @@ class TopologySelectorTermList implements JsonSerializable
     /**
      * @var TopologySelectorTerm[]
      */
-    private array $items = [];
+    private array $items;
 
     public function __construct()
     {
@@ -25,11 +25,6 @@ class TopologySelectorTermList implements JsonSerializable
         return $this;
     }
 
-    /**
-     * @var TopologySelectorTerm[] $items
-     *
-     * @return self
-     */
     public function addAll(array $items): self
     {
         foreach ($items as $value) {

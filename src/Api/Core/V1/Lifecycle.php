@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Core\V1;
 
+use ArrayObject;
 use JsonSerializable;
 
 /**
@@ -21,7 +22,7 @@ class Lifecycle implements JsonSerializable
      * info:
      * https://kubernetes.io/docs/concepts/containers/container-lifecycle-hooks/#container-hooks
      */
-    private LifecycleHandler $postStart;
+    private LifecycleHandler|null $postStart = null;
 
     /**
      * PreStop is called immediately before a container is terminated due to an API
@@ -34,7 +35,7 @@ class Lifecycle implements JsonSerializable
      * completes or until the termination grace period is reached. More info:
      * https://kubernetes.io/docs/concepts/containers/container-lifecycle-hooks/#container-hooks
      */
-    private LifecycleHandler $preStop;
+    private LifecycleHandler|null $preStop = null;
 
     /**
      * StopSignal defines which signal will be sent to a container when it is being
@@ -45,8 +46,6 @@ class Lifecycle implements JsonSerializable
 
     public function __construct()
     {
-        $this->postStart = new LifecycleHandler();
-        $this->preStop = new LifecycleHandler();
     }
 
     public function getStopSignal(): string|null
@@ -56,12 +55,12 @@ class Lifecycle implements JsonSerializable
 
     public function postStart(): LifecycleHandler
     {
-        return $this->postStart;
+        return $this->postStart ??= new LifecycleHandler();
     }
 
     public function preStop(): LifecycleHandler
     {
-        return $this->preStop;
+        return $this->preStop ??= new LifecycleHandler();
     }
 
     public function setStopSignal(string $stopSignal): self
@@ -71,12 +70,12 @@ class Lifecycle implements JsonSerializable
         return $this;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'postStart' => $this->postStart,
             'preStop' => $this->preStop,
             'stopSignal' => $this->stopSignal,
-        ];
+        ]);
     }
 }

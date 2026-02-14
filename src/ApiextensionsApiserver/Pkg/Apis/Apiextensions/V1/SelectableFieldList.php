@@ -11,7 +11,7 @@ class SelectableFieldList implements JsonSerializable
     /**
      * @var SelectableField[]
      */
-    private array $items = [];
+    private array $items;
 
     public function __construct()
     {
@@ -25,11 +25,6 @@ class SelectableFieldList implements JsonSerializable
         return $this;
     }
 
-    /**
-     * @var SelectableField[] $items
-     *
-     * @return self
-     */
     public function addAll(array $items): self
     {
         foreach ($items as $value) {

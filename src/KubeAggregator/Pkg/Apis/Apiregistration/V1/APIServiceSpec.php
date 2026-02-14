@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\KubeAggregator\Pkg\Apis\Apiregistration\V1;
 
+use ArrayObject;
 use JsonSerializable;
 
 /**
@@ -51,7 +52,7 @@ class APIServiceSpec implements JsonSerializable
      * groupversion is handled locally on this server. The call will simply delegate to
      * the normal handler chain to be fulfilled.
      */
-    private ServiceReference $service;
+    private ServiceReference|null $service = null;
 
     /**
      * Version is the API version this server hosts.  For example, "v1"
@@ -78,7 +79,6 @@ class APIServiceSpec implements JsonSerializable
     public function __construct(int $groupPriorityMinimum, int $versionPriority)
     {
         $this->groupPriorityMinimum = $groupPriorityMinimum;
-        $this->service = new ServiceReference();
         $this->versionPriority = $versionPriority;
     }
 
@@ -114,7 +114,7 @@ class APIServiceSpec implements JsonSerializable
 
     public function service(): ServiceReference
     {
-        return $this->service;
+        return $this->service ??= new ServiceReference();
     }
 
     public function setCaBundle(string $caBundle): self
@@ -159,9 +159,9 @@ class APIServiceSpec implements JsonSerializable
         return $this;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'caBundle' => $this->caBundle,
             'group' => $this->group,
             'groupPriorityMinimum' => $this->groupPriorityMinimum,
@@ -169,6 +169,6 @@ class APIServiceSpec implements JsonSerializable
             'service' => $this->service,
             'version' => $this->version,
             'versionPriority' => $this->versionPriority,
-        ];
+        ]);
     }
 }

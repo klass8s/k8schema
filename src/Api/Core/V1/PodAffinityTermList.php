@@ -11,7 +11,7 @@ class PodAffinityTermList implements JsonSerializable
     /**
      * @var PodAffinityTerm[]
      */
-    private array $items = [];
+    private array $items;
 
     public function __construct()
     {
@@ -25,11 +25,6 @@ class PodAffinityTermList implements JsonSerializable
         return $this;
     }
 
-    /**
-     * @var PodAffinityTerm[] $items
-     *
-     * @return self
-     */
     public function addAll(array $items): self
     {
         foreach ($items as $value) {

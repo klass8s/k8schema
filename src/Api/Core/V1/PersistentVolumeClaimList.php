@@ -11,7 +11,7 @@ class PersistentVolumeClaimList implements JsonSerializable
     /**
      * @var PersistentVolumeClaim[]
      */
-    private array $items = [];
+    private array $items;
 
     public function __construct()
     {
@@ -25,11 +25,6 @@ class PersistentVolumeClaimList implements JsonSerializable
         return $this;
     }
 
-    /**
-     * @var PersistentVolumeClaim[] $items
-     *
-     * @return self
-     */
     public function addAll(array $items): self
     {
         foreach ($items as $value) {

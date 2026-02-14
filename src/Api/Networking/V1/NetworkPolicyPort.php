@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Networking\V1;
 
+use ArrayObject;
 use JsonSerializable;
 
 /**
@@ -73,12 +74,12 @@ class NetworkPolicyPort implements JsonSerializable
         return $this;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'endPort' => $this->endPort,
             'port' => $this->port,
             'protocol' => $this->protocol,
-        ];
+        ]);
     }
 }

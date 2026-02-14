@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Networking\V1;
 
+use ArrayObject;
 use JsonSerializable;
 
 /**
@@ -21,12 +22,11 @@ class IngressServiceBackend implements JsonSerializable
      * port of the referenced service. A port name or port number is required for a
      * IngressServiceBackend.
      */
-    private ServiceBackendPort $port;
+    private ServiceBackendPort|null $port = null;
 
     public function __construct(string $name)
     {
         $this->name = $name;
-        $this->port = new ServiceBackendPort();
     }
 
     public function getName(): string
@@ -36,7 +36,7 @@ class IngressServiceBackend implements JsonSerializable
 
     public function port(): ServiceBackendPort
     {
-        return $this->port;
+        return $this->port ??= new ServiceBackendPort();
     }
 
     public function setName(string $name): self
@@ -46,11 +46,11 @@ class IngressServiceBackend implements JsonSerializable
         return $this;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'name' => $this->name,
             'port' => $this->port,
-        ];
+        ]);
     }
 }

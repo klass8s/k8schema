@@ -11,7 +11,7 @@ class EndpointSubsetList implements JsonSerializable
     /**
      * @var EndpointSubset[]
      */
-    private array $items = [];
+    private array $items;
 
     public function __construct()
     {
@@ -25,11 +25,6 @@ class EndpointSubsetList implements JsonSerializable
         return $this;
     }
 
-    /**
-     * @var EndpointSubset[] $items
-     *
-     * @return self
-     */
     public function addAll(array $items): self
     {
         foreach ($items as $value) {

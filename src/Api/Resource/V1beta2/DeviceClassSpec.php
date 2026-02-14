@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Resource\V1beta2;
 
+use ArrayObject;
 use JsonSerializable;
 
 /**
@@ -44,11 +45,11 @@ class DeviceClassSpec implements JsonSerializable
         return $this->selectors;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'config' => $this->config,
             'selectors' => $this->selectors,
-        ];
+        ]);
     }
 }

@@ -11,7 +11,7 @@ class MatchConditionList implements JsonSerializable
     /**
      * @var MatchCondition[]
      */
-    private array $items = [];
+    private array $items;
 
     public function __construct()
     {
@@ -25,11 +25,6 @@ class MatchConditionList implements JsonSerializable
         return $this;
     }
 
-    /**
-     * @var MatchCondition[] $items
-     *
-     * @return self
-     */
     public function addAll(array $items): self
     {
         foreach ($items as $value) {

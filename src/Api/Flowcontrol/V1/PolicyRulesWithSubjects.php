@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Flowcontrol\V1;
 
+use ArrayObject;
 use JsonSerializable;
 
 /**
@@ -59,12 +60,12 @@ class PolicyRulesWithSubjects implements JsonSerializable
         return $this->subjects;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'nonResourceRules' => $this->nonResourceRules,
             'resourceRules' => $this->resourceRules,
             'subjects' => $this->subjects,
-        ];
+        ]);
     }
 }

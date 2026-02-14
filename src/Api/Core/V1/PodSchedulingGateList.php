@@ -11,7 +11,7 @@ class PodSchedulingGateList implements JsonSerializable
     /**
      * @var PodSchedulingGate[]
      */
-    private array $items = [];
+    private array $items;
 
     public function __construct()
     {
@@ -25,11 +25,6 @@ class PodSchedulingGateList implements JsonSerializable
         return $this;
     }
 
-    /**
-     * @var PodSchedulingGate[] $items
-     *
-     * @return self
-     */
     public function addAll(array $items): self
     {
         foreach ($items as $value) {

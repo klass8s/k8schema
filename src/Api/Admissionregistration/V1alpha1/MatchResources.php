@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Admissionregistration\V1alpha1;
 
+use ArrayObject;
 use JsonSerializable;
 use K8Schema\Apimachinery\Pkg\Apis\Meta\V1\LabelSelector;
 
@@ -85,7 +86,7 @@ class MatchResources implements JsonSerializable
      *
      * Default to the empty LabelSelector, which matches everything.
      */
-    private LabelSelector $namespaceSelector;
+    private LabelSelector|null $namespaceSelector = null;
 
     /**
      * ObjectSelector decides whether to run the policy based on if the object has
@@ -98,7 +99,7 @@ class MatchResources implements JsonSerializable
      * because end users may skip the admission webhook by setting the labels. Default
      * to the empty LabelSelector, which matches everything.
      */
-    private LabelSelector $objectSelector;
+    private LabelSelector|null $objectSelector = null;
 
     /**
      * ResourceRules describes what operations on what resources/subresources the
@@ -110,8 +111,6 @@ class MatchResources implements JsonSerializable
     public function __construct()
     {
         $this->excludeResourceRules = new NamedRuleWithOperationsList();
-        $this->namespaceSelector = new LabelSelector();
-        $this->objectSelector = new LabelSelector();
         $this->resourceRules = new NamedRuleWithOperationsList();
     }
 
@@ -127,12 +126,12 @@ class MatchResources implements JsonSerializable
 
     public function namespaceSelector(): LabelSelector
     {
-        return $this->namespaceSelector;
+        return $this->namespaceSelector ??= new LabelSelector();
     }
 
     public function objectSelector(): LabelSelector
     {
-        return $this->objectSelector;
+        return $this->objectSelector ??= new LabelSelector();
     }
 
     public function resourceRules(): NamedRuleWithOperationsList
@@ -147,14 +146,14 @@ class MatchResources implements JsonSerializable
         return $this;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'excludeResourceRules' => $this->excludeResourceRules,
             'matchPolicy' => $this->matchPolicy,
             'namespaceSelector' => $this->namespaceSelector,
             'objectSelector' => $this->objectSelector,
             'resourceRules' => $this->resourceRules,
-        ];
+        ]);
     }
 }

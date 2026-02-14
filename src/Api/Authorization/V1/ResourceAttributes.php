@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Authorization\V1;
 
+use ArrayObject;
 use JsonSerializable;
 
 /**
@@ -19,7 +20,7 @@ class ResourceAttributes implements JsonSerializable
      * This field  is alpha-level. To use this field, you must enable the
      * `AuthorizeWithSelectors` feature gate (disabled by default).
      */
-    private FieldSelectorAttributes $fieldSelector;
+    private FieldSelectorAttributes|null $fieldSelector = null;
 
     /**
      * Group is the API Group of the Resource.  "*" means all.
@@ -33,7 +34,7 @@ class ResourceAttributes implements JsonSerializable
      * This field  is alpha-level. To use this field, you must enable the
      * `AuthorizeWithSelectors` feature gate (disabled by default).
      */
-    private LabelSelectorAttributes $labelSelector;
+    private LabelSelectorAttributes|null $labelSelector = null;
 
     /**
      * Name is the name of the resource being requested for a "get" or deleted for a
@@ -73,13 +74,11 @@ class ResourceAttributes implements JsonSerializable
 
     public function __construct()
     {
-        $this->fieldSelector = new FieldSelectorAttributes();
-        $this->labelSelector = new LabelSelectorAttributes();
     }
 
     public function fieldSelector(): FieldSelectorAttributes
     {
-        return $this->fieldSelector;
+        return $this->fieldSelector ??= new FieldSelectorAttributes();
     }
 
     public function getGroup(): string|null
@@ -119,7 +118,7 @@ class ResourceAttributes implements JsonSerializable
 
     public function labelSelector(): LabelSelectorAttributes
     {
-        return $this->labelSelector;
+        return $this->labelSelector ??= new LabelSelectorAttributes();
     }
 
     public function setGroup(string $group): self
@@ -171,9 +170,9 @@ class ResourceAttributes implements JsonSerializable
         return $this;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'fieldSelector' => $this->fieldSelector,
             'group' => $this->group,
             'labelSelector' => $this->labelSelector,
@@ -183,6 +182,6 @@ class ResourceAttributes implements JsonSerializable
             'subresource' => $this->subresource,
             'verb' => $this->verb,
             'version' => $this->version,
-        ];
+        ]);
     }
 }

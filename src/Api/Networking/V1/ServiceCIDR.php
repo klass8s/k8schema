@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Networking\V1;
 
+use ArrayObject;
 use K8Schema\APIResourceInterface;
 use K8Schema\Apimachinery\Pkg\Apis\Meta\V1\ObjectMeta;
 
@@ -45,13 +46,13 @@ class ServiceCIDR implements APIResourceInterface
         return $this->spec;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'apiVersion' => self::API_VERSION,
             'kind' => self::KIND,
             'metadata' => $this->metadata,
             'spec' => $this->spec,
-        ];
+        ]);
     }
 }

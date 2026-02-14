@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Core\V1;
 
+use ArrayObject;
 use JsonSerializable;
 
 /**
@@ -49,11 +50,11 @@ class ProjectedVolumeSource implements JsonSerializable
         return $this->sources;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'defaultMode' => $this->defaultMode,
             'sources' => $this->sources,
-        ];
+        ]);
     }
 }

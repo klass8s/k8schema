@@ -11,7 +11,7 @@ class AuditAnnotationList implements JsonSerializable
     /**
      * @var AuditAnnotation[]
      */
-    private array $items = [];
+    private array $items;
 
     public function __construct()
     {
@@ -25,11 +25,6 @@ class AuditAnnotationList implements JsonSerializable
         return $this;
     }
 
-    /**
-     * @var AuditAnnotation[] $items
-     *
-     * @return self
-     */
     public function addAll(array $items): self
     {
         foreach ($items as $value) {

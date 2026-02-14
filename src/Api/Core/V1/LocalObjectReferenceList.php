@@ -11,7 +11,7 @@ class LocalObjectReferenceList implements JsonSerializable
     /**
      * @var LocalObjectReference[]
      */
-    private array $items = [];
+    private array $items;
 
     public function __construct()
     {
@@ -25,11 +25,6 @@ class LocalObjectReferenceList implements JsonSerializable
         return $this;
     }
 
-    /**
-     * @var LocalObjectReference[] $items
-     *
-     * @return self
-     */
     public function addAll(array $items): self
     {
         foreach ($items as $value) {

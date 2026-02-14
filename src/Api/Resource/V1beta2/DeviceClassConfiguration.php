@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Resource\V1beta2;
 
+use ArrayObject;
 use JsonSerializable;
 
 /**
@@ -32,10 +33,10 @@ class DeviceClassConfiguration implements JsonSerializable
         return $this;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'opaque' => $this->opaque,
-        ];
+        ]);
     }
 }

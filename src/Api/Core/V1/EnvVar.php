@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Core\V1;
 
+use ArrayObject;
 use JsonSerializable;
 
 /**
@@ -31,12 +32,11 @@ class EnvVar implements JsonSerializable
      * Source for the environment variable's value. Cannot be used if value is not
      * empty.
      */
-    private EnvVarSource $valueFrom;
+    private EnvVarSource|null $valueFrom = null;
 
     public function __construct(string $name)
     {
         $this->name = $name;
-        $this->valueFrom = new EnvVarSource();
     }
 
     public function getName(): string
@@ -65,15 +65,15 @@ class EnvVar implements JsonSerializable
 
     public function valueFrom(): EnvVarSource
     {
-        return $this->valueFrom;
+        return $this->valueFrom ??= new EnvVarSource();
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'name' => $this->name,
             'value' => $this->value,
             'valueFrom' => $this->valueFrom,
-        ];
+        ]);
     }
 }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Storage\V1;
 
+use ArrayObject;
 use JsonSerializable;
 use K8Schema\Collection\StringList;
 
@@ -271,9 +272,9 @@ class CSIDriverSpec implements JsonSerializable
         return $this->volumeLifecycleModes;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'attachRequired' => $this->attachRequired,
             'fsGroupPolicy' => $this->fsGroupPolicy,
             'nodeAllocatableUpdatePeriodSeconds' => $this->nodeAllocatableUpdatePeriodSeconds,
@@ -283,6 +284,6 @@ class CSIDriverSpec implements JsonSerializable
             'storageCapacity' => $this->storageCapacity,
             'tokenRequests' => $this->tokenRequests,
             'volumeLifecycleModes' => $this->volumeLifecycleModes,
-        ];
+        ]);
     }
 }

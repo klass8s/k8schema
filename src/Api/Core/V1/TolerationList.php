@@ -11,7 +11,7 @@ class TolerationList implements JsonSerializable
     /**
      * @var Toleration[]
      */
-    private array $items = [];
+    private array $items;
 
     public function __construct()
     {
@@ -25,11 +25,6 @@ class TolerationList implements JsonSerializable
         return $this;
     }
 
-    /**
-     * @var Toleration[] $items
-     *
-     * @return self
-     */
     public function addAll(array $items): self
     {
         foreach ($items as $value) {

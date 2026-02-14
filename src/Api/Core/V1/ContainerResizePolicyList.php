@@ -11,7 +11,7 @@ class ContainerResizePolicyList implements JsonSerializable
     /**
      * @var ContainerResizePolicy[]
      */
-    private array $items = [];
+    private array $items;
 
     public function __construct()
     {
@@ -25,11 +25,6 @@ class ContainerResizePolicyList implements JsonSerializable
         return $this;
     }
 
-    /**
-     * @var ContainerResizePolicy[] $items
-     *
-     * @return self
-     */
     public function addAll(array $items): self
     {
         foreach ($items as $value) {

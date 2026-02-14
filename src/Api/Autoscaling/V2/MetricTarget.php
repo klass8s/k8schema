@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Autoscaling\V2;
 
+use ArrayObject;
 use JsonSerializable;
 
 /**
@@ -88,13 +89,13 @@ class MetricTarget implements JsonSerializable
         return $this;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'averageUtilization' => $this->averageUtilization,
             'averageValue' => $this->averageValue,
             'type' => $this->type,
             'value' => $this->value,
-        ];
+        ]);
     }
 }

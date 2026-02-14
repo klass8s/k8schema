@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Core\V1;
 
+use ArrayObject;
 use JsonSerializable;
 use K8Schema\Collection\StringMap;
 use K8Schema\Collection\StringOrFloatMap;
@@ -23,7 +24,7 @@ class PodSpec implements JsonSerializable
     /**
      * If specified, the pod's scheduling constraints
      */
-    private Affinity $affinity;
+    private Affinity|null $affinity = null;
 
     /**
      * AutomountServiceAccountToken indicates whether a service account token should be
@@ -41,7 +42,7 @@ class PodSpec implements JsonSerializable
      * Specifies the DNS parameters of a pod. Parameters specified here will be merged
      * to the generated DNS configuration based on DNSPolicy.
      */
-    private PodDNSConfig $dnsConfig;
+    private PodDNSConfig|null $dnsConfig = null;
 
     /**
      * Set DNS policy for the pod. Defaults to "ClusterFirst". Valid values are
@@ -246,7 +247,7 @@ class PodSpec implements JsonSerializable
      *
      * This is an alpha field and requires enabling the PodLevelResources feature gate.
      */
-    private ResourceRequirements $resources;
+    private ResourceRequirements|null $resources = null;
 
     /**
      * Restart policy for all containers within the pod. One of Always, OnFailure,
@@ -287,7 +288,7 @@ class PodSpec implements JsonSerializable
      * settings. Optional: Defaults to empty.  See type description for default values
      * of each field.
      */
-    private PodSecurityContext $securityContext;
+    private PodSecurityContext|null $securityContext = null;
 
     /**
      * DeprecatedServiceAccount is a deprecated alias for ServiceAccountName.
@@ -360,9 +361,7 @@ class PodSpec implements JsonSerializable
 
     public function __construct()
     {
-        $this->affinity = new Affinity();
         $this->containers = new ContainerList();
-        $this->dnsConfig = new PodDNSConfig();
         $this->ephemeralContainers = new EphemeralContainerList();
         $this->hostAliases = new HostAliasList();
         $this->imagePullSecrets = new LocalObjectReferenceList();
@@ -371,9 +370,7 @@ class PodSpec implements JsonSerializable
         $this->overhead = new StringOrFloatMap();
         $this->readinessGates = new PodReadinessGateList();
         $this->resourceClaims = new PodResourceClaimList();
-        $this->resources = new ResourceRequirements();
         $this->schedulingGates = new PodSchedulingGateList();
-        $this->securityContext = new PodSecurityContext();
         $this->tolerations = new TolerationList();
         $this->topologySpreadConstraints = new TopologySpreadConstraintList();
         $this->volumes = new VolumeList();
@@ -381,7 +378,7 @@ class PodSpec implements JsonSerializable
 
     public function affinity(): Affinity
     {
-        return $this->affinity;
+        return $this->affinity ??= new Affinity();
     }
 
     public function containers(): ContainerList
@@ -391,7 +388,7 @@ class PodSpec implements JsonSerializable
 
     public function dnsConfig(): PodDNSConfig
     {
-        return $this->dnsConfig;
+        return $this->dnsConfig ??= new PodDNSConfig();
     }
 
     public function ephemeralContainers(): EphemeralContainerList
@@ -551,7 +548,7 @@ class PodSpec implements JsonSerializable
 
     public function resources(): ResourceRequirements
     {
-        return $this->resources;
+        return $this->resources ??= new ResourceRequirements();
     }
 
     public function schedulingGates(): PodSchedulingGateList
@@ -561,7 +558,7 @@ class PodSpec implements JsonSerializable
 
     public function securityContext(): PodSecurityContext
     {
-        return $this->securityContext;
+        return $this->securityContext ??= new PodSecurityContext();
     }
 
     public function setActiveDeadlineSeconds(int $activeDeadlineSeconds): self
@@ -740,9 +737,9 @@ class PodSpec implements JsonSerializable
         return $this->volumes;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'activeDeadlineSeconds' => $this->activeDeadlineSeconds,
             'affinity' => $this->affinity,
             'automountServiceAccountToken' => $this->automountServiceAccountToken,
@@ -783,6 +780,6 @@ class PodSpec implements JsonSerializable
             'tolerations' => $this->tolerations,
             'topologySpreadConstraints' => $this->topologySpreadConstraints,
             'volumes' => $this->volumes,
-        ];
+        ]);
     }
 }

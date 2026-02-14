@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Core\V1;
 
+use ArrayObject;
 use JsonSerializable;
 
 /**
@@ -15,7 +16,7 @@ class LifecycleHandler implements JsonSerializable
     /**
      * Exec specifies a command to execute in the container.
      */
-    private ExecAction $exec;
+    private ExecAction|null $exec = null;
 
     /**
      * HTTPGet specifies an HTTP GET request to perform.
@@ -36,12 +37,11 @@ class LifecycleHandler implements JsonSerializable
 
     public function __construct()
     {
-        $this->exec = new ExecAction();
     }
 
     public function exec(): ExecAction
     {
-        return $this->exec;
+        return $this->exec ??= new ExecAction();
     }
 
     public function getHttpGet(): HTTPGetAction|null
@@ -80,13 +80,13 @@ class LifecycleHandler implements JsonSerializable
         return $this;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'exec' => $this->exec,
             'httpGet' => $this->httpGet,
             'sleep' => $this->sleep,
             'tcpSocket' => $this->tcpSocket,
-        ];
+        ]);
     }
 }

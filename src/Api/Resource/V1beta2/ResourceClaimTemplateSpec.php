@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Resource\V1beta2;
 
+use ArrayObject;
 use JsonSerializable;
 use K8Schema\Apimachinery\Pkg\Apis\Meta\V1\ObjectMeta;
 
@@ -42,11 +43,11 @@ class ResourceClaimTemplateSpec implements JsonSerializable
         return $this->spec;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'metadata' => $this->metadata,
             'spec' => $this->spec,
-        ];
+        ]);
     }
 }

@@ -11,7 +11,7 @@ class SuccessPolicyRuleList implements JsonSerializable
     /**
      * @var SuccessPolicyRule[]
      */
-    private array $items = [];
+    private array $items;
 
     public function __construct()
     {
@@ -25,11 +25,6 @@ class SuccessPolicyRuleList implements JsonSerializable
         return $this;
     }
 
-    /**
-     * @var SuccessPolicyRule[] $items
-     *
-     * @return self
-     */
     public function addAll(array $items): self
     {
         foreach ($items as $value) {

@@ -11,7 +11,7 @@ class MutatingWebhookList implements JsonSerializable
     /**
      * @var MutatingWebhook[]
      */
-    private array $items = [];
+    private array $items;
 
     public function __construct()
     {
@@ -25,11 +25,6 @@ class MutatingWebhookList implements JsonSerializable
         return $this;
     }
 
-    /**
-     * @var MutatingWebhook[] $items
-     *
-     * @return self
-     */
     public function addAll(array $items): self
     {
         foreach ($items as $value) {

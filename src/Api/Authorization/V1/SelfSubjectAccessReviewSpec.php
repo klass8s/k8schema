@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Authorization\V1;
 
+use ArrayObject;
 use JsonSerializable;
 
 /**
@@ -16,35 +17,33 @@ class SelfSubjectAccessReviewSpec implements JsonSerializable
     /**
      * NonResourceAttributes describes information for a non-resource access request
      */
-    private NonResourceAttributes $nonResourceAttributes;
+    private NonResourceAttributes|null $nonResourceAttributes = null;
 
     /**
      * ResourceAuthorizationAttributes describes information for a resource access
      * request
      */
-    private ResourceAttributes $resourceAttributes;
+    private ResourceAttributes|null $resourceAttributes = null;
 
     public function __construct()
     {
-        $this->nonResourceAttributes = new NonResourceAttributes();
-        $this->resourceAttributes = new ResourceAttributes();
     }
 
     public function nonResourceAttributes(): NonResourceAttributes
     {
-        return $this->nonResourceAttributes;
+        return $this->nonResourceAttributes ??= new NonResourceAttributes();
     }
 
     public function resourceAttributes(): ResourceAttributes
     {
-        return $this->resourceAttributes;
+        return $this->resourceAttributes ??= new ResourceAttributes();
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'nonResourceAttributes' => $this->nonResourceAttributes,
             'resourceAttributes' => $this->resourceAttributes,
-        ];
+        ]);
     }
 }

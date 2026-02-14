@@ -11,7 +11,7 @@ class DeviceTolerationList implements JsonSerializable
     /**
      * @var DeviceToleration[]
      */
-    private array $items = [];
+    private array $items;
 
     public function __construct()
     {
@@ -25,11 +25,6 @@ class DeviceTolerationList implements JsonSerializable
         return $this;
     }
 
-    /**
-     * @var DeviceToleration[] $items
-     *
-     * @return self
-     */
     public function addAll(array $items): self
     {
         foreach ($items as $value) {

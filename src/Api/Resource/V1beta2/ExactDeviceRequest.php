@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Resource\V1beta2;
 
+use ArrayObject;
 use JsonSerializable;
 
 /**
@@ -155,15 +156,15 @@ class ExactDeviceRequest implements JsonSerializable
         return $this->tolerations;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'adminAccess' => $this->adminAccess,
             'allocationMode' => $this->allocationMode,
             'count' => $this->count,
             'deviceClassName' => $this->deviceClassName,
             'selectors' => $this->selectors,
             'tolerations' => $this->tolerations,
-        ];
+        ]);
     }
 }

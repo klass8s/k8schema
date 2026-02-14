@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Resource\V1alpha3;
 
+use ArrayObject;
 use JsonSerializable;
 
 /**
@@ -16,7 +17,7 @@ class DeviceTaintRuleSpec implements JsonSerializable
      * criteria must be satified for a device to match. The empty selector matches all
      * devices. Without a selector, no devices are matches.
      */
-    private DeviceTaintSelector $deviceSelector;
+    private DeviceTaintSelector|null $deviceSelector = null;
 
     /**
      * The taint that gets applied to matching devices.
@@ -25,13 +26,12 @@ class DeviceTaintRuleSpec implements JsonSerializable
 
     public function __construct(DeviceTaint $taint)
     {
-        $this->deviceSelector = new DeviceTaintSelector();
         $this->taint = $taint;
     }
 
     public function deviceSelector(): DeviceTaintSelector
     {
-        return $this->deviceSelector;
+        return $this->deviceSelector ??= new DeviceTaintSelector();
     }
 
     public function getTaint(): DeviceTaint
@@ -46,11 +46,11 @@ class DeviceTaintRuleSpec implements JsonSerializable
         return $this;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'deviceSelector' => $this->deviceSelector,
             'taint' => $this->taint,
-        ];
+        ]);
     }
 }

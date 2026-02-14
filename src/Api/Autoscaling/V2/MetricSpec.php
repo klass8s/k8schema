@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Autoscaling\V2;
 
+use ArrayObject;
 use JsonSerializable;
 
 /**
@@ -135,15 +136,15 @@ class MetricSpec implements JsonSerializable
         return $this;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'containerResource' => $this->containerResource,
             'external' => $this->external,
             'object' => $this->object,
             'pods' => $this->pods,
             'resource' => $this->resource,
             'type' => $this->type,
-        ];
+        ]);
     }
 }

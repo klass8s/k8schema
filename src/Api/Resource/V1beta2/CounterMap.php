@@ -4,14 +4,15 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Resource\V1beta2;
 
+use ArrayObject;
 use JsonSerializable;
 
 class CounterMap implements JsonSerializable
 {
     /**
-     * @var Counter[]
+     * @var ArrayObject<string, Counter>
      */
-    private array $items = [];
+    private ArrayObject $items;
 
     public function __construct()
     {
@@ -25,11 +26,6 @@ class CounterMap implements JsonSerializable
         return $this;
     }
 
-    /**
-     * @var Counter[] $items
-     *
-     * @return self
-     */
     public function addAll(array $items): self
     {
         foreach ($items as $key => $value) {
@@ -40,16 +36,16 @@ class CounterMap implements JsonSerializable
     }
 
     /**
-     * @return Counter[]
+     * @return ArrayObject<string, Counter>
      */
-    public function all(): array
+    public function all(): ArrayObject
     {
         return $this->items;
     }
 
     public function clear(): self
     {
-        $this->items = [];
+        $this->items = new ArrayObject();
 
         return $this;
     }
@@ -66,17 +62,17 @@ class CounterMap implements JsonSerializable
 
     public function has(string $name): bool
     {
-        return array_key_exists($name, $this->items);
+        return $this->items->offsetExists($name);
     }
 
     public function remove(string $name): self
     {
-        unset($this->items[$name]);
+        $this->items->offsetUnset($name);
 
         return $this;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
         return $this->items;
     }

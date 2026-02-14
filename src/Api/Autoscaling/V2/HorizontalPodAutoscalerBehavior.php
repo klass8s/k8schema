@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Autoscaling\V2;
 
+use ArrayObject;
 use JsonSerializable;
 
 /**
@@ -17,7 +18,7 @@ class HorizontalPodAutoscalerBehavior implements JsonSerializable
      * to allow to scale down to minReplicas pods, with a 300 second stabilization
      * window (i.e., the highest recommendation for the last 300sec is used).
      */
-    private HPAScalingRules $scaleDown;
+    private HPAScalingRules|null $scaleDown = null;
 
     /**
      * scaleUp is scaling policy for scaling Up. If not set, the default value is the
@@ -26,29 +27,27 @@ class HorizontalPodAutoscalerBehavior implements JsonSerializable
      *   * double the number of pods per 60 seconds
      * No stabilization is used.
      */
-    private HPAScalingRules $scaleUp;
+    private HPAScalingRules|null $scaleUp = null;
 
     public function __construct()
     {
-        $this->scaleDown = new HPAScalingRules();
-        $this->scaleUp = new HPAScalingRules();
     }
 
     public function scaleDown(): HPAScalingRules
     {
-        return $this->scaleDown;
+        return $this->scaleDown ??= new HPAScalingRules();
     }
 
     public function scaleUp(): HPAScalingRules
     {
-        return $this->scaleUp;
+        return $this->scaleUp ??= new HPAScalingRules();
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'scaleDown' => $this->scaleDown,
             'scaleUp' => $this->scaleUp,
-        ];
+        ]);
     }
 }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Core\V1;
 
+use ArrayObject;
 use K8Schema\APIResourceInterface;
 use K8Schema\Apimachinery\Pkg\Apis\Meta\V1\ObjectMeta;
 
@@ -37,7 +38,7 @@ class ServiceAccount implements APIResourceInterface
      * Standard object's metadata. More info:
      * https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
      */
-    private ObjectMeta $metadata;
+    private ObjectMeta|null $metadata = null;
 
     /**
      * Secrets is a list of the secrets in the same namespace that pods running using
@@ -55,7 +56,6 @@ class ServiceAccount implements APIResourceInterface
     public function __construct()
     {
         $this->imagePullSecrets = new LocalObjectReferenceList();
-        $this->metadata = new ObjectMeta();
         $this->secrets = new ObjectReferenceList();
     }
 
@@ -71,7 +71,7 @@ class ServiceAccount implements APIResourceInterface
 
     public function metadata(): ObjectMeta
     {
-        return $this->metadata;
+        return $this->metadata ??= new ObjectMeta();
     }
 
     public function secrets(): ObjectReferenceList
@@ -86,15 +86,15 @@ class ServiceAccount implements APIResourceInterface
         return $this;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'apiVersion' => self::API_VERSION,
             'kind' => self::KIND,
             'automountServiceAccountToken' => $this->automountServiceAccountToken,
             'imagePullSecrets' => $this->imagePullSecrets,
             'metadata' => $this->metadata,
             'secrets' => $this->secrets,
-        ];
+        ]);
     }
 }

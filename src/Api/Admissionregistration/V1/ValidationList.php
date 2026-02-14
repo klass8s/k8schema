@@ -11,7 +11,7 @@ class ValidationList implements JsonSerializable
     /**
      * @var Validation[]
      */
-    private array $items = [];
+    private array $items;
 
     public function __construct()
     {
@@ -25,11 +25,6 @@ class ValidationList implements JsonSerializable
         return $this;
     }
 
-    /**
-     * @var Validation[] $items
-     *
-     * @return self
-     */
     public function addAll(array $items): self
     {
         foreach ($items as $value) {

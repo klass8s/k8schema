@@ -11,7 +11,7 @@ class HostAliasList implements JsonSerializable
     /**
      * @var HostAlias[]
      */
-    private array $items = [];
+    private array $items;
 
     public function __construct()
     {
@@ -25,11 +25,6 @@ class HostAliasList implements JsonSerializable
         return $this;
     }
 
-    /**
-     * @var HostAlias[] $items
-     *
-     * @return self
-     */
     public function addAll(array $items): self
     {
         foreach ($items as $value) {

@@ -11,7 +11,7 @@ class ScopedResourceSelectorRequirementList implements JsonSerializable
     /**
      * @var ScopedResourceSelectorRequirement[]
      */
-    private array $items = [];
+    private array $items;
 
     public function __construct()
     {
@@ -25,11 +25,6 @@ class ScopedResourceSelectorRequirementList implements JsonSerializable
         return $this;
     }
 
-    /**
-     * @var ScopedResourceSelectorRequirement[] $items
-     *
-     * @return self
-     */
     public function addAll(array $items): self
     {
         foreach ($items as $value) {
