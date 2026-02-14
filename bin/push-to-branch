@@ -26,13 +26,10 @@ if [ -n "$(git status --porcelain)" ]; then
   exit 1
 fi
 
+echo "Creating a new branch $K8S_API_VERSION or switching to it..."
+git checkout "$K8S_API_VERSION" || git checkout -b "$K8S_API_VERSION"
 bin/generate "$K8S_API_VERSION"
-
-echo "Creating a new branch $K8S_API_VERSION"
-git checkout -B "$K8S_API_VERSION"
-git pull
 git add .
-git pull
 git commit -m "feat: PHP definitions for Kubernetes API $K8S_API_VERSION"
 git push -u origin "$K8S_API_VERSION"
 git checkout main || exit 1
