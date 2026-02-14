@@ -29,7 +29,7 @@ fi
 bin/generate "$K8S_API_VERSION"
 
 echo "Creating a new branch $K8S_API_VERSION"
-git switch -C "$K8S_API_VERSION"
+git checkout -B "$K8S_API_VERSION"
 git add .
 git commit -m "feat: PHP definitions for Kubernetes API $K8S_API_VERSION"
 git push -u origin "$K8S_API_VERSION"
