@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Core\V1;
 
+use ArrayObject;
 use JsonSerializable;
 
 /**
@@ -32,12 +33,12 @@ class VolumeProjection implements JsonSerializable
     /**
      * configMap information about the configMap data to project
      */
-    private ConfigMapProjection $configMap;
+    private ConfigMapProjection|null $configMap = null;
 
     /**
      * downwardAPI information about the downwardAPI data to project
      */
-    private DownwardAPIProjection $downwardAPI;
+    private DownwardAPIProjection|null $downwardAPI = null;
 
     /**
      * Projects an auto-rotating credential bundle (private key and certificate chain)
@@ -76,7 +77,7 @@ class VolumeProjection implements JsonSerializable
     /**
      * secret information about the secret data to project
      */
-    private SecretProjection $secret;
+    private SecretProjection|null $secret = null;
 
     /**
      * serviceAccountToken is information about the serviceAccountToken data to project
@@ -85,19 +86,16 @@ class VolumeProjection implements JsonSerializable
 
     public function __construct()
     {
-        $this->configMap = new ConfigMapProjection();
-        $this->downwardAPI = new DownwardAPIProjection();
-        $this->secret = new SecretProjection();
     }
 
     public function configMap(): ConfigMapProjection
     {
-        return $this->configMap;
+        return $this->configMap ??= new ConfigMapProjection();
     }
 
     public function downwardAPI(): DownwardAPIProjection
     {
-        return $this->downwardAPI;
+        return $this->downwardAPI ??= new DownwardAPIProjection();
     }
 
     public function getClusterTrustBundle(): ClusterTrustBundleProjection|null
@@ -117,7 +115,7 @@ class VolumeProjection implements JsonSerializable
 
     public function secret(): SecretProjection
     {
-        return $this->secret;
+        return $this->secret ??= new SecretProjection();
     }
 
     public function setClusterTrustBundle(ClusterTrustBundleProjection $clusterTrustBundle): self
@@ -141,15 +139,15 @@ class VolumeProjection implements JsonSerializable
         return $this;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'clusterTrustBundle' => $this->clusterTrustBundle,
             'configMap' => $this->configMap,
             'downwardAPI' => $this->downwardAPI,
             'podCertificate' => $this->podCertificate,
             'secret' => $this->secret,
             'serviceAccountToken' => $this->serviceAccountToken,
-        ];
+        ]);
     }
 }

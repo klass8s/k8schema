@@ -11,7 +11,7 @@ class ObjectReferenceList implements JsonSerializable
     /**
      * @var ObjectReference[]
      */
-    private array $items = [];
+    private array $items;
 
     public function __construct()
     {
@@ -25,11 +25,6 @@ class ObjectReferenceList implements JsonSerializable
         return $this;
     }
 
-    /**
-     * @var ObjectReference[] $items
-     *
-     * @return self
-     */
     public function addAll(array $items): self
     {
         foreach ($items as $value) {

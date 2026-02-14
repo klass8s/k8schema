@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Networking\V1;
 
+use ArrayObject;
 use JsonSerializable;
 
 /**
@@ -17,7 +18,7 @@ class IngressSpec implements JsonSerializable
      * DefaultBackend is not set, the handling of requests that do not match any of the
      * rules will be up to the Ingress controller.
      */
-    private IngressBackend $defaultBackend;
+    private IngressBackend|null $defaultBackend = null;
 
     /**
      * ingressClassName is the name of an IngressClass cluster resource. Ingress
@@ -50,14 +51,13 @@ class IngressSpec implements JsonSerializable
 
     public function __construct()
     {
-        $this->defaultBackend = new IngressBackend();
         $this->rules = new IngressRuleList();
         $this->tls = new IngressTLSList();
     }
 
     public function defaultBackend(): IngressBackend
     {
-        return $this->defaultBackend;
+        return $this->defaultBackend ??= new IngressBackend();
     }
 
     public function getIngressClassName(): string|null
@@ -82,13 +82,13 @@ class IngressSpec implements JsonSerializable
         return $this->tls;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'defaultBackend' => $this->defaultBackend,
             'ingressClassName' => $this->ingressClassName,
             'rules' => $this->rules,
             'tls' => $this->tls,
-        ];
+        ]);
     }
 }

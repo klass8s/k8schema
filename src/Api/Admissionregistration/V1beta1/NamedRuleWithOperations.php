@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Admissionregistration\V1beta1;
 
+use ArrayObject;
 use JsonSerializable;
 use K8Schema\Collection\StringList;
 
@@ -110,15 +111,15 @@ class NamedRuleWithOperations implements JsonSerializable
         return $this;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'apiGroups' => $this->apiGroups,
             'apiVersions' => $this->apiVersions,
             'operations' => $this->operations,
             'resourceNames' => $this->resourceNames,
             'resources' => $this->resources,
             'scope' => $this->scope,
-        ];
+        ]);
     }
 }

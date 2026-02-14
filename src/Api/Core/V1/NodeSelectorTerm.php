@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Core\V1;
 
+use ArrayObject;
 use JsonSerializable;
 
 /**
@@ -39,11 +40,11 @@ class NodeSelectorTerm implements JsonSerializable
         return $this->matchFields;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'matchExpressions' => $this->matchExpressions,
             'matchFields' => $this->matchFields,
-        ];
+        ]);
     }
 }

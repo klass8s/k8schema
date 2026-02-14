@@ -11,7 +11,7 @@ class RuleWithOperationsList implements JsonSerializable
     /**
      * @var RuleWithOperations[]
      */
-    private array $items = [];
+    private array $items;
 
     public function __construct()
     {
@@ -25,11 +25,6 @@ class RuleWithOperationsList implements JsonSerializable
         return $this;
     }
 
-    /**
-     * @var RuleWithOperations[] $items
-     *
-     * @return self
-     */
     public function addAll(array $items): self
     {
         foreach ($items as $value) {

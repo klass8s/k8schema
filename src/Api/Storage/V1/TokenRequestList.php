@@ -11,7 +11,7 @@ class TokenRequestList implements JsonSerializable
     /**
      * @var TokenRequest[]
      */
-    private array $items = [];
+    private array $items;
 
     public function __construct()
     {
@@ -25,11 +25,6 @@ class TokenRequestList implements JsonSerializable
         return $this;
     }
 
-    /**
-     * @var TokenRequest[] $items
-     *
-     * @return self
-     */
     public function addAll(array $items): self
     {
         foreach ($items as $value) {

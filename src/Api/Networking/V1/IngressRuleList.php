@@ -11,7 +11,7 @@ class IngressRuleList implements JsonSerializable
     /**
      * @var IngressRule[]
      */
-    private array $items = [];
+    private array $items;
 
     public function __construct()
     {
@@ -25,11 +25,6 @@ class IngressRuleList implements JsonSerializable
         return $this;
     }
 
-    /**
-     * @var IngressRule[] $items
-     *
-     * @return self
-     */
     public function addAll(array $items): self
     {
         foreach ($items as $value) {

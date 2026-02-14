@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Rbac\V1;
 
+use ArrayObject;
 use JsonSerializable;
 
 /**
@@ -93,13 +94,13 @@ class Subject implements JsonSerializable
         return $this;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'apiGroup' => $this->apiGroup,
             'kind' => $this->kind,
             'name' => $this->name,
             'namespace' => $this->namespace,
-        ];
+        ]);
     }
 }

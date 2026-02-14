@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Core\V1;
 
+use ArrayObject;
 use JsonSerializable;
 use K8Schema\Collection\StringMap;
 
@@ -180,9 +181,9 @@ class PodCertificateProjection implements JsonSerializable
         return $this->userAnnotations;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'certificateChainPath' => $this->certificateChainPath,
             'credentialBundlePath' => $this->credentialBundlePath,
             'keyPath' => $this->keyPath,
@@ -190,6 +191,6 @@ class PodCertificateProjection implements JsonSerializable
             'maxExpirationSeconds' => $this->maxExpirationSeconds,
             'signerName' => $this->signerName,
             'userAnnotations' => $this->userAnnotations,
-        ];
+        ]);
     }
 }

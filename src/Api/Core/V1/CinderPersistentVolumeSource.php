@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Core\V1;
 
+use ArrayObject;
 use JsonSerializable;
 
 /**
@@ -32,7 +33,7 @@ class CinderPersistentVolumeSource implements JsonSerializable
      * secretRef is Optional: points to a secret object containing parameters used to
      * connect to OpenStack.
      */
-    private SecretReference $secretRef;
+    private SecretReference|null $secretRef = null;
 
     /**
      * volumeID used to identify the volume in cinder. More info:
@@ -42,7 +43,6 @@ class CinderPersistentVolumeSource implements JsonSerializable
 
     public function __construct(string $volumeID)
     {
-        $this->secretRef = new SecretReference();
         $this->volumeID = $volumeID;
     }
 
@@ -63,7 +63,7 @@ class CinderPersistentVolumeSource implements JsonSerializable
 
     public function secretRef(): SecretReference
     {
-        return $this->secretRef;
+        return $this->secretRef ??= new SecretReference();
     }
 
     public function setFsType(string $fsType): self
@@ -87,13 +87,13 @@ class CinderPersistentVolumeSource implements JsonSerializable
         return $this;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'fsType' => $this->fsType,
             'readOnly' => $this->readOnly,
             'secretRef' => $this->secretRef,
             'volumeID' => $this->volumeID,
-        ];
+        ]);
     }
 }

@@ -11,7 +11,7 @@ class EndpointAddressList implements JsonSerializable
     /**
      * @var EndpointAddress[]
      */
-    private array $items = [];
+    private array $items;
 
     public function __construct()
     {
@@ -25,11 +25,6 @@ class EndpointAddressList implements JsonSerializable
         return $this;
     }
 
-    /**
-     * @var EndpointAddress[] $items
-     *
-     * @return self
-     */
     public function addAll(array $items): self
     {
         foreach ($items as $value) {

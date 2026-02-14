@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Core\V1;
 
+use ArrayObject;
 use JsonSerializable;
 
 /**
@@ -33,12 +34,11 @@ class EndpointAddress implements JsonSerializable
     /**
      * Reference to object providing the endpoint.
      */
-    private ObjectReference $targetRef;
+    private ObjectReference|null $targetRef = null;
 
     public function __construct(string $ip)
     {
         $this->ip = $ip;
-        $this->targetRef = new ObjectReference();
     }
 
     public function getHostname(): string|null
@@ -79,16 +79,16 @@ class EndpointAddress implements JsonSerializable
 
     public function targetRef(): ObjectReference
     {
-        return $this->targetRef;
+        return $this->targetRef ??= new ObjectReference();
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'hostname' => $this->hostname,
             'ip' => $this->ip,
             'nodeName' => $this->nodeName,
             'targetRef' => $this->targetRef,
-        ];
+        ]);
     }
 }

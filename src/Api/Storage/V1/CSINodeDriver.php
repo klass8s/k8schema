@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Storage\V1;
 
+use ArrayObject;
 use JsonSerializable;
 use K8Schema\Collection\StringList;
 
@@ -17,7 +18,7 @@ class CSINodeDriver implements JsonSerializable
      * allocatable represents the volume resources of a node that are available for
      * scheduling. This field is beta.
      */
-    private VolumeNodeResources $allocatable;
+    private VolumeNodeResources|null $allocatable = null;
 
     /**
      * name represents the name of the CSI driver that this object refers to. This MUST
@@ -51,7 +52,6 @@ class CSINodeDriver implements JsonSerializable
 
     public function __construct(string $name, string $nodeID)
     {
-        $this->allocatable = new VolumeNodeResources();
         $this->name = $name;
         $this->nodeID = $nodeID;
         $this->topologyKeys = new StringList();
@@ -59,7 +59,7 @@ class CSINodeDriver implements JsonSerializable
 
     public function allocatable(): VolumeNodeResources
     {
-        return $this->allocatable;
+        return $this->allocatable ??= new VolumeNodeResources();
     }
 
     public function getName(): string
@@ -91,13 +91,13 @@ class CSINodeDriver implements JsonSerializable
         return $this->topologyKeys;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'allocatable' => $this->allocatable,
             'name' => $this->name,
             'nodeID' => $this->nodeID,
             'topologyKeys' => $this->topologyKeys,
-        ];
+        ]);
     }
 }

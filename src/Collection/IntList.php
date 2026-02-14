@@ -11,7 +11,7 @@ class IntList implements JsonSerializable
     /**
      * @var int[]
      */
-    private array $items = [];
+    private array $items;
 
     public function __construct()
     {
@@ -25,11 +25,6 @@ class IntList implements JsonSerializable
         return $this;
     }
 
-    /**
-     * @var int[] $items
-     *
-     * @return self
-     */
     public function addAll(array $items): self
     {
         foreach ($items as $value) {

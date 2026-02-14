@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Certificates\V1beta1;
 
+use ArrayObject;
 use JsonSerializable;
 use K8Schema\Collection\StringMap;
 
@@ -270,9 +271,9 @@ class PodCertificateRequestSpec implements JsonSerializable
         return $this->unverifiedUserAnnotations;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'maxExpirationSeconds' => $this->maxExpirationSeconds,
             'nodeName' => $this->nodeName,
             'nodeUID' => $this->nodeUID,
@@ -284,6 +285,6 @@ class PodCertificateRequestSpec implements JsonSerializable
             'serviceAccountUID' => $this->serviceAccountUID,
             'signerName' => $this->signerName,
             'unverifiedUserAnnotations' => $this->unverifiedUserAnnotations,
-        ];
+        ]);
     }
 }

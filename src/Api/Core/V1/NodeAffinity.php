@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Core\V1;
 
+use ArrayObject;
 use JsonSerializable;
 
 /**
@@ -30,12 +31,11 @@ class NodeAffinity implements JsonSerializable
      * due to an update), the system may or may not try to eventually evict the pod
      * from its node.
      */
-    private NodeSelector $requiredDuringSchedulingIgnoredDuringExecution;
+    private NodeSelector|null $requiredDuringSchedulingIgnoredDuringExecution = null;
 
     public function __construct()
     {
         $this->preferredDuringSchedulingIgnoredDuringExecution = new PreferredSchedulingTermList();
-        $this->requiredDuringSchedulingIgnoredDuringExecution = new NodeSelector();
     }
 
     public function preferredDuringSchedulingIgnoredDuringExecution(): PreferredSchedulingTermList
@@ -45,14 +45,14 @@ class NodeAffinity implements JsonSerializable
 
     public function requiredDuringSchedulingIgnoredDuringExecution(): NodeSelector
     {
-        return $this->requiredDuringSchedulingIgnoredDuringExecution;
+        return $this->requiredDuringSchedulingIgnoredDuringExecution ??= new NodeSelector();
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'preferredDuringSchedulingIgnoredDuringExecution' => $this->preferredDuringSchedulingIgnoredDuringExecution,
             'requiredDuringSchedulingIgnoredDuringExecution' => $this->requiredDuringSchedulingIgnoredDuringExecution,
-        ];
+        ]);
     }
 }

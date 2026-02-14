@@ -11,7 +11,7 @@ class ForZoneList implements JsonSerializable
     /**
      * @var ForZone[]
      */
-    private array $items = [];
+    private array $items;
 
     public function __construct()
     {
@@ -25,11 +25,6 @@ class ForZoneList implements JsonSerializable
         return $this;
     }
 
-    /**
-     * @var ForZone[] $items
-     *
-     * @return self
-     */
     public function addAll(array $items): self
     {
         foreach ($items as $value) {

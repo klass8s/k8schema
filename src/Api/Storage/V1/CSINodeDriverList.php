@@ -11,7 +11,7 @@ class CSINodeDriverList implements JsonSerializable
     /**
      * @var CSINodeDriver[]
      */
-    private array $items = [];
+    private array $items;
 
     public function __construct()
     {
@@ -25,11 +25,6 @@ class CSINodeDriverList implements JsonSerializable
         return $this;
     }
 
-    /**
-     * @var CSINodeDriver[] $items
-     *
-     * @return self
-     */
     public function addAll(array $items): self
     {
         foreach ($items as $value) {

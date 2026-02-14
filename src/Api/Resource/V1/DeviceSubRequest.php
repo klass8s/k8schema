@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Resource\V1;
 
+use ArrayObject;
 use JsonSerializable;
 
 /**
@@ -52,7 +53,7 @@ class DeviceSubRequest implements JsonSerializable
      * and have this capacity, with a value >= the requested amount, but which cannot
      * be allocated to this request.
      */
-    private CapacityRequirements $capacity;
+    private CapacityRequirements|null $capacity = null;
 
     /**
      * Count is used only when the count mode is "ExactCount". Must be greater than
@@ -110,7 +111,6 @@ class DeviceSubRequest implements JsonSerializable
 
     public function __construct(string $deviceClassName, string $name)
     {
-        $this->capacity = new CapacityRequirements();
         $this->deviceClassName = $deviceClassName;
         $this->name = $name;
         $this->selectors = new DeviceSelectorList();
@@ -119,7 +119,7 @@ class DeviceSubRequest implements JsonSerializable
 
     public function capacity(): CapacityRequirements
     {
-        return $this->capacity;
+        return $this->capacity ??= new CapacityRequirements();
     }
 
     public function getAllocationMode(): string|null
@@ -180,9 +180,9 @@ class DeviceSubRequest implements JsonSerializable
         return $this->tolerations;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'allocationMode' => $this->allocationMode,
             'capacity' => $this->capacity,
             'count' => $this->count,
@@ -190,6 +190,6 @@ class DeviceSubRequest implements JsonSerializable
             'name' => $this->name,
             'selectors' => $this->selectors,
             'tolerations' => $this->tolerations,
-        ];
+        ]);
     }
 }

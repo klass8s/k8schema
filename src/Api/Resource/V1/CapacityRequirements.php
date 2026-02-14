@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Resource\V1;
 
+use ArrayObject;
 use JsonSerializable;
 use K8Schema\Collection\StringOrFloatMap;
 
@@ -52,10 +53,10 @@ class CapacityRequirements implements JsonSerializable
         return $this->requests;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'requests' => $this->requests,
-        ];
+        ]);
     }
 }

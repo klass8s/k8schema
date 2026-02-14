@@ -11,7 +11,7 @@ class PodGroupList implements JsonSerializable
     /**
      * @var PodGroup[]
      */
-    private array $items = [];
+    private array $items;
 
     public function __construct()
     {
@@ -25,11 +25,6 @@ class PodGroupList implements JsonSerializable
         return $this;
     }
 
-    /**
-     * @var PodGroup[] $items
-     *
-     * @return self
-     */
     public function addAll(array $items): self
     {
         foreach ($items as $value) {

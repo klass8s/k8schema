@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Networking\V1;
 
+use ArrayObject;
 use JsonSerializable;
 
 /**
@@ -47,11 +48,11 @@ class NetworkPolicyIngressRule implements JsonSerializable
         return $this->ports;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'from' => $this->from,
             'ports' => $this->ports,
-        ];
+        ]);
     }
 }

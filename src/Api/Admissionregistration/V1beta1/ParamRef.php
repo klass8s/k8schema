@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Admissionregistration\V1beta1;
 
+use ArrayObject;
 use JsonSerializable;
 use K8Schema\Apimachinery\Pkg\Apis\Meta\V1\LabelSelector;
 
@@ -66,11 +67,10 @@ class ParamRef implements JsonSerializable
      * One of `name` or `selector` must be set, but `name` and `selector` are mutually
      * exclusive properties. If one is set, the other must be unset.
      */
-    private LabelSelector $selector;
+    private LabelSelector|null $selector = null;
 
     public function __construct()
     {
-        $this->selector = new LabelSelector();
     }
 
     public function getName(): string|null
@@ -90,7 +90,7 @@ class ParamRef implements JsonSerializable
 
     public function selector(): LabelSelector
     {
-        return $this->selector;
+        return $this->selector ??= new LabelSelector();
     }
 
     public function setName(string $name): self
@@ -114,13 +114,13 @@ class ParamRef implements JsonSerializable
         return $this;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'name' => $this->name,
             'namespace' => $this->namespace,
             'parameterNotFoundAction' => $this->parameterNotFoundAction,
             'selector' => $this->selector,
-        ];
+        ]);
     }
 }

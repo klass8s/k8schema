@@ -11,7 +11,7 @@ class ForNodeList implements JsonSerializable
     /**
      * @var ForNode[]
      */
-    private array $items = [];
+    private array $items;
 
     public function __construct()
     {
@@ -25,11 +25,6 @@ class ForNodeList implements JsonSerializable
         return $this;
     }
 
-    /**
-     * @var ForNode[] $items
-     *
-     * @return self
-     */
     public function addAll(array $items): self
     {
         foreach ($items as $value) {

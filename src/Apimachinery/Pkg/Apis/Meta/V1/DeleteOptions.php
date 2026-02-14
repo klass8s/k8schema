@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Apimachinery\Pkg\Apis\Meta\V1;
 
+use ArrayObject;
 use JsonSerializable;
 use K8Schema\Collection\StringList;
 
@@ -70,7 +71,7 @@ class DeleteOptions implements JsonSerializable
      * Must be fulfilled before a deletion is carried out. If not possible, a 409
      * Conflict status will be returned.
      */
-    private Preconditions $preconditions;
+    private Preconditions|null $preconditions = null;
 
     /**
      * Whether and how garbage collection will be performed. Either this field or
@@ -86,7 +87,6 @@ class DeleteOptions implements JsonSerializable
     public function __construct()
     {
         $this->dryRun = new StringList();
-        $this->preconditions = new Preconditions();
     }
 
     public function dryRun(): StringList
@@ -126,7 +126,7 @@ class DeleteOptions implements JsonSerializable
 
     public function preconditions(): Preconditions
     {
-        return $this->preconditions;
+        return $this->preconditions ??= new Preconditions();
     }
 
     public function setApiVersion(string $apiVersion): self
@@ -172,9 +172,9 @@ class DeleteOptions implements JsonSerializable
         return $this;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'apiVersion' => $this->apiVersion,
             'dryRun' => $this->dryRun,
             'gracePeriodSeconds' => $this->gracePeriodSeconds,
@@ -183,6 +183,6 @@ class DeleteOptions implements JsonSerializable
             'orphanDependents' => $this->orphanDependents,
             'preconditions' => $this->preconditions,
             'propagationPolicy' => $this->propagationPolicy,
-        ];
+        ]);
     }
 }

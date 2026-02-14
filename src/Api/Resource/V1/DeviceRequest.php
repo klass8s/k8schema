@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Resource\V1;
 
+use ArrayObject;
 use JsonSerializable;
 
 /**
@@ -85,12 +86,12 @@ class DeviceRequest implements JsonSerializable
         return $this;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'exactly' => $this->exactly,
             'firstAvailable' => $this->firstAvailable,
             'name' => $this->name,
-        ];
+        ]);
     }
 }

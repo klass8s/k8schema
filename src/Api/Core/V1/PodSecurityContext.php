@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Core\V1;
 
+use ArrayObject;
 use JsonSerializable;
 use K8Schema\Collection\IntList;
 
@@ -111,7 +112,7 @@ class PodSecurityContext implements JsonSerializable
      * PodSecurityContext, the value specified in SecurityContext takes precedence for
      * that container. Note that this field cannot be set when spec.os.name is windows.
      */
-    private SELinuxOptions $seLinuxOptions;
+    private SELinuxOptions|null $seLinuxOptions = null;
 
     /**
      * The seccomp options to use by the containers in this pod. Note that this field
@@ -153,14 +154,12 @@ class PodSecurityContext implements JsonSerializable
      * SecurityContext and PodSecurityContext, the value specified in SecurityContext
      * takes precedence. Note that this field cannot be set when spec.os.name is linux.
      */
-    private WindowsSecurityContextOptions $windowsOptions;
+    private WindowsSecurityContextOptions|null $windowsOptions = null;
 
     public function __construct()
     {
-        $this->seLinuxOptions = new SELinuxOptions();
         $this->supplementalGroups = new IntList();
         $this->sysctls = new SysctlList();
-        $this->windowsOptions = new WindowsSecurityContextOptions();
     }
 
     public function getAppArmorProfile(): AppArmorProfile|null
@@ -210,7 +209,7 @@ class PodSecurityContext implements JsonSerializable
 
     public function seLinuxOptions(): SELinuxOptions
     {
-        return $this->seLinuxOptions;
+        return $this->seLinuxOptions ??= new SELinuxOptions();
     }
 
     public function setAppArmorProfile(AppArmorProfile $appArmorProfile): self
@@ -288,12 +287,12 @@ class PodSecurityContext implements JsonSerializable
 
     public function windowsOptions(): WindowsSecurityContextOptions
     {
-        return $this->windowsOptions;
+        return $this->windowsOptions ??= new WindowsSecurityContextOptions();
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'appArmorProfile' => $this->appArmorProfile,
             'fsGroup' => $this->fsGroup,
             'fsGroupChangePolicy' => $this->fsGroupChangePolicy,
@@ -307,6 +306,6 @@ class PodSecurityContext implements JsonSerializable
             'supplementalGroupsPolicy' => $this->supplementalGroupsPolicy,
             'sysctls' => $this->sysctls,
             'windowsOptions' => $this->windowsOptions,
-        ];
+        ]);
     }
 }

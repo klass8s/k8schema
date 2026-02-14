@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Resource\V1;
 
+use ArrayObject;
 use JsonSerializable;
 
 /**
@@ -58,7 +59,7 @@ class ExactDeviceRequest implements JsonSerializable
      * and have this capacity, with a value >= the requested amount, but which cannot
      * be allocated to this request.
      */
-    private CapacityRequirements $capacity;
+    private CapacityRequirements|null $capacity = null;
 
     /**
      * Count is used only when the count mode is "ExactCount". Must be greater than
@@ -107,7 +108,6 @@ class ExactDeviceRequest implements JsonSerializable
 
     public function __construct(string $deviceClassName)
     {
-        $this->capacity = new CapacityRequirements();
         $this->deviceClassName = $deviceClassName;
         $this->selectors = new DeviceSelectorList();
         $this->tolerations = new DeviceTolerationList();
@@ -115,7 +115,7 @@ class ExactDeviceRequest implements JsonSerializable
 
     public function capacity(): CapacityRequirements
     {
-        return $this->capacity;
+        return $this->capacity ??= new CapacityRequirements();
     }
 
     public function getAdminAccess(): bool|null
@@ -176,9 +176,9 @@ class ExactDeviceRequest implements JsonSerializable
         return $this->tolerations;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'adminAccess' => $this->adminAccess,
             'allocationMode' => $this->allocationMode,
             'capacity' => $this->capacity,
@@ -186,6 +186,6 @@ class ExactDeviceRequest implements JsonSerializable
             'deviceClassName' => $this->deviceClassName,
             'selectors' => $this->selectors,
             'tolerations' => $this->tolerations,
-        ];
+        ]);
     }
 }

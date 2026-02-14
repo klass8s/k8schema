@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\ApiextensionsApiserver\Pkg\Apis\Apiextensions\V1;
 
+use ArrayObject;
 use JsonSerializable;
 
 /**
@@ -46,7 +47,7 @@ class CustomResourceDefinitionVersion implements JsonSerializable
      * schema describes the schema used for validation, pruning, and defaulting of this
      * version of the custom resource.
      */
-    private CustomResourceValidation $schema;
+    private CustomResourceValidation|null $schema = null;
 
     /**
      * selectableFields specifies paths to fields that may be used as field selectors.
@@ -70,17 +71,15 @@ class CustomResourceDefinitionVersion implements JsonSerializable
      * subresources specify what subresources this version of the defined custom
      * resource have.
      */
-    private CustomResourceSubresources $subresources;
+    private CustomResourceSubresources|null $subresources = null;
 
     public function __construct(string $name, bool $served, bool $storage)
     {
         $this->additionalPrinterColumns = new CustomResourceColumnDefinitionList();
         $this->name = $name;
-        $this->schema = new CustomResourceValidation();
         $this->selectableFields = new SelectableFieldList();
         $this->served = $served;
         $this->storage = $storage;
-        $this->subresources = new CustomResourceSubresources();
     }
 
     public function additionalPrinterColumns(): CustomResourceColumnDefinitionList
@@ -115,7 +114,7 @@ class CustomResourceDefinitionVersion implements JsonSerializable
 
     public function schema(): CustomResourceValidation
     {
-        return $this->schema;
+        return $this->schema ??= new CustomResourceValidation();
     }
 
     public function selectableFields(): SelectableFieldList
@@ -160,12 +159,12 @@ class CustomResourceDefinitionVersion implements JsonSerializable
 
     public function subresources(): CustomResourceSubresources
     {
-        return $this->subresources;
+        return $this->subresources ??= new CustomResourceSubresources();
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'additionalPrinterColumns' => $this->additionalPrinterColumns,
             'deprecated' => $this->deprecated,
             'deprecationWarning' => $this->deprecationWarning,
@@ -175,6 +174,6 @@ class CustomResourceDefinitionVersion implements JsonSerializable
             'served' => $this->served,
             'storage' => $this->storage,
             'subresources' => $this->subresources,
-        ];
+        ]);
     }
 }

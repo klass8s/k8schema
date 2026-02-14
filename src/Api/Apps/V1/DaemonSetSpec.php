@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Apps\V1;
 
+use ArrayObject;
 use JsonSerializable;
 use K8Schema\Api\Core\V1\PodTemplateSpec;
 use K8Schema\Apimachinery\Pkg\Apis\Meta\V1\LabelSelector;
@@ -45,13 +46,12 @@ class DaemonSetSpec implements JsonSerializable
     /**
      * An update strategy to replace existing DaemonSet pods with new pods.
      */
-    private DaemonSetUpdateStrategy $updateStrategy;
+    private DaemonSetUpdateStrategy|null $updateStrategy = null;
 
     public function __construct()
     {
         $this->selector = new LabelSelector();
         $this->template = new PodTemplateSpec();
-        $this->updateStrategy = new DaemonSetUpdateStrategy();
     }
 
     public function getMinReadySeconds(): int|null
@@ -90,17 +90,17 @@ class DaemonSetSpec implements JsonSerializable
 
     public function updateStrategy(): DaemonSetUpdateStrategy
     {
-        return $this->updateStrategy;
+        return $this->updateStrategy ??= new DaemonSetUpdateStrategy();
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'minReadySeconds' => $this->minReadySeconds,
             'revisionHistoryLimit' => $this->revisionHistoryLimit,
             'selector' => $this->selector,
             'template' => $this->template,
             'updateStrategy' => $this->updateStrategy,
-        ];
+        ]);
     }
 }

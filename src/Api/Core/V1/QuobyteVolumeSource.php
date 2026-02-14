@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Core\V1;
 
+use ArrayObject;
 use JsonSerializable;
 
 /**
@@ -124,15 +125,15 @@ class QuobyteVolumeSource implements JsonSerializable
         return $this;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'group' => $this->group,
             'readOnly' => $this->readOnly,
             'registry' => $this->registry,
             'tenant' => $this->tenant,
             'user' => $this->user,
             'volume' => $this->volume,
-        ];
+        ]);
     }
 }

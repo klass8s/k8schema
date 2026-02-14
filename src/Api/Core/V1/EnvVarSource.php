@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Core\V1;
 
+use ArrayObject;
 use JsonSerializable;
 
 /**
@@ -105,14 +106,14 @@ class EnvVarSource implements JsonSerializable
         return $this;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'configMapKeyRef' => $this->configMapKeyRef,
             'fieldRef' => $this->fieldRef,
             'fileKeyRef' => $this->fileKeyRef,
             'resourceFieldRef' => $this->resourceFieldRef,
             'secretKeyRef' => $this->secretKeyRef,
-        ];
+        ]);
     }
 }

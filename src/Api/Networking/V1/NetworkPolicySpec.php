@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Networking\V1;
 
+use ArrayObject;
 use JsonSerializable;
 use K8Schema\Apimachinery\Pkg\Apis\Meta\V1\LabelSelector;
 use K8Schema\Collection\StringList;
@@ -43,7 +44,7 @@ class NetworkPolicySpec implements JsonSerializable
      * additively. This field is optional. If it is not specified, it defaults to an
      * empty selector.
      */
-    private LabelSelector $podSelector;
+    private LabelSelector|null $podSelector = null;
 
     /**
      * policyTypes is a list of rule types that the NetworkPolicy relates to. Valid
@@ -63,7 +64,6 @@ class NetworkPolicySpec implements JsonSerializable
     {
         $this->egress = new NetworkPolicyEgressRuleList();
         $this->ingress = new NetworkPolicyIngressRuleList();
-        $this->podSelector = new LabelSelector();
         $this->policyTypes = new StringList();
     }
 
@@ -79,7 +79,7 @@ class NetworkPolicySpec implements JsonSerializable
 
     public function podSelector(): LabelSelector
     {
-        return $this->podSelector;
+        return $this->podSelector ??= new LabelSelector();
     }
 
     public function policyTypes(): StringList
@@ -87,13 +87,13 @@ class NetworkPolicySpec implements JsonSerializable
         return $this->policyTypes;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'egress' => $this->egress,
             'ingress' => $this->ingress,
             'podSelector' => $this->podSelector,
             'policyTypes' => $this->policyTypes,
-        ];
+        ]);
     }
 }

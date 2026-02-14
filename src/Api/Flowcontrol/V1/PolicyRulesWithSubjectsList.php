@@ -11,7 +11,7 @@ class PolicyRulesWithSubjectsList implements JsonSerializable
     /**
      * @var PolicyRulesWithSubjects[]
      */
-    private array $items = [];
+    private array $items;
 
     public function __construct()
     {
@@ -25,11 +25,6 @@ class PolicyRulesWithSubjectsList implements JsonSerializable
         return $this;
     }
 
-    /**
-     * @var PolicyRulesWithSubjects[] $items
-     *
-     * @return self
-     */
     public function addAll(array $items): self
     {
         foreach ($items as $value) {

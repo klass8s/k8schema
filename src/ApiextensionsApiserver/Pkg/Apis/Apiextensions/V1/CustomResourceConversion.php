@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\ApiextensionsApiserver\Pkg\Apis\Apiextensions\V1;
 
+use ArrayObject;
 use JsonSerializable;
 
 /**
@@ -25,12 +26,11 @@ class CustomResourceConversion implements JsonSerializable
      * webhook describes how to call the conversion webhook. Required when `strategy`
      * is set to `"Webhook"`.
      */
-    private WebhookConversion $webhook;
+    private WebhookConversion|null $webhook = null;
 
     public function __construct(string $strategy)
     {
         $this->strategy = $strategy;
-        $this->webhook = new WebhookConversion();
     }
 
     public function getStrategy(): string
@@ -47,14 +47,14 @@ class CustomResourceConversion implements JsonSerializable
 
     public function webhook(): WebhookConversion
     {
-        return $this->webhook;
+        return $this->webhook ??= new WebhookConversion();
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'strategy' => $this->strategy,
             'webhook' => $this->webhook,
-        ];
+        ]);
     }
 }

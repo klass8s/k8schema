@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Autoscaling\V2;
 
+use ArrayObject;
 use JsonSerializable;
 
 /**
@@ -73,12 +74,12 @@ class HPAScalingPolicy implements JsonSerializable
         return $this;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'periodSeconds' => $this->periodSeconds,
             'type' => $this->type,
             'value' => $this->value,
-        ];
+        ]);
     }
 }

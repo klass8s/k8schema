@@ -11,7 +11,7 @@ class MutationList implements JsonSerializable
     /**
      * @var Mutation[]
      */
-    private array $items = [];
+    private array $items;
 
     public function __construct()
     {
@@ -25,11 +25,6 @@ class MutationList implements JsonSerializable
         return $this;
     }
 
-    /**
-     * @var Mutation[] $items
-     *
-     * @return self
-     */
     public function addAll(array $items): self
     {
         foreach ($items as $value) {

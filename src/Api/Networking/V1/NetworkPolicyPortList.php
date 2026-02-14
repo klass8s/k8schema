@@ -11,7 +11,7 @@ class NetworkPolicyPortList implements JsonSerializable
     /**
      * @var NetworkPolicyPort[]
      */
-    private array $items = [];
+    private array $items;
 
     public function __construct()
     {
@@ -25,11 +25,6 @@ class NetworkPolicyPortList implements JsonSerializable
         return $this;
     }
 
-    /**
-     * @var NetworkPolicyPort[] $items
-     *
-     * @return self
-     */
     public function addAll(array $items): self
     {
         foreach ($items as $value) {

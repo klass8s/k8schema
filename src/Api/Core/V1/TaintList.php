@@ -11,7 +11,7 @@ class TaintList implements JsonSerializable
     /**
      * @var Taint[]
      */
-    private array $items = [];
+    private array $items;
 
     public function __construct()
     {
@@ -25,11 +25,6 @@ class TaintList implements JsonSerializable
         return $this;
     }
 
-    /**
-     * @var Taint[] $items
-     *
-     * @return self
-     */
     public function addAll(array $items): self
     {
         foreach ($items as $value) {

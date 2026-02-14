@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Rbac\V1;
 
+use ArrayObject;
 use JsonSerializable;
 use K8Schema\Apimachinery\Pkg\Apis\Meta\V1\LabelSelectorList;
 
@@ -30,10 +31,10 @@ class AggregationRule implements JsonSerializable
         return $this->clusterRoleSelectors;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'clusterRoleSelectors' => $this->clusterRoleSelectors,
-        ];
+        ]);
     }
 }

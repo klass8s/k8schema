@@ -11,7 +11,7 @@ class ComponentConditionList implements JsonSerializable
     /**
      * @var ComponentCondition[]
      */
-    private array $items = [];
+    private array $items;
 
     public function __construct()
     {
@@ -25,11 +25,6 @@ class ComponentConditionList implements JsonSerializable
         return $this;
     }
 
-    /**
-     * @var ComponentCondition[] $items
-     *
-     * @return self
-     */
     public function addAll(array $items): self
     {
         foreach ($items as $value) {

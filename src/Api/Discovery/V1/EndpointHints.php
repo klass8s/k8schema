@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Discovery\V1;
 
+use ArrayObject;
 use JsonSerializable;
 
 /**
@@ -39,11 +40,11 @@ class EndpointHints implements JsonSerializable
         return $this->forZones;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'forNodes' => $this->forNodes,
             'forZones' => $this->forZones,
-        ];
+        ]);
     }
 }

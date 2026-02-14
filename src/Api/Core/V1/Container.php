@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Core\V1;
 
+use ArrayObject;
 use JsonSerializable;
 use K8Schema\Collection\StringList;
 
@@ -70,14 +71,14 @@ class Container implements JsonSerializable
      * Actions that the management system should take in response to container
      * lifecycle events. Cannot be updated.
      */
-    private Lifecycle $lifecycle;
+    private Lifecycle|null $lifecycle = null;
 
     /**
      * Periodic probe of container liveness. Container will be restarted if the probe
      * fails. Cannot be updated. More info:
      * https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle#container-probes
      */
-    private Probe $livenessProbe;
+    private Probe|null $livenessProbe = null;
 
     /**
      * Name of the container specified as a DNS_LABEL. Each container in a pod must
@@ -100,7 +101,7 @@ class Container implements JsonSerializable
      * service endpoints if the probe fails. Cannot be updated. More info:
      * https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle#container-probes
      */
-    private Probe $readinessProbe;
+    private Probe|null $readinessProbe = null;
 
     /**
      * Resources resize policy for the container. This field cannot be set on ephemeral
@@ -112,7 +113,7 @@ class Container implements JsonSerializable
      * Compute Resources required by this container. Cannot be updated. More info:
      * https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
      */
-    private ResourceRequirements $resources;
+    private ResourceRequirements|null $resources = null;
 
     /**
      * RestartPolicy defines the restart behavior of individual containers in a pod.
@@ -149,7 +150,7 @@ class Container implements JsonSerializable
      * PodSecurityContext. More info:
      * https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
      */
-    private SecurityContext $securityContext;
+    private SecurityContext|null $securityContext = null;
 
     /**
      * StartupProbe indicates that the Pod has successfully initialized. If specified,
@@ -160,7 +161,7 @@ class Container implements JsonSerializable
      * during steady-state operation. This cannot be updated. More info:
      * https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle#container-probes
      */
-    private Probe $startupProbe;
+    private Probe|null $startupProbe = null;
 
     /**
      * Whether this container should allocate a buffer for stdin in the container
@@ -230,16 +231,10 @@ class Container implements JsonSerializable
         $this->command = new StringList();
         $this->env = new EnvVarList();
         $this->envFrom = new EnvFromSourceList();
-        $this->lifecycle = new Lifecycle();
-        $this->livenessProbe = new Probe();
         $this->name = $name;
         $this->ports = new ContainerPortList();
-        $this->readinessProbe = new Probe();
         $this->resizePolicy = new ContainerResizePolicyList();
-        $this->resources = new ResourceRequirements();
         $this->restartPolicyRules = new ContainerRestartRuleList();
-        $this->securityContext = new SecurityContext();
-        $this->startupProbe = new Probe();
         $this->volumeDevices = new VolumeDeviceList();
         $this->volumeMounts = new VolumeMountList();
     }
@@ -316,12 +311,12 @@ class Container implements JsonSerializable
 
     public function lifecycle(): Lifecycle
     {
-        return $this->lifecycle;
+        return $this->lifecycle ??= new Lifecycle();
     }
 
     public function livenessProbe(): Probe
     {
-        return $this->livenessProbe;
+        return $this->livenessProbe ??= new Probe();
     }
 
     public function ports(): ContainerPortList
@@ -331,7 +326,7 @@ class Container implements JsonSerializable
 
     public function readinessProbe(): Probe
     {
-        return $this->readinessProbe;
+        return $this->readinessProbe ??= new Probe();
     }
 
     public function resizePolicy(): ContainerResizePolicyList
@@ -341,7 +336,7 @@ class Container implements JsonSerializable
 
     public function resources(): ResourceRequirements
     {
-        return $this->resources;
+        return $this->resources ??= new ResourceRequirements();
     }
 
     public function restartPolicyRules(): ContainerRestartRuleList
@@ -351,7 +346,7 @@ class Container implements JsonSerializable
 
     public function securityContext(): SecurityContext
     {
-        return $this->securityContext;
+        return $this->securityContext ??= new SecurityContext();
     }
 
     public function setImage(string $image): self
@@ -426,7 +421,7 @@ class Container implements JsonSerializable
 
     public function startupProbe(): Probe
     {
-        return $this->startupProbe;
+        return $this->startupProbe ??= new Probe();
     }
 
     public function volumeDevices(): VolumeDeviceList
@@ -439,9 +434,9 @@ class Container implements JsonSerializable
         return $this->volumeMounts;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'args' => $this->args,
             'command' => $this->command,
             'env' => $this->env,
@@ -467,6 +462,6 @@ class Container implements JsonSerializable
             'volumeDevices' => $this->volumeDevices,
             'volumeMounts' => $this->volumeMounts,
             'workingDir' => $this->workingDir,
-        ];
+        ]);
     }
 }

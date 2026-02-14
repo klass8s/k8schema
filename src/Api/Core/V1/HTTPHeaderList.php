@@ -11,7 +11,7 @@ class HTTPHeaderList implements JsonSerializable
     /**
      * @var HTTPHeader[]
      */
-    private array $items = [];
+    private array $items;
 
     public function __construct()
     {
@@ -25,11 +25,6 @@ class HTTPHeaderList implements JsonSerializable
         return $this;
     }
 
-    /**
-     * @var HTTPHeader[] $items
-     *
-     * @return self
-     */
     public function addAll(array $items): self
     {
         foreach ($items as $value) {

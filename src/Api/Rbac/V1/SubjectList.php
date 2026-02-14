@@ -11,7 +11,7 @@ class SubjectList implements JsonSerializable
     /**
      * @var Subject[]
      */
-    private array $items = [];
+    private array $items;
 
     public function __construct()
     {
@@ -25,11 +25,6 @@ class SubjectList implements JsonSerializable
         return $this;
     }
 
-    /**
-     * @var Subject[] $items
-     *
-     * @return self
-     */
     public function addAll(array $items): self
     {
         foreach ($items as $value) {

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Core\V1;
 
+use ArrayObject;
 use JsonSerializable;
 
 /**
@@ -15,22 +16,21 @@ class VolumeNodeAffinity implements JsonSerializable
     /**
      * required specifies hard node constraints that must be met.
      */
-    private NodeSelector $required;
+    private NodeSelector|null $required = null;
 
     public function __construct()
     {
-        $this->required = new NodeSelector();
     }
 
     public function required(): NodeSelector
     {
-        return $this->required;
+        return $this->required ??= new NodeSelector();
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'required' => $this->required,
-        ];
+        ]);
     }
 }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Rbac\V1;
 
+use ArrayObject;
 use JsonSerializable;
 use K8Schema\Collection\StringList;
 
@@ -84,14 +85,14 @@ class PolicyRule implements JsonSerializable
         return $this->verbs;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'apiGroups' => $this->apiGroups,
             'nonResourceURLs' => $this->nonResourceURLs,
             'resourceNames' => $this->resourceNames,
             'resources' => $this->resources,
             'verbs' => $this->verbs,
-        ];
+        ]);
     }
 }

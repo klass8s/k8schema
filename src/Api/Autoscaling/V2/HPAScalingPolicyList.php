@@ -11,7 +11,7 @@ class HPAScalingPolicyList implements JsonSerializable
     /**
      * @var HPAScalingPolicy[]
      */
-    private array $items = [];
+    private array $items;
 
     public function __construct()
     {
@@ -25,11 +25,6 @@ class HPAScalingPolicyList implements JsonSerializable
         return $this;
     }
 
-    /**
-     * @var HPAScalingPolicy[] $items
-     *
-     * @return self
-     */
     public function addAll(array $items): self
     {
         foreach ($items as $value) {

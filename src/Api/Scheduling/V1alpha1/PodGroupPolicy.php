@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Scheduling\V1alpha1;
 
+use ArrayObject;
 use JsonSerializable;
 
 /**
@@ -15,7 +16,7 @@ class PodGroupPolicy implements JsonSerializable
      * Basic specifies that the pods in this group should be scheduled using standard
      * Kubernetes scheduling behavior.
      */
-    private BasicSchedulingPolicy $basic;
+    private BasicSchedulingPolicy|null $basic = null;
 
     /**
      * Gang specifies that the pods in this group should be scheduled using
@@ -25,12 +26,11 @@ class PodGroupPolicy implements JsonSerializable
 
     public function __construct()
     {
-        $this->basic = new BasicSchedulingPolicy();
     }
 
     public function basic(): BasicSchedulingPolicy
     {
-        return $this->basic;
+        return $this->basic ??= new BasicSchedulingPolicy();
     }
 
     public function getGang(): GangSchedulingPolicy|null
@@ -45,11 +45,11 @@ class PodGroupPolicy implements JsonSerializable
         return $this;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'basic' => $this->basic,
             'gang' => $this->gang,
-        ];
+        ]);
     }
 }

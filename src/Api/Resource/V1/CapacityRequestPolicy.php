@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Resource\V1;
 
+use ArrayObject;
 use JsonSerializable;
 use K8Schema\Collection\StringOrFloatList;
 
@@ -85,12 +86,12 @@ class CapacityRequestPolicy implements JsonSerializable
         return $this->validValues;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'default' => $this->default,
             'validRange' => $this->validRange,
             'validValues' => $this->validValues,
-        ];
+        ]);
     }
 }

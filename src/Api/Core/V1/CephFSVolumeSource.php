@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Core\V1;
 
+use ArrayObject;
 use JsonSerializable;
 use K8Schema\Collection\StringList;
 
@@ -44,7 +45,7 @@ class CephFSVolumeSource implements JsonSerializable
      * User, default is empty. More info:
      * https://examples.k8s.io/volumes/cephfs/README.md#how-to-use-it
      */
-    private LocalObjectReference $secretRef;
+    private LocalObjectReference|null $secretRef = null;
 
     /**
      * user is optional: User is the rados user name, default is admin More info:
@@ -55,7 +56,6 @@ class CephFSVolumeSource implements JsonSerializable
     public function __construct()
     {
         $this->monitors = new StringList();
-        $this->secretRef = new LocalObjectReference();
     }
 
     public function getPath(): string|null
@@ -85,7 +85,7 @@ class CephFSVolumeSource implements JsonSerializable
 
     public function secretRef(): LocalObjectReference
     {
-        return $this->secretRef;
+        return $this->secretRef ??= new LocalObjectReference();
     }
 
     public function setPath(string $path): self
@@ -116,15 +116,15 @@ class CephFSVolumeSource implements JsonSerializable
         return $this;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'monitors' => $this->monitors,
             'path' => $this->path,
             'readOnly' => $this->readOnly,
             'secretFile' => $this->secretFile,
             'secretRef' => $this->secretRef,
             'user' => $this->user,
-        ];
+        ]);
     }
 }

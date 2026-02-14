@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Core\V1;
 
+use ArrayObject;
 use JsonSerializable;
 
 /**
@@ -40,7 +41,7 @@ class Volume implements JsonSerializable
      * Deprecated: CephFS is deprecated and the in-tree cephfs type is no longer
      * supported.
      */
-    private CephFSVolumeSource $cephfs;
+    private CephFSVolumeSource|null $cephfs = null;
 
     /**
      * cinder represents a cinder volume attached and mounted on kubelets host machine.
@@ -53,7 +54,7 @@ class Volume implements JsonSerializable
     /**
      * configMap represents a configMap that should populate this volume
      */
-    private ConfigMapVolumeSource $configMap;
+    private ConfigMapVolumeSource|null $configMap = null;
 
     /**
      * csi (Container Storage Interface) represents ephemeral storage that is handled
@@ -65,13 +66,13 @@ class Volume implements JsonSerializable
      * downwardAPI represents downward API about the pod that should populate this
      * volume
      */
-    private DownwardAPIVolumeSource $downwardAPI;
+    private DownwardAPIVolumeSource|null $downwardAPI = null;
 
     /**
      * emptyDir represents a temporary directory that shares a pod's lifetime. More
      * info: https://kubernetes.io/docs/concepts/storage/volumes#emptydir
      */
-    private EmptyDirVolumeSource $emptyDir;
+    private EmptyDirVolumeSource|null $emptyDir = null;
 
     /**
      * ephemeral represents a volume that is handled by a cluster storage driver. The
@@ -96,13 +97,13 @@ class Volume implements JsonSerializable
      * A pod can use both types of ephemeral volumes and persistent volumes at the same
      * time.
      */
-    private EphemeralVolumeSource $ephemeral;
+    private EphemeralVolumeSource|null $ephemeral = null;
 
     /**
      * fc represents a Fibre Channel resource that is attached to a kubelet's host
      * machine and then exposed to the pod.
      */
-    private FCVolumeSource $fc;
+    private FCVolumeSource|null $fc = null;
 
     /**
      * flexVolume represents a generic volume resource that is provisioned/attached
@@ -116,7 +117,7 @@ class Volume implements JsonSerializable
      * depends on the Flocker control service being running. Deprecated: Flocker is
      * deprecated and the in-tree flocker type is no longer supported.
      */
-    private FlockerVolumeSource $flocker;
+    private FlockerVolumeSource|null $flocker = null;
 
     /**
      * gcePersistentDisk represents a GCE Disk resource that is attached to a kubelet's
@@ -178,7 +179,7 @@ class Volume implements JsonSerializable
      * field spec.securityContext.fsGroupChangePolicy has no effect on this volume
      * type.
      */
-    private ImageVolumeSource $image;
+    private ImageVolumeSource|null $image = null;
 
     /**
      * iscsi represents an ISCSI Disk resource that is attached to a kubelet's host
@@ -224,7 +225,7 @@ class Volume implements JsonSerializable
     /**
      * projected items for all in one resources secrets, configmaps, and downward API
      */
-    private ProjectedVolumeSource $projected;
+    private ProjectedVolumeSource|null $projected = null;
 
     /**
      * quobyte represents a Quobyte mount on the host that shares a pod's lifetime.
@@ -251,14 +252,14 @@ class Volume implements JsonSerializable
      * secret represents a secret that should populate this volume. More info:
      * https://kubernetes.io/docs/concepts/storage/volumes#secret
      */
-    private SecretVolumeSource $secret;
+    private SecretVolumeSource|null $secret = null;
 
     /**
      * storageOS represents a StorageOS volume attached and mounted on Kubernetes
      * nodes. Deprecated: StorageOS is deprecated and the in-tree storageos type is no
      * longer supported.
      */
-    private StorageOSVolumeSource $storageos;
+    private StorageOSVolumeSource|null $storageos = null;
 
     /**
      * vsphereVolume represents a vSphere volume attached and mounted on kubelets host
@@ -269,53 +270,42 @@ class Volume implements JsonSerializable
 
     public function __construct(string $name)
     {
-        $this->cephfs = new CephFSVolumeSource();
-        $this->configMap = new ConfigMapVolumeSource();
-        $this->downwardAPI = new DownwardAPIVolumeSource();
-        $this->emptyDir = new EmptyDirVolumeSource();
-        $this->ephemeral = new EphemeralVolumeSource();
-        $this->fc = new FCVolumeSource();
-        $this->flocker = new FlockerVolumeSource();
-        $this->image = new ImageVolumeSource();
         $this->name = $name;
-        $this->projected = new ProjectedVolumeSource();
-        $this->secret = new SecretVolumeSource();
-        $this->storageos = new StorageOSVolumeSource();
     }
 
     public function cephfs(): CephFSVolumeSource
     {
-        return $this->cephfs;
+        return $this->cephfs ??= new CephFSVolumeSource();
     }
 
     public function configMap(): ConfigMapVolumeSource
     {
-        return $this->configMap;
+        return $this->configMap ??= new ConfigMapVolumeSource();
     }
 
     public function downwardAPI(): DownwardAPIVolumeSource
     {
-        return $this->downwardAPI;
+        return $this->downwardAPI ??= new DownwardAPIVolumeSource();
     }
 
     public function emptyDir(): EmptyDirVolumeSource
     {
-        return $this->emptyDir;
+        return $this->emptyDir ??= new EmptyDirVolumeSource();
     }
 
     public function ephemeral(): EphemeralVolumeSource
     {
-        return $this->ephemeral;
+        return $this->ephemeral ??= new EphemeralVolumeSource();
     }
 
     public function fc(): FCVolumeSource
     {
-        return $this->fc;
+        return $this->fc ??= new FCVolumeSource();
     }
 
     public function flocker(): FlockerVolumeSource
     {
-        return $this->flocker;
+        return $this->flocker ??= new FlockerVolumeSource();
     }
 
     public function getAwsElasticBlockStore(): AWSElasticBlockStoreVolumeSource|null
@@ -420,17 +410,17 @@ class Volume implements JsonSerializable
 
     public function image(): ImageVolumeSource
     {
-        return $this->image;
+        return $this->image ??= new ImageVolumeSource();
     }
 
     public function projected(): ProjectedVolumeSource
     {
-        return $this->projected;
+        return $this->projected ??= new ProjectedVolumeSource();
     }
 
     public function secret(): SecretVolumeSource
     {
-        return $this->secret;
+        return $this->secret ??= new SecretVolumeSource();
     }
 
     public function setAwsElasticBlockStore(AWSElasticBlockStoreVolumeSource $awsElasticBlockStore): self
@@ -575,12 +565,12 @@ class Volume implements JsonSerializable
 
     public function storageos(): StorageOSVolumeSource
     {
-        return $this->storageos;
+        return $this->storageos ??= new StorageOSVolumeSource();
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'awsElasticBlockStore' => $this->awsElasticBlockStore,
             'azureDisk' => $this->azureDisk,
             'azureFile' => $this->azureFile,
@@ -612,6 +602,6 @@ class Volume implements JsonSerializable
             'secret' => $this->secret,
             'storageos' => $this->storageos,
             'vsphereVolume' => $this->vsphereVolume,
-        ];
+        ]);
     }
 }

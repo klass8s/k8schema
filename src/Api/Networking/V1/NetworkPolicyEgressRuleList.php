@@ -11,7 +11,7 @@ class NetworkPolicyEgressRuleList implements JsonSerializable
     /**
      * @var NetworkPolicyEgressRule[]
      */
-    private array $items = [];
+    private array $items;
 
     public function __construct()
     {
@@ -25,11 +25,6 @@ class NetworkPolicyEgressRuleList implements JsonSerializable
         return $this;
     }
 
-    /**
-     * @var NetworkPolicyEgressRule[] $items
-     *
-     * @return self
-     */
     public function addAll(array $items): self
     {
         foreach ($items as $value) {

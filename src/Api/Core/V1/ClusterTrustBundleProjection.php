@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Core\V1;
 
+use ArrayObject;
 use JsonSerializable;
 use K8Schema\Apimachinery\Pkg\Apis\Meta\V1\LabelSelector;
 
@@ -18,7 +19,7 @@ class ClusterTrustBundleProjection implements JsonSerializable
      * if signerName is set.  Mutually-exclusive with name.  If unset, interpreted as
      * "match nothing".  If set but empty, interpreted as "match everything".
      */
-    private LabelSelector $labelSelector;
+    private LabelSelector|null $labelSelector = null;
 
     /**
      * Select a single ClusterTrustBundle by object name.  Mutually-exclusive with
@@ -48,7 +49,6 @@ class ClusterTrustBundleProjection implements JsonSerializable
 
     public function __construct(string $path)
     {
-        $this->labelSelector = new LabelSelector();
         $this->path = $path;
     }
 
@@ -74,7 +74,7 @@ class ClusterTrustBundleProjection implements JsonSerializable
 
     public function labelSelector(): LabelSelector
     {
-        return $this->labelSelector;
+        return $this->labelSelector ??= new LabelSelector();
     }
 
     public function setName(string $name): self
@@ -105,14 +105,14 @@ class ClusterTrustBundleProjection implements JsonSerializable
         return $this;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'labelSelector' => $this->labelSelector,
             'name' => $this->name,
             'optional' => $this->optional,
             'path' => $this->path,
             'signerName' => $this->signerName,
-        ];
+        ]);
     }
 }
