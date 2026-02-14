@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Batch\V1;
 
+use ArrayObject;
 use JsonSerializable;
 
 /**
@@ -165,9 +166,9 @@ class CronJobSpec implements JsonSerializable
         return $this;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'concurrencyPolicy' => $this->concurrencyPolicy,
             'failedJobsHistoryLimit' => $this->failedJobsHistoryLimit,
             'jobTemplate' => $this->jobTemplate,
@@ -176,6 +177,6 @@ class CronJobSpec implements JsonSerializable
             'successfulJobsHistoryLimit' => $this->successfulJobsHistoryLimit,
             'suspend' => $this->suspend,
             'timeZone' => $this->timeZone,
-        ];
+        ]);
     }
 }

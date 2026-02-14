@@ -11,7 +11,7 @@ class DownwardAPIVolumeFileList implements JsonSerializable
     /**
      * @var DownwardAPIVolumeFile[]
      */
-    private array $items = [];
+    private array $items;
 
     public function __construct()
     {
@@ -25,11 +25,6 @@ class DownwardAPIVolumeFileList implements JsonSerializable
         return $this;
     }
 
-    /**
-     * @var DownwardAPIVolumeFile[] $items
-     *
-     * @return self
-     */
     public function addAll(array $items): self
     {
         foreach ($items as $value) {

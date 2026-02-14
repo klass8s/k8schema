@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Core\V1;
 
+use ArrayObject;
 use JsonSerializable;
 use K8Schema\Collection\StringList;
 use K8Schema\Collection\StringMap;
@@ -231,7 +232,7 @@ class ServiceSpec implements JsonSerializable
     /**
      * sessionAffinityConfig contains the configurations of session affinity.
      */
-    private SessionAffinityConfig $sessionAffinityConfig;
+    private SessionAffinityConfig|null $sessionAffinityConfig = null;
 
     /**
      * TrafficDistribution offers a way to express preferences for how traffic is
@@ -267,7 +268,6 @@ class ServiceSpec implements JsonSerializable
         $this->loadBalancerSourceRanges = new StringList();
         $this->ports = new ServicePortList();
         $this->selector = new StringMap();
-        $this->sessionAffinityConfig = new SessionAffinityConfig();
     }
 
     public function clusterIPs(): StringList
@@ -367,7 +367,7 @@ class ServiceSpec implements JsonSerializable
 
     public function sessionAffinityConfig(): SessionAffinityConfig
     {
-        return $this->sessionAffinityConfig;
+        return $this->sessionAffinityConfig ??= new SessionAffinityConfig();
     }
 
     public function setAllocateLoadBalancerNodePorts(bool $allocateLoadBalancerNodePorts): self
@@ -461,9 +461,9 @@ class ServiceSpec implements JsonSerializable
         return $this;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'allocateLoadBalancerNodePorts' => $this->allocateLoadBalancerNodePorts,
             'clusterIP' => $this->clusterIP,
             'clusterIPs' => $this->clusterIPs,
@@ -484,6 +484,6 @@ class ServiceSpec implements JsonSerializable
             'sessionAffinityConfig' => $this->sessionAffinityConfig,
             'trafficDistribution' => $this->trafficDistribution,
             'type' => $this->type,
-        ];
+        ]);
     }
 }

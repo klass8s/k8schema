@@ -11,7 +11,7 @@ class StringOrFloatList implements JsonSerializable
     /**
      * @var string[]|float[]
      */
-    private array $items = [];
+    private array $items;
 
     public function __construct()
     {
@@ -25,11 +25,6 @@ class StringOrFloatList implements JsonSerializable
         return $this;
     }
 
-    /**
-     * @var string[]|float[] $items
-     *
-     * @return self
-     */
     public function addAll(array $items): self
     {
         foreach ($items as $value) {

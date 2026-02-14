@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Rbac\V1;
 
+use ArrayObject;
 use K8Schema\APIResourceInterface;
 use K8Schema\Apimachinery\Pkg\Apis\Meta\V1\ObjectMeta;
 
@@ -20,7 +21,7 @@ class ClusterRoleBinding implements APIResourceInterface
     /**
      * Standard object's metadata.
      */
-    private ObjectMeta $metadata;
+    private ObjectMeta|null $metadata = null;
 
     /**
      * RoleRef can only reference a ClusterRole in the global namespace. If the RoleRef
@@ -36,7 +37,6 @@ class ClusterRoleBinding implements APIResourceInterface
 
     public function __construct(RoleRef $roleRef)
     {
-        $this->metadata = new ObjectMeta();
         $this->roleRef = $roleRef;
         $this->subjects = new SubjectList();
     }
@@ -48,7 +48,7 @@ class ClusterRoleBinding implements APIResourceInterface
 
     public function metadata(): ObjectMeta
     {
-        return $this->metadata;
+        return $this->metadata ??= new ObjectMeta();
     }
 
     public function setRoleRef(RoleRef $roleRef): self
@@ -63,14 +63,14 @@ class ClusterRoleBinding implements APIResourceInterface
         return $this->subjects;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'apiVersion' => self::API_VERSION,
             'kind' => self::KIND,
             'metadata' => $this->metadata,
             'roleRef' => $this->roleRef,
             'subjects' => $this->subjects,
-        ];
+        ]);
     }
 }

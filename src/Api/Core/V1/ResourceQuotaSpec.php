@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Core\V1;
 
+use ArrayObject;
 use JsonSerializable;
 use K8Schema\Collection\StringList;
 use K8Schema\Collection\StringOrFloatMap;
@@ -25,7 +26,7 @@ class ResourceQuotaSpec implements JsonSerializable
      * combination with possible values. For a resource to match, both scopes AND
      * scopeSelector (if specified in spec), must be matched.
      */
-    private ScopeSelector $scopeSelector;
+    private ScopeSelector|null $scopeSelector = null;
 
     /**
      * A collection of filters that must match each object tracked by a quota. If not
@@ -36,7 +37,6 @@ class ResourceQuotaSpec implements JsonSerializable
     public function __construct()
     {
         $this->hard = new StringOrFloatMap();
-        $this->scopeSelector = new ScopeSelector();
         $this->scopes = new StringList();
     }
 
@@ -47,7 +47,7 @@ class ResourceQuotaSpec implements JsonSerializable
 
     public function scopeSelector(): ScopeSelector
     {
-        return $this->scopeSelector;
+        return $this->scopeSelector ??= new ScopeSelector();
     }
 
     public function scopes(): StringList
@@ -55,12 +55,12 @@ class ResourceQuotaSpec implements JsonSerializable
         return $this->scopes;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'hard' => $this->hard,
             'scopeSelector' => $this->scopeSelector,
             'scopes' => $this->scopes,
-        ];
+        ]);
     }
 }

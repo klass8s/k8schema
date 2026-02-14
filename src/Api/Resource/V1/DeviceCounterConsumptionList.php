@@ -11,7 +11,7 @@ class DeviceCounterConsumptionList implements JsonSerializable
     /**
      * @var DeviceCounterConsumption[]
      */
-    private array $items = [];
+    private array $items;
 
     public function __construct()
     {
@@ -25,11 +25,6 @@ class DeviceCounterConsumptionList implements JsonSerializable
         return $this;
     }
 
-    /**
-     * @var DeviceCounterConsumption[] $items
-     *
-     * @return self
-     */
     public function addAll(array $items): self
     {
         foreach ($items as $value) {

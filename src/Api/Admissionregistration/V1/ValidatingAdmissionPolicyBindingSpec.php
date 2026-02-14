@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Admissionregistration\V1;
 
+use ArrayObject;
 use JsonSerializable;
 use K8Schema\Collection\StringList;
 
@@ -23,7 +24,7 @@ class ValidatingAdmissionPolicyBindingSpec implements JsonSerializable
      * this is differs from ValidatingAdmissionPolicy matchConstraints, where
      * resourceRules are required.
      */
-    private MatchResources $matchResources;
+    private MatchResources|null $matchResources = null;
 
     /**
      * paramRef specifies the parameter resource used to configure the admission
@@ -34,7 +35,7 @@ class ValidatingAdmissionPolicyBindingSpec implements JsonSerializable
      * If the policy does not specify a ParamKind then this field is ignored, and the
      * rules are evaluated without a param.
      */
-    private ParamRef $paramRef;
+    private ParamRef|null $paramRef = null;
 
     /**
      * PolicyName references a ValidatingAdmissionPolicy name which the
@@ -92,8 +93,6 @@ class ValidatingAdmissionPolicyBindingSpec implements JsonSerializable
 
     public function __construct()
     {
-        $this->matchResources = new MatchResources();
-        $this->paramRef = new ParamRef();
         $this->validationActions = new StringList();
     }
 
@@ -104,12 +103,12 @@ class ValidatingAdmissionPolicyBindingSpec implements JsonSerializable
 
     public function matchResources(): MatchResources
     {
-        return $this->matchResources;
+        return $this->matchResources ??= new MatchResources();
     }
 
     public function paramRef(): ParamRef
     {
-        return $this->paramRef;
+        return $this->paramRef ??= new ParamRef();
     }
 
     public function setPolicyName(string $policyName): self
@@ -124,13 +123,13 @@ class ValidatingAdmissionPolicyBindingSpec implements JsonSerializable
         return $this->validationActions;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'matchResources' => $this->matchResources,
             'paramRef' => $this->paramRef,
             'policyName' => $this->policyName,
             'validationActions' => $this->validationActions,
-        ];
+        ]);
     }
 }

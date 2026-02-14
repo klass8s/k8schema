@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Core\V1;
 
+use ArrayObject;
 use JsonSerializable;
 
 /**
@@ -14,22 +15,21 @@ class SessionAffinityConfig implements JsonSerializable
     /**
      * clientIP contains the configurations of Client IP based session affinity.
      */
-    private ClientIPConfig $clientIP;
+    private ClientIPConfig|null $clientIP = null;
 
     public function __construct()
     {
-        $this->clientIP = new ClientIPConfig();
     }
 
     public function clientIP(): ClientIPConfig
     {
-        return $this->clientIP;
+        return $this->clientIP ??= new ClientIPConfig();
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'clientIP' => $this->clientIP,
-        ];
+        ]);
     }
 }

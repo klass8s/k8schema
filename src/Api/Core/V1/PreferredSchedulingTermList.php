@@ -11,7 +11,7 @@ class PreferredSchedulingTermList implements JsonSerializable
     /**
      * @var PreferredSchedulingTerm[]
      */
-    private array $items = [];
+    private array $items;
 
     public function __construct()
     {
@@ -25,11 +25,6 @@ class PreferredSchedulingTermList implements JsonSerializable
         return $this;
     }
 
-    /**
-     * @var PreferredSchedulingTerm[] $items
-     *
-     * @return self
-     */
     public function addAll(array $items): self
     {
         foreach ($items as $value) {

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Node\V1;
 
+use ArrayObject;
 use K8Schema\APIResourceInterface;
 use K8Schema\Apimachinery\Pkg\Apis\Meta\V1\ObjectMeta;
 
@@ -36,28 +37,25 @@ class RuntimeClass implements APIResourceInterface
      * More info:
      * https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
      */
-    private ObjectMeta $metadata;
+    private ObjectMeta|null $metadata = null;
 
     /**
      * overhead represents the resource overhead associated with running a pod for a
      * given RuntimeClass. For more details, see
      *  https://kubernetes.io/docs/concepts/scheduling-eviction/pod-overhead/
      */
-    private Overhead $overhead;
+    private Overhead|null $overhead = null;
 
     /**
      * scheduling holds the scheduling constraints to ensure that pods running with
      * this RuntimeClass are scheduled to nodes that support it. If scheduling is nil,
      * this RuntimeClass is assumed to be supported by all nodes.
      */
-    private Scheduling $scheduling;
+    private Scheduling|null $scheduling = null;
 
     public function __construct(string $handler)
     {
         $this->handler = $handler;
-        $this->metadata = new ObjectMeta();
-        $this->overhead = new Overhead();
-        $this->scheduling = new Scheduling();
     }
 
     public function getHandler(): string
@@ -67,17 +65,17 @@ class RuntimeClass implements APIResourceInterface
 
     public function metadata(): ObjectMeta
     {
-        return $this->metadata;
+        return $this->metadata ??= new ObjectMeta();
     }
 
     public function overhead(): Overhead
     {
-        return $this->overhead;
+        return $this->overhead ??= new Overhead();
     }
 
     public function scheduling(): Scheduling
     {
-        return $this->scheduling;
+        return $this->scheduling ??= new Scheduling();
     }
 
     public function setHandler(string $handler): self
@@ -87,15 +85,15 @@ class RuntimeClass implements APIResourceInterface
         return $this;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'apiVersion' => self::API_VERSION,
             'kind' => self::KIND,
             'handler' => $this->handler,
             'metadata' => $this->metadata,
             'overhead' => $this->overhead,
             'scheduling' => $this->scheduling,
-        ];
+        ]);
     }
 }

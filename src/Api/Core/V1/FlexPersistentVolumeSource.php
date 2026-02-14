@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Core\V1;
 
+use ArrayObject;
 use JsonSerializable;
 use K8Schema\Collection\StringMap;
 
@@ -42,13 +43,12 @@ class FlexPersistentVolumeSource implements JsonSerializable
      * secret object is specified. If the secret object contains more than one secret,
      * all secrets are passed to the plugin scripts.
      */
-    private SecretReference $secretRef;
+    private SecretReference|null $secretRef = null;
 
     public function __construct(string $driver)
     {
         $this->driver = $driver;
         $this->options = new StringMap();
-        $this->secretRef = new SecretReference();
     }
 
     public function getDriver(): string
@@ -73,7 +73,7 @@ class FlexPersistentVolumeSource implements JsonSerializable
 
     public function secretRef(): SecretReference
     {
-        return $this->secretRef;
+        return $this->secretRef ??= new SecretReference();
     }
 
     public function setDriver(string $driver): self
@@ -97,14 +97,14 @@ class FlexPersistentVolumeSource implements JsonSerializable
         return $this;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'driver' => $this->driver,
             'fsType' => $this->fsType,
             'options' => $this->options,
             'readOnly' => $this->readOnly,
             'secretRef' => $this->secretRef,
-        ];
+        ]);
     }
 }

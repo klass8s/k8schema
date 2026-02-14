@@ -11,7 +11,7 @@ class NodeSelectorTermList implements JsonSerializable
     /**
      * @var NodeSelectorTerm[]
      */
-    private array $items = [];
+    private array $items;
 
     public function __construct()
     {
@@ -25,11 +25,6 @@ class NodeSelectorTermList implements JsonSerializable
         return $this;
     }
 
-    /**
-     * @var NodeSelectorTerm[] $items
-     *
-     * @return self
-     */
     public function addAll(array $items): self
     {
         foreach ($items as $value) {

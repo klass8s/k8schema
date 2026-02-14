@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Core\V1;
 
+use ArrayObject;
 use K8Schema\APIResourceInterface;
 use K8Schema\Apimachinery\Pkg\Apis\Meta\V1\ObjectMeta;
 use K8Schema\DateTimeInterface;
@@ -72,7 +73,7 @@ class Event implements APIResourceInterface
     /**
      * Optional secondary object for more complex actions.
      */
-    private ObjectReference $related;
+    private ObjectReference|null $related = null;
 
     /**
      * Name of the controller that emitted this Event, e.g. `kubernetes.io/kubelet`.
@@ -88,13 +89,13 @@ class Event implements APIResourceInterface
      * Data about the Event series this event represents or nil if it's a singleton
      * Event.
      */
-    private EventSeries $series;
+    private EventSeries|null $series = null;
 
     /**
      * The component reporting this event. Should be a short machine understandable
      * string.
      */
-    private EventSource $source;
+    private EventSource|null $source = null;
 
     /**
      * Type of this event (Normal, Warning), new types could be added in the future
@@ -105,9 +106,6 @@ class Event implements APIResourceInterface
     {
         $this->involvedObject = new ObjectReference();
         $this->metadata = new ObjectMeta();
-        $this->related = new ObjectReference();
-        $this->series = new EventSeries();
-        $this->source = new EventSource();
     }
 
     public function getAction(): string|null
@@ -172,12 +170,12 @@ class Event implements APIResourceInterface
 
     public function related(): ObjectReference
     {
-        return $this->related;
+        return $this->related ??= new ObjectReference();
     }
 
     public function series(): EventSeries
     {
-        return $this->series;
+        return $this->series ??= new EventSeries();
     }
 
     public function setAction(string $action): self
@@ -252,12 +250,12 @@ class Event implements APIResourceInterface
 
     public function source(): EventSource
     {
-        return $this->source;
+        return $this->source ??= new EventSource();
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'apiVersion' => self::API_VERSION,
             'kind' => self::KIND,
             'action' => $this->action,
@@ -275,6 +273,6 @@ class Event implements APIResourceInterface
             'series' => $this->series,
             'source' => $this->source,
             'type' => $this->type,
-        ];
+        ]);
     }
 }

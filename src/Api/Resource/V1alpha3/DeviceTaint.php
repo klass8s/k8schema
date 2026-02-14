@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Resource\V1alpha3;
 
+use ArrayObject;
 use JsonSerializable;
 use K8Schema\DateTimeInterface;
 
@@ -90,13 +91,13 @@ class DeviceTaint implements JsonSerializable
         return $this;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'effect' => $this->effect,
             'key' => $this->key,
             'timeAdded' => $this->timeAdded,
             'value' => $this->value,
-        ];
+        ]);
     }
 }

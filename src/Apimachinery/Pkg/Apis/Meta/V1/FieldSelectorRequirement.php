@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Apimachinery\Pkg\Apis\Meta\V1;
 
+use ArrayObject;
 use JsonSerializable;
 use K8Schema\Collection\StringList;
 
@@ -67,12 +68,12 @@ class FieldSelectorRequirement implements JsonSerializable
         return $this->values;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'key' => $this->key,
             'operator' => $this->operator,
             'values' => $this->values,
-        ];
+        ]);
     }
 }

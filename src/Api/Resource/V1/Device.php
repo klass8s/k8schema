@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Resource\V1;
 
+use ArrayObject;
 use JsonSerializable;
 use K8Schema\Api\Core\V1\NodeSelector;
 use K8Schema\Collection\StringList;
@@ -121,7 +122,7 @@ class Device implements JsonSerializable
      * Must only be set if Spec.PerDeviceNodeSelection is set to true. At most one of
      * NodeName, NodeSelector and AllNodes can be set.
      */
-    private NodeSelector $nodeSelector;
+    private NodeSelector|null $nodeSelector = null;
 
     /**
      * If specified, these are the driver-defined taints.
@@ -140,7 +141,6 @@ class Device implements JsonSerializable
         $this->capacity = new DeviceCapacityMap();
         $this->consumesCounters = new DeviceCounterConsumptionList();
         $this->name = $name;
-        $this->nodeSelector = new NodeSelector();
         $this->taints = new DeviceTaintList();
     }
 
@@ -196,7 +196,7 @@ class Device implements JsonSerializable
 
     public function nodeSelector(): NodeSelector
     {
-        return $this->nodeSelector;
+        return $this->nodeSelector ??= new NodeSelector();
     }
 
     public function setAllNodes(bool $allNodes): self
@@ -239,9 +239,9 @@ class Device implements JsonSerializable
         return $this->taints;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'allNodes' => $this->allNodes,
             'allowMultipleAllocations' => $this->allowMultipleAllocations,
             'attributes' => $this->attributes,
@@ -254,6 +254,6 @@ class Device implements JsonSerializable
             'nodeName' => $this->nodeName,
             'nodeSelector' => $this->nodeSelector,
             'taints' => $this->taints,
-        ];
+        ]);
     }
 }

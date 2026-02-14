@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Discovery\V1;
 
+use ArrayObject;
 use K8Schema\APIResourceInterface;
 use K8Schema\Apimachinery\Pkg\Apis\Meta\V1\ObjectMeta;
 
@@ -40,7 +41,7 @@ class EndpointSlice implements APIResourceInterface
     /**
      * Standard object's metadata.
      */
-    private ObjectMeta $metadata;
+    private ObjectMeta|null $metadata = null;
 
     /**
      * ports specifies the list of network ports exposed by each endpoint in this
@@ -55,7 +56,6 @@ class EndpointSlice implements APIResourceInterface
     {
         $this->addressType = $addressType;
         $this->endpoints = new EndpointList();
-        $this->metadata = new ObjectMeta();
         $this->ports = new EndpointPortList();
     }
 
@@ -71,7 +71,7 @@ class EndpointSlice implements APIResourceInterface
 
     public function metadata(): ObjectMeta
     {
-        return $this->metadata;
+        return $this->metadata ??= new ObjectMeta();
     }
 
     public function ports(): EndpointPortList
@@ -86,15 +86,15 @@ class EndpointSlice implements APIResourceInterface
         return $this;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'apiVersion' => self::API_VERSION,
             'kind' => self::KIND,
             'addressType' => $this->addressType,
             'endpoints' => $this->endpoints,
             'metadata' => $this->metadata,
             'ports' => $this->ports,
-        ];
+        ]);
     }
 }

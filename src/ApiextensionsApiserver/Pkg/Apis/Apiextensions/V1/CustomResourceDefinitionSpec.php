@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\ApiextensionsApiserver\Pkg\Apis\Apiextensions\V1;
 
+use ArrayObject;
 use JsonSerializable;
 
 /**
@@ -132,15 +133,15 @@ class CustomResourceDefinitionSpec implements JsonSerializable
         return $this->versions;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'conversion' => $this->conversion,
             'group' => $this->group,
             'names' => $this->names,
             'preserveUnknownFields' => $this->preserveUnknownFields,
             'scope' => $this->scope,
             'versions' => $this->versions,
-        ];
+        ]);
     }
 }

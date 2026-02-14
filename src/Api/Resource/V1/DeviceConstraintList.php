@@ -11,7 +11,7 @@ class DeviceConstraintList implements JsonSerializable
     /**
      * @var DeviceConstraint[]
      */
-    private array $items = [];
+    private array $items;
 
     public function __construct()
     {
@@ -25,11 +25,6 @@ class DeviceConstraintList implements JsonSerializable
         return $this;
     }
 
-    /**
-     * @var DeviceConstraint[] $items
-     *
-     * @return self
-     */
     public function addAll(array $items): self
     {
         foreach ($items as $value) {

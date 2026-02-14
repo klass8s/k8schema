@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Core\V1;
 
+use ArrayObject;
 use JsonSerializable;
 use K8Schema\Collection\StringList;
 
@@ -16,7 +17,7 @@ class NodeSpec implements JsonSerializable
      * Deprecated: Previously used to specify the source of the node's configuration
      * for the DynamicKubeletConfig feature. This feature is removed.
      */
-    private NodeConfigSource $configSource;
+    private NodeConfigSource|null $configSource = null;
 
     /**
      * Deprecated. Not all kubelets will set this field. Remove field after 1.13. see:
@@ -56,14 +57,13 @@ class NodeSpec implements JsonSerializable
 
     public function __construct()
     {
-        $this->configSource = new NodeConfigSource();
         $this->podCIDRs = new StringList();
         $this->taints = new TaintList();
     }
 
     public function configSource(): NodeConfigSource
     {
-        return $this->configSource;
+        return $this->configSource ??= new NodeConfigSource();
     }
 
     public function getExternalID(): string|null
@@ -124,9 +124,9 @@ class NodeSpec implements JsonSerializable
         return $this->taints;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'configSource' => $this->configSource,
             'externalID' => $this->externalID,
             'podCIDR' => $this->podCIDR,
@@ -134,6 +134,6 @@ class NodeSpec implements JsonSerializable
             'providerID' => $this->providerID,
             'taints' => $this->taints,
             'unschedulable' => $this->unschedulable,
-        ];
+        ]);
     }
 }

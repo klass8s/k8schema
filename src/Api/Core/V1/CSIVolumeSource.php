@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Core\V1;
 
+use ArrayObject;
 use JsonSerializable;
 use K8Schema\Collection\StringMap;
 
@@ -33,7 +34,7 @@ class CSIVolumeSource implements JsonSerializable
      * secret is required. If the secret object contains more than one secret, all
      * secret references are passed.
      */
-    private LocalObjectReference $nodePublishSecretRef;
+    private LocalObjectReference|null $nodePublishSecretRef = null;
 
     /**
      * readOnly specifies a read-only configuration for the volume. Defaults to false
@@ -50,7 +51,6 @@ class CSIVolumeSource implements JsonSerializable
     public function __construct(string $driver)
     {
         $this->driver = $driver;
-        $this->nodePublishSecretRef = new LocalObjectReference();
         $this->volumeAttributes = new StringMap();
     }
 
@@ -71,7 +71,7 @@ class CSIVolumeSource implements JsonSerializable
 
     public function nodePublishSecretRef(): LocalObjectReference
     {
-        return $this->nodePublishSecretRef;
+        return $this->nodePublishSecretRef ??= new LocalObjectReference();
     }
 
     public function setDriver(string $driver): self
@@ -100,14 +100,14 @@ class CSIVolumeSource implements JsonSerializable
         return $this->volumeAttributes;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'driver' => $this->driver,
             'fsType' => $this->fsType,
             'nodePublishSecretRef' => $this->nodePublishSecretRef,
             'readOnly' => $this->readOnly,
             'volumeAttributes' => $this->volumeAttributes,
-        ];
+        ]);
     }
 }

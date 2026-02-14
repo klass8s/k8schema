@@ -11,7 +11,7 @@ class LabelSelectorRequirementList implements JsonSerializable
     /**
      * @var LabelSelectorRequirement[]
      */
-    private array $items = [];
+    private array $items;
 
     public function __construct()
     {
@@ -25,11 +25,6 @@ class LabelSelectorRequirementList implements JsonSerializable
         return $this;
     }
 
-    /**
-     * @var LabelSelectorRequirement[] $items
-     *
-     * @return self
-     */
     public function addAll(array $items): self
     {
         foreach ($items as $value) {

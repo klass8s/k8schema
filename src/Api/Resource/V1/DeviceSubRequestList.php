@@ -11,7 +11,7 @@ class DeviceSubRequestList implements JsonSerializable
     /**
      * @var DeviceSubRequest[]
      */
-    private array $items = [];
+    private array $items;
 
     public function __construct()
     {
@@ -25,11 +25,6 @@ class DeviceSubRequestList implements JsonSerializable
         return $this;
     }
 
-    /**
-     * @var DeviceSubRequest[] $items
-     *
-     * @return self
-     */
     public function addAll(array $items): self
     {
         foreach ($items as $value) {

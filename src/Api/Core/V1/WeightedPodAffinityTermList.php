@@ -11,7 +11,7 @@ class WeightedPodAffinityTermList implements JsonSerializable
     /**
      * @var WeightedPodAffinityTerm[]
      */
-    private array $items = [];
+    private array $items;
 
     public function __construct()
     {
@@ -25,11 +25,6 @@ class WeightedPodAffinityTermList implements JsonSerializable
         return $this;
     }
 
-    /**
-     * @var WeightedPodAffinityTerm[] $items
-     *
-     * @return self
-     */
     public function addAll(array $items): self
     {
         foreach ($items as $value) {

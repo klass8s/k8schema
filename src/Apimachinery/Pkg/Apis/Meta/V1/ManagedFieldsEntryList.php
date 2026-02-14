@@ -11,7 +11,7 @@ class ManagedFieldsEntryList implements JsonSerializable
     /**
      * @var ManagedFieldsEntry[]
      */
-    private array $items = [];
+    private array $items;
 
     public function __construct()
     {
@@ -25,11 +25,6 @@ class ManagedFieldsEntryList implements JsonSerializable
         return $this;
     }
 
-    /**
-     * @var ManagedFieldsEntry[] $items
-     *
-     * @return self
-     */
     public function addAll(array $items): self
     {
         foreach ($items as $value) {

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Core\V1;
 
+use ArrayObject;
 use JsonSerializable;
 
 /**
@@ -28,7 +29,7 @@ class StorageOSVolumeSource implements JsonSerializable
      * secretRef specifies the secret to use for obtaining the StorageOS API
      * credentials.  If not specified, default values will be attempted.
      */
-    private LocalObjectReference $secretRef;
+    private LocalObjectReference|null $secretRef = null;
 
     /**
      * volumeName is the human-readable name of the StorageOS volume.  Volume names are
@@ -48,7 +49,6 @@ class StorageOSVolumeSource implements JsonSerializable
 
     public function __construct()
     {
-        $this->secretRef = new LocalObjectReference();
     }
 
     public function getFsType(): string|null
@@ -73,7 +73,7 @@ class StorageOSVolumeSource implements JsonSerializable
 
     public function secretRef(): LocalObjectReference
     {
-        return $this->secretRef;
+        return $this->secretRef ??= new LocalObjectReference();
     }
 
     public function setFsType(string $fsType): self
@@ -104,14 +104,14 @@ class StorageOSVolumeSource implements JsonSerializable
         return $this;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'fsType' => $this->fsType,
             'readOnly' => $this->readOnly,
             'secretRef' => $this->secretRef,
             'volumeName' => $this->volumeName,
             'volumeNamespace' => $this->volumeNamespace,
-        ];
+        ]);
     }
 }

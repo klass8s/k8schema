@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Resource\V1;
 
+use ArrayObject;
 use JsonSerializable;
 
 /**
@@ -51,12 +52,12 @@ class DeviceClaim implements JsonSerializable
         return $this->requests;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'config' => $this->config,
             'constraints' => $this->constraints,
             'requests' => $this->requests,
-        ];
+        ]);
     }
 }

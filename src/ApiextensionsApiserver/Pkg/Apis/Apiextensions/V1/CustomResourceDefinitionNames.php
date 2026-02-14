@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\ApiextensionsApiserver\Pkg\Apis\Apiextensions\V1;
 
+use ArrayObject;
 use JsonSerializable;
 use K8Schema\Collection\StringList;
 
@@ -120,15 +121,15 @@ class CustomResourceDefinitionNames implements JsonSerializable
         return $this->shortNames;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'categories' => $this->categories,
             'kind' => $this->kind,
             'listKind' => $this->listKind,
             'plural' => $this->plural,
             'shortNames' => $this->shortNames,
             'singular' => $this->singular,
-        ];
+        ]);
     }
 }

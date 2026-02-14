@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Core\V1;
 
+use ArrayObject;
 use JsonSerializable;
 use K8Schema\Collection\StringList;
 
@@ -56,7 +57,7 @@ class RBDVolumeSource implements JsonSerializable
      * overrides keyring. Default is nil. More info:
      * https://examples.k8s.io/volumes/rbd/README.md#how-to-use-it
      */
-    private LocalObjectReference $secretRef;
+    private LocalObjectReference|null $secretRef = null;
 
     /**
      * user is the rados user name. Default is admin. More info:
@@ -68,7 +69,6 @@ class RBDVolumeSource implements JsonSerializable
     {
         $this->image = $image;
         $this->monitors = new StringList();
-        $this->secretRef = new LocalObjectReference();
     }
 
     public function getFsType(): string|null
@@ -108,7 +108,7 @@ class RBDVolumeSource implements JsonSerializable
 
     public function secretRef(): LocalObjectReference
     {
-        return $this->secretRef;
+        return $this->secretRef ??= new LocalObjectReference();
     }
 
     public function setFsType(string $fsType): self
@@ -153,9 +153,9 @@ class RBDVolumeSource implements JsonSerializable
         return $this;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'fsType' => $this->fsType,
             'image' => $this->image,
             'keyring' => $this->keyring,
@@ -164,6 +164,6 @@ class RBDVolumeSource implements JsonSerializable
             'readOnly' => $this->readOnly,
             'secretRef' => $this->secretRef,
             'user' => $this->user,
-        ];
+        ]);
     }
 }

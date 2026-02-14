@@ -11,7 +11,7 @@ class NetworkPolicyPeerList implements JsonSerializable
     /**
      * @var NetworkPolicyPeer[]
      */
-    private array $items = [];
+    private array $items;
 
     public function __construct()
     {
@@ -25,11 +25,6 @@ class NetworkPolicyPeerList implements JsonSerializable
         return $this;
     }
 
-    /**
-     * @var NetworkPolicyPeer[] $items
-     *
-     * @return self
-     */
     public function addAll(array $items): self
     {
         foreach ($items as $value) {

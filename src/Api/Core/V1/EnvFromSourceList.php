@@ -11,7 +11,7 @@ class EnvFromSourceList implements JsonSerializable
     /**
      * @var EnvFromSource[]
      */
-    private array $items = [];
+    private array $items;
 
     public function __construct()
     {
@@ -25,11 +25,6 @@ class EnvFromSourceList implements JsonSerializable
         return $this;
     }
 
-    /**
-     * @var EnvFromSource[] $items
-     *
-     * @return self
-     */
     public function addAll(array $items): self
     {
         foreach ($items as $value) {

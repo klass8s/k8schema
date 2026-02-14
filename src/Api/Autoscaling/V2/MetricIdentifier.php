@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Autoscaling\V2;
 
+use ArrayObject;
 use JsonSerializable;
 use K8Schema\Apimachinery\Pkg\Apis\Meta\V1\LabelSelector;
 
@@ -23,12 +24,11 @@ class MetricIdentifier implements JsonSerializable
      * metrics server for more specific metrics scoping. When unset, just the
      * metricName will be used to gather metrics.
      */
-    private LabelSelector $selector;
+    private LabelSelector|null $selector = null;
 
     public function __construct(string $name)
     {
         $this->name = $name;
-        $this->selector = new LabelSelector();
     }
 
     public function getName(): string
@@ -38,7 +38,7 @@ class MetricIdentifier implements JsonSerializable
 
     public function selector(): LabelSelector
     {
-        return $this->selector;
+        return $this->selector ??= new LabelSelector();
     }
 
     public function setName(string $name): self
@@ -48,11 +48,11 @@ class MetricIdentifier implements JsonSerializable
         return $this;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'name' => $this->name,
             'selector' => $this->selector,
-        ];
+        ]);
     }
 }

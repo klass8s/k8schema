@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Core\V1;
 
+use ArrayObject;
 use JsonSerializable;
 use K8Schema\Collection\StringList;
 
@@ -95,14 +96,14 @@ class FCVolumeSource implements JsonSerializable
         return $this->wwids;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'fsType' => $this->fsType,
             'lun' => $this->lun,
             'readOnly' => $this->readOnly,
             'targetWWNs' => $this->targetWWNs,
             'wwids' => $this->wwids,
-        ];
+        ]);
     }
 }

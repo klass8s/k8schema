@@ -11,7 +11,7 @@ class StatusCauseList implements JsonSerializable
     /**
      * @var StatusCause[]
      */
-    private array $items = [];
+    private array $items;
 
     public function __construct()
     {
@@ -25,11 +25,6 @@ class StatusCauseList implements JsonSerializable
         return $this;
     }
 
-    /**
-     * @var StatusCause[] $items
-     *
-     * @return self
-     */
     public function addAll(array $items): self
     {
         foreach ($items as $value) {

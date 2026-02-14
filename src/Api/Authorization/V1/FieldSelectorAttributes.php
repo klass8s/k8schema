@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Authorization\V1;
 
+use ArrayObject;
 use JsonSerializable;
 use K8Schema\Apimachinery\Pkg\Apis\Meta\V1\FieldSelectorRequirementList;
 
@@ -62,11 +63,11 @@ class FieldSelectorAttributes implements JsonSerializable
         return $this;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'rawSelector' => $this->rawSelector,
             'requirements' => $this->requirements,
-        ];
+        ]);
     }
 }

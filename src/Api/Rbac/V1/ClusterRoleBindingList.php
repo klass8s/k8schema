@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Rbac\V1;
 
+use ArrayObject;
 use K8Schema\APIResourceListInterface;
 use K8Schema\Apimachinery\Pkg\Apis\Meta\V1\ListMeta;
 
@@ -18,18 +19,17 @@ class ClusterRoleBindingList implements APIResourceListInterface
     /**
      * @var ClusterRoleBinding[]
      */
-    private array $items = [];
+    private array $items;
 
     /**
      * Standard object's metadata.
      */
-    private ListMeta $metadata;
+    private ListMeta|null $metadata = null;
 
     public function __construct()
     {
         $this->clear();
         $this->items = [];
-        $this->metadata = new ListMeta();
     }
 
     public function add(ClusterRoleBinding $value): self
@@ -39,11 +39,6 @@ class ClusterRoleBindingList implements APIResourceListInterface
         return $this;
     }
 
-    /**
-     * @var ClusterRoleBinding[] $items
-     *
-     * @return self
-     */
     public function addAll(array $items): self
     {
         foreach ($items as $value) {
@@ -75,16 +70,16 @@ class ClusterRoleBindingList implements APIResourceListInterface
 
     public function metadata(): ListMeta
     {
-        return $this->metadata;
+        return $this->metadata ??= new ListMeta();
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'apiVersion' => self::API_VERSION,
             'kind' => self::KIND,
             'items' => $this->items,
             'metadata' => $this->metadata,
-        ];
+        ]);
     }
 }

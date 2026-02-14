@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Admissionregistration\V1;
 
+use ArrayObject;
 use K8Schema\APIResourceInterface;
 use K8Schema\Apimachinery\Pkg\Apis\Meta\V1\ObjectMeta;
 
@@ -20,7 +21,7 @@ class ValidatingWebhookConfiguration implements APIResourceInterface
      * Standard object metadata; More info:
      * https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata.
      */
-    private ObjectMeta $metadata;
+    private ObjectMeta|null $metadata = null;
 
     /**
      * Webhooks is a list of webhooks and the affected resources and operations.
@@ -29,13 +30,12 @@ class ValidatingWebhookConfiguration implements APIResourceInterface
 
     public function __construct()
     {
-        $this->metadata = new ObjectMeta();
         $this->webhooks = new ValidatingWebhookList();
     }
 
     public function metadata(): ObjectMeta
     {
-        return $this->metadata;
+        return $this->metadata ??= new ObjectMeta();
     }
 
     public function webhooks(): ValidatingWebhookList
@@ -43,13 +43,13 @@ class ValidatingWebhookConfiguration implements APIResourceInterface
         return $this->webhooks;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'apiVersion' => self::API_VERSION,
             'kind' => self::KIND,
             'metadata' => $this->metadata,
             'webhooks' => $this->webhooks,
-        ];
+        ]);
     }
 }

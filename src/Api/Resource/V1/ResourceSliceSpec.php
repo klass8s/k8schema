@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Resource\V1;
 
+use ArrayObject;
 use JsonSerializable;
 use K8Schema\Api\Core\V1\NodeSelector;
 
@@ -61,7 +62,7 @@ class ResourceSliceSpec implements JsonSerializable
      * Exactly one of NodeName, NodeSelector, AllNodes, and PerDeviceNodeSelection must
      * be set.
      */
-    private NodeSelector $nodeSelector;
+    private NodeSelector|null $nodeSelector = null;
 
     /**
      * PerDeviceNodeSelection defines whether the access from nodes to resources in the
@@ -92,7 +93,6 @@ class ResourceSliceSpec implements JsonSerializable
     {
         $this->devices = new DeviceList();
         $this->driver = $driver;
-        $this->nodeSelector = new NodeSelector();
         $this->pool = $pool;
         $this->sharedCounters = new CounterSetList();
     }
@@ -129,7 +129,7 @@ class ResourceSliceSpec implements JsonSerializable
 
     public function nodeSelector(): NodeSelector
     {
-        return $this->nodeSelector;
+        return $this->nodeSelector ??= new NodeSelector();
     }
 
     public function setAllNodes(bool $allNodes): self
@@ -172,9 +172,9 @@ class ResourceSliceSpec implements JsonSerializable
         return $this->sharedCounters;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'allNodes' => $this->allNodes,
             'devices' => $this->devices,
             'driver' => $this->driver,
@@ -183,6 +183,6 @@ class ResourceSliceSpec implements JsonSerializable
             'perDeviceNodeSelection' => $this->perDeviceNodeSelection,
             'pool' => $this->pool,
             'sharedCounters' => $this->sharedCounters,
-        ];
+        ]);
     }
 }

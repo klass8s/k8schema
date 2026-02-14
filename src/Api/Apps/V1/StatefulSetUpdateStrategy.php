@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Apps\V1;
 
+use ArrayObject;
 use JsonSerializable;
 
 /**
@@ -17,7 +18,7 @@ class StatefulSetUpdateStrategy implements JsonSerializable
      * RollingUpdate is used to communicate parameters when Type is
      * RollingUpdateStatefulSetStrategyType.
      */
-    private RollingUpdateStatefulSetStrategy $rollingUpdate;
+    private RollingUpdateStatefulSetStrategy|null $rollingUpdate = null;
 
     /**
      * Type indicates the type of the StatefulSetUpdateStrategy. Default is
@@ -27,7 +28,6 @@ class StatefulSetUpdateStrategy implements JsonSerializable
 
     public function __construct()
     {
-        $this->rollingUpdate = new RollingUpdateStatefulSetStrategy();
     }
 
     public function getType(): string|null
@@ -37,7 +37,7 @@ class StatefulSetUpdateStrategy implements JsonSerializable
 
     public function rollingUpdate(): RollingUpdateStatefulSetStrategy
     {
-        return $this->rollingUpdate;
+        return $this->rollingUpdate ??= new RollingUpdateStatefulSetStrategy();
     }
 
     public function setType(string $type): self
@@ -47,11 +47,11 @@ class StatefulSetUpdateStrategy implements JsonSerializable
         return $this;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'rollingUpdate' => $this->rollingUpdate,
             'type' => $this->type,
-        ];
+        ]);
     }
 }

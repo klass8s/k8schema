@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Resource\V1;
 
+use ArrayObject;
 use JsonSerializable;
 
 /**
@@ -23,7 +24,7 @@ class DeviceCapacity implements JsonSerializable
      * exceed the device's defined capacity. If request is also unset, default is the
      * full capacity value.
      */
-    private CapacityRequestPolicy $requestPolicy;
+    private CapacityRequestPolicy|null $requestPolicy = null;
 
     /**
      * Value defines how much of a certain capacity that device has.
@@ -35,7 +36,6 @@ class DeviceCapacity implements JsonSerializable
 
     public function __construct(string|float $value)
     {
-        $this->requestPolicy = new CapacityRequestPolicy();
         $this->value = $value;
     }
 
@@ -46,7 +46,7 @@ class DeviceCapacity implements JsonSerializable
 
     public function requestPolicy(): CapacityRequestPolicy
     {
-        return $this->requestPolicy;
+        return $this->requestPolicy ??= new CapacityRequestPolicy();
     }
 
     public function setValue(string|float $value): self
@@ -56,11 +56,11 @@ class DeviceCapacity implements JsonSerializable
         return $this;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'requestPolicy' => $this->requestPolicy,
             'value' => $this->value,
-        ];
+        ]);
     }
 }

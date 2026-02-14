@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Authentication\V1;
 
+use ArrayObject;
 use JsonSerializable;
 use K8Schema\Collection\StringList;
 
@@ -27,7 +28,7 @@ class TokenRequestSpec implements JsonSerializable
      * server's TokenReview endpoint will validate the BoundObjectRef, but other
      * audiences may not. Keep ExpirationSeconds small if you want prompt revocation.
      */
-    private BoundObjectReference $boundObjectRef;
+    private BoundObjectReference|null $boundObjectRef = null;
 
     /**
      * ExpirationSeconds is the requested duration of validity of the request. The
@@ -39,7 +40,6 @@ class TokenRequestSpec implements JsonSerializable
     public function __construct()
     {
         $this->audiences = new StringList();
-        $this->boundObjectRef = new BoundObjectReference();
     }
 
     public function audiences(): StringList
@@ -49,7 +49,7 @@ class TokenRequestSpec implements JsonSerializable
 
     public function boundObjectRef(): BoundObjectReference
     {
-        return $this->boundObjectRef;
+        return $this->boundObjectRef ??= new BoundObjectReference();
     }
 
     public function getExpirationSeconds(): int|null
@@ -64,12 +64,12 @@ class TokenRequestSpec implements JsonSerializable
         return $this;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'audiences' => $this->audiences,
             'boundObjectRef' => $this->boundObjectRef,
             'expirationSeconds' => $this->expirationSeconds,
-        ];
+        ]);
     }
 }

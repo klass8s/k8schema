@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Core\V1;
 
+use ArrayObject;
 use JsonSerializable;
 use K8Schema\Collection\StringList;
 
@@ -73,12 +74,12 @@ class EphemeralContainer implements JsonSerializable
     /**
      * Lifecycle is not allowed for ephemeral containers.
      */
-    private Lifecycle $lifecycle;
+    private Lifecycle|null $lifecycle = null;
 
     /**
      * Probes are not allowed for ephemeral containers.
      */
-    private Probe $livenessProbe;
+    private Probe|null $livenessProbe = null;
 
     /**
      * Name of the ephemeral container specified as a DNS_LABEL. This name must be
@@ -94,7 +95,7 @@ class EphemeralContainer implements JsonSerializable
     /**
      * Probes are not allowed for ephemeral containers.
      */
-    private Probe $readinessProbe;
+    private Probe|null $readinessProbe = null;
 
     /**
      * Resources resize policy for the container.
@@ -105,7 +106,7 @@ class EphemeralContainer implements JsonSerializable
      * Resources are not allowed for ephemeral containers. Ephemeral containers use
      * spare resources already allocated to the pod.
      */
-    private ResourceRequirements $resources;
+    private ResourceRequirements|null $resources = null;
 
     /**
      * Restart policy for the container to manage the restart behavior of each
@@ -124,12 +125,12 @@ class EphemeralContainer implements JsonSerializable
      * should be run with. If set, the fields of SecurityContext override the
      * equivalent fields of PodSecurityContext.
      */
-    private SecurityContext $securityContext;
+    private SecurityContext|null $securityContext = null;
 
     /**
      * Probes are not allowed for ephemeral containers.
      */
-    private Probe $startupProbe;
+    private Probe|null $startupProbe = null;
 
     /**
      * Whether this container should allocate a buffer for stdin in the container
@@ -212,16 +213,10 @@ class EphemeralContainer implements JsonSerializable
         $this->command = new StringList();
         $this->env = new EnvVarList();
         $this->envFrom = new EnvFromSourceList();
-        $this->lifecycle = new Lifecycle();
-        $this->livenessProbe = new Probe();
         $this->name = $name;
         $this->ports = new ContainerPortList();
-        $this->readinessProbe = new Probe();
         $this->resizePolicy = new ContainerResizePolicyList();
-        $this->resources = new ResourceRequirements();
         $this->restartPolicyRules = new ContainerRestartRuleList();
-        $this->securityContext = new SecurityContext();
-        $this->startupProbe = new Probe();
         $this->volumeDevices = new VolumeDeviceList();
         $this->volumeMounts = new VolumeMountList();
     }
@@ -303,12 +298,12 @@ class EphemeralContainer implements JsonSerializable
 
     public function lifecycle(): Lifecycle
     {
-        return $this->lifecycle;
+        return $this->lifecycle ??= new Lifecycle();
     }
 
     public function livenessProbe(): Probe
     {
-        return $this->livenessProbe;
+        return $this->livenessProbe ??= new Probe();
     }
 
     public function ports(): ContainerPortList
@@ -318,7 +313,7 @@ class EphemeralContainer implements JsonSerializable
 
     public function readinessProbe(): Probe
     {
-        return $this->readinessProbe;
+        return $this->readinessProbe ??= new Probe();
     }
 
     public function resizePolicy(): ContainerResizePolicyList
@@ -328,7 +323,7 @@ class EphemeralContainer implements JsonSerializable
 
     public function resources(): ResourceRequirements
     {
-        return $this->resources;
+        return $this->resources ??= new ResourceRequirements();
     }
 
     public function restartPolicyRules(): ContainerRestartRuleList
@@ -338,7 +333,7 @@ class EphemeralContainer implements JsonSerializable
 
     public function securityContext(): SecurityContext
     {
-        return $this->securityContext;
+        return $this->securityContext ??= new SecurityContext();
     }
 
     public function setImage(string $image): self
@@ -420,7 +415,7 @@ class EphemeralContainer implements JsonSerializable
 
     public function startupProbe(): Probe
     {
-        return $this->startupProbe;
+        return $this->startupProbe ??= new Probe();
     }
 
     public function volumeDevices(): VolumeDeviceList
@@ -433,9 +428,9 @@ class EphemeralContainer implements JsonSerializable
         return $this->volumeMounts;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'args' => $this->args,
             'command' => $this->command,
             'env' => $this->env,
@@ -462,6 +457,6 @@ class EphemeralContainer implements JsonSerializable
             'volumeDevices' => $this->volumeDevices,
             'volumeMounts' => $this->volumeMounts,
             'workingDir' => $this->workingDir,
-        ];
+        ]);
     }
 }

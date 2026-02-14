@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Apimachinery\Pkg\Apis\Meta\V1;
 
+use ArrayObject;
 use JsonSerializable;
 
 /**
@@ -105,13 +106,13 @@ class ListMeta implements JsonSerializable
         return $this;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'continue' => $this->continue,
             'remainingItemCount' => $this->remainingItemCount,
             'resourceVersion' => $this->resourceVersion,
             'selfLink' => $this->selfLink,
-        ];
+        ]);
     }
 }

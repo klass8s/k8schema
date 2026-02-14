@@ -11,7 +11,7 @@ class LimitRangeItemList implements JsonSerializable
     /**
      * @var LimitRangeItem[]
      */
-    private array $items = [];
+    private array $items;
 
     public function __construct()
     {
@@ -25,11 +25,6 @@ class LimitRangeItemList implements JsonSerializable
         return $this;
     }
 
-    /**
-     * @var LimitRangeItem[] $items
-     *
-     * @return self
-     */
     public function addAll(array $items): self
     {
         foreach ($items as $value) {

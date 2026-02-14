@@ -11,7 +11,7 @@ class OwnerReferenceList implements JsonSerializable
     /**
      * @var OwnerReference[]
      */
-    private array $items = [];
+    private array $items;
 
     public function __construct()
     {
@@ -25,11 +25,6 @@ class OwnerReferenceList implements JsonSerializable
         return $this;
     }
 
-    /**
-     * @var OwnerReference[] $items
-     *
-     * @return self
-     */
     public function addAll(array $items): self
     {
         foreach ($items as $value) {

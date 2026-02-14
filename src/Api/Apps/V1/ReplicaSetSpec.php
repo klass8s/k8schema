@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Apps\V1;
 
+use ArrayObject;
 use JsonSerializable;
 use K8Schema\Api\Core\V1\PodTemplateSpec;
 use K8Schema\Apimachinery\Pkg\Apis\Meta\V1\LabelSelector;
@@ -40,12 +41,11 @@ class ReplicaSetSpec implements JsonSerializable
      * insufficient replicas are detected. More info:
      * https://kubernetes.io/docs/concepts/workloads/controllers/replicaset/#pod-template
      */
-    private PodTemplateSpec $template;
+    private PodTemplateSpec|null $template = null;
 
     public function __construct()
     {
         $this->selector = new LabelSelector();
-        $this->template = new PodTemplateSpec();
     }
 
     public function getMinReadySeconds(): int|null
@@ -79,16 +79,16 @@ class ReplicaSetSpec implements JsonSerializable
 
     public function template(): PodTemplateSpec
     {
-        return $this->template;
+        return $this->template ??= new PodTemplateSpec();
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'minReadySeconds' => $this->minReadySeconds,
             'replicas' => $this->replicas,
             'selector' => $this->selector,
             'template' => $this->template,
-        ];
+        ]);
     }
 }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Apps\V1;
 
+use ArrayObject;
 use K8Schema\APIResourceInterface;
 use K8Schema\Apimachinery\Pkg\Apis\Meta\V1\ObjectMeta;
 use K8Schema\Apimachinery\Pkg\Runtime\RawExtension;
@@ -27,13 +28,13 @@ class ControllerRevision implements APIResourceInterface
     /**
      * Data is the serialized representation of the state.
      */
-    private RawExtension $data;
+    private RawExtension|null $data = null;
 
     /**
      * Standard object's metadata. More info:
      * https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
      */
-    private ObjectMeta $metadata;
+    private ObjectMeta|null $metadata = null;
 
     /**
      * Revision indicates the revision of the state represented by Data.
@@ -42,14 +43,12 @@ class ControllerRevision implements APIResourceInterface
 
     public function __construct(int $revision)
     {
-        $this->data = new RawExtension();
-        $this->metadata = new ObjectMeta();
         $this->revision = $revision;
     }
 
     public function data(): RawExtension
     {
-        return $this->data;
+        return $this->data ??= new RawExtension();
     }
 
     public function getRevision(): int
@@ -59,7 +58,7 @@ class ControllerRevision implements APIResourceInterface
 
     public function metadata(): ObjectMeta
     {
-        return $this->metadata;
+        return $this->metadata ??= new ObjectMeta();
     }
 
     public function setRevision(int $revision): self
@@ -69,14 +68,14 @@ class ControllerRevision implements APIResourceInterface
         return $this;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'apiVersion' => self::API_VERSION,
             'kind' => self::KIND,
             'data' => $this->data,
             'metadata' => $this->metadata,
             'revision' => $this->revision,
-        ];
+        ]);
     }
 }

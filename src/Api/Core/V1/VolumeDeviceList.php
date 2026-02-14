@@ -11,7 +11,7 @@ class VolumeDeviceList implements JsonSerializable
     /**
      * @var VolumeDevice[]
      */
-    private array $items = [];
+    private array $items;
 
     public function __construct()
     {
@@ -25,11 +25,6 @@ class VolumeDeviceList implements JsonSerializable
         return $this;
     }
 
-    /**
-     * @var VolumeDevice[] $items
-     *
-     * @return self
-     */
     public function addAll(array $items): self
     {
         foreach ($items as $value) {

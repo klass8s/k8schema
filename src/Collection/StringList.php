@@ -11,7 +11,7 @@ class StringList implements JsonSerializable
     /**
      * @var string[]
      */
-    private array $items = [];
+    private array $items;
 
     public function __construct()
     {
@@ -25,11 +25,6 @@ class StringList implements JsonSerializable
         return $this;
     }
 
-    /**
-     * @var string[] $items
-     *
-     * @return self
-     */
     public function addAll(array $items): self
     {
         foreach ($items as $value) {

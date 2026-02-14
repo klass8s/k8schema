@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Core\V1;
 
+use ArrayObject;
 use JsonSerializable;
 use K8Schema\Collection\StringList;
 
@@ -38,11 +39,11 @@ class Capabilities implements JsonSerializable
         return $this->drop;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'add' => $this->add,
             'drop' => $this->drop,
-        ];
+        ]);
     }
 }

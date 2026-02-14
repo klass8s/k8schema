@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Batch\V1;
 
+use ArrayObject;
 use JsonSerializable;
 use K8Schema\Api\Core\V1\PodTemplateSpec;
 use K8Schema\Apimachinery\Pkg\Apis\Meta\V1\LabelSelector;
@@ -126,7 +127,7 @@ class JobSpec implements JsonSerializable
      * it is checked against the backoffLimit. This field cannot be used in combination
      * with restartPolicy=OnFailure.
      */
-    private PodFailurePolicy $podFailurePolicy;
+    private PodFailurePolicy|null $podFailurePolicy = null;
 
     /**
      * podReplacementPolicy specifies when to create replacement Pods. Possible values
@@ -147,7 +148,7 @@ class JobSpec implements JsonSerializable
      * sets this field for you. More info:
      * https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/#label-selectors
      */
-    private LabelSelector $selector;
+    private LabelSelector|null $selector = null;
 
     /**
      * successPolicy specifies the policy when the Job can be declared as succeeded. If
@@ -156,7 +157,7 @@ class JobSpec implements JsonSerializable
      * specified, it must be immutable and works only for the Indexed Jobs. Once the
      * Job meets the SuccessPolicy, the lingering pods are terminated.
      */
-    private SuccessPolicy $successPolicy;
+    private SuccessPolicy|null $successPolicy = null;
 
     /**
      * suspend specifies whether the Job controller should create Pods or not. If a Job
@@ -189,9 +190,6 @@ class JobSpec implements JsonSerializable
 
     public function __construct()
     {
-        $this->podFailurePolicy = new PodFailurePolicy();
-        $this->selector = new LabelSelector();
-        $this->successPolicy = new SuccessPolicy();
         $this->template = new PodTemplateSpec();
     }
 
@@ -257,12 +255,12 @@ class JobSpec implements JsonSerializable
 
     public function podFailurePolicy(): PodFailurePolicy
     {
-        return $this->podFailurePolicy;
+        return $this->podFailurePolicy ??= new PodFailurePolicy();
     }
 
     public function selector(): LabelSelector
     {
-        return $this->selector;
+        return $this->selector ??= new LabelSelector();
     }
 
     public function setActiveDeadlineSeconds(int $activeDeadlineSeconds): self
@@ -351,7 +349,7 @@ class JobSpec implements JsonSerializable
 
     public function successPolicy(): SuccessPolicy
     {
-        return $this->successPolicy;
+        return $this->successPolicy ??= new SuccessPolicy();
     }
 
     public function template(): PodTemplateSpec
@@ -359,9 +357,9 @@ class JobSpec implements JsonSerializable
         return $this->template;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'activeDeadlineSeconds' => $this->activeDeadlineSeconds,
             'backoffLimit' => $this->backoffLimit,
             'backoffLimitPerIndex' => $this->backoffLimitPerIndex,
@@ -378,6 +376,6 @@ class JobSpec implements JsonSerializable
             'suspend' => $this->suspend,
             'template' => $this->template,
             'ttlSecondsAfterFinished' => $this->ttlSecondsAfterFinished,
-        ];
+        ]);
     }
 }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Resource\V1alpha3;
 
+use ArrayObject;
 use JsonSerializable;
 
 /**
@@ -107,14 +108,14 @@ class DeviceTaintSelector implements JsonSerializable
         return $this;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'device' => $this->device,
             'deviceClassName' => $this->deviceClassName,
             'driver' => $this->driver,
             'pool' => $this->pool,
             'selectors' => $this->selectors,
-        ];
+        ]);
     }
 }

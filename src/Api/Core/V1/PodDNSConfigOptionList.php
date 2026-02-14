@@ -11,7 +11,7 @@ class PodDNSConfigOptionList implements JsonSerializable
     /**
      * @var PodDNSConfigOption[]
      */
-    private array $items = [];
+    private array $items;
 
     public function __construct()
     {
@@ -25,11 +25,6 @@ class PodDNSConfigOptionList implements JsonSerializable
         return $this;
     }
 
-    /**
-     * @var PodDNSConfigOption[] $items
-     *
-     * @return self
-     */
     public function addAll(array $items): self
     {
         foreach ($items as $value) {

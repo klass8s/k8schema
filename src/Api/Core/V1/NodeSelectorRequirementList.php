@@ -11,7 +11,7 @@ class NodeSelectorRequirementList implements JsonSerializable
     /**
      * @var NodeSelectorRequirement[]
      */
-    private array $items = [];
+    private array $items;
 
     public function __construct()
     {
@@ -25,11 +25,6 @@ class NodeSelectorRequirementList implements JsonSerializable
         return $this;
     }
 
-    /**
-     * @var NodeSelectorRequirement[] $items
-     *
-     * @return self
-     */
     public function addAll(array $items): self
     {
         foreach ($items as $value) {

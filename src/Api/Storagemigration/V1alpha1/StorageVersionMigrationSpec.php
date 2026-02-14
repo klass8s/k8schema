@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Storagemigration\V1alpha1;
 
+use ArrayObject;
 use JsonSerializable;
 
 /**
@@ -46,11 +47,11 @@ class StorageVersionMigrationSpec implements JsonSerializable
         return $this;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'continueToken' => $this->continueToken,
             'resource' => $this->resource,
-        ];
+        ]);
     }
 }

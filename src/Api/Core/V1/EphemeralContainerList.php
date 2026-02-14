@@ -11,7 +11,7 @@ class EphemeralContainerList implements JsonSerializable
     /**
      * @var EphemeralContainer[]
      */
-    private array $items = [];
+    private array $items;
 
     public function __construct()
     {
@@ -25,11 +25,6 @@ class EphemeralContainerList implements JsonSerializable
         return $this;
     }
 
-    /**
-     * @var EphemeralContainer[] $items
-     *
-     * @return self
-     */
     public function addAll(array $items): self
     {
         foreach ($items as $value) {

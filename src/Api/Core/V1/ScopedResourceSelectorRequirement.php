@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Core\V1;
 
+use ArrayObject;
 use JsonSerializable;
 use K8Schema\Collection\StringList;
 
@@ -67,12 +68,12 @@ class ScopedResourceSelectorRequirement implements JsonSerializable
         return $this->values;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'operator' => $this->operator,
             'scopeName' => $this->scopeName,
             'values' => $this->values,
-        ];
+        ]);
     }
 }

@@ -11,7 +11,7 @@ class IngressTLSList implements JsonSerializable
     /**
      * @var IngressTLS[]
      */
-    private array $items = [];
+    private array $items;
 
     public function __construct()
     {
@@ -25,11 +25,6 @@ class IngressTLSList implements JsonSerializable
         return $this;
     }
 
-    /**
-     * @var IngressTLS[] $items
-     *
-     * @return self
-     */
     public function addAll(array $items): self
     {
         foreach ($items as $value) {
