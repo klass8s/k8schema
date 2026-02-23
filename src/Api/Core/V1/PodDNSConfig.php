@@ -56,6 +56,27 @@ class PodDNSConfig implements JsonSerializable
         return $this->searches;
     }
 
+    public function setNameservers(StringList $nameservers): self
+    {
+        $this->nameservers = $nameservers;
+
+        return $this;
+    }
+
+    public function setOptions(PodDNSConfigOptionList $options): self
+    {
+        $this->options = $options;
+
+        return $this;
+    }
+
+    public function setSearches(StringList $searches): self
+    {
+        $this->searches = $searches;
+
+        return $this;
+    }
+
     public function jsonSerialize(): ArrayObject
     {
         return new ArrayObject([

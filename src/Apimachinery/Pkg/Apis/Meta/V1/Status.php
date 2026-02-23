@@ -59,9 +59,19 @@ class Status implements APIResourceListInterface
         return $this->code;
     }
 
+    public function getDetails(): StatusDetails|null
+    {
+        return $this->details;
+    }
+
     public function getMessage(): string|null
     {
         return $this->message;
+    }
+
+    public function getMetadata(): ListMeta|null
+    {
+        return $this->metadata;
     }
 
     public function getReason(): string|null
@@ -81,9 +91,23 @@ class Status implements APIResourceListInterface
         return $this;
     }
 
+    public function setDetails(StatusDetails $details): self
+    {
+        $this->details = $details;
+
+        return $this;
+    }
+
     public function setMessage(string $message): self
     {
         $this->message = $message;
+
+        return $this;
+    }
+
+    public function setMetadata(ListMeta $metadata): self
+    {
+        $this->metadata = $metadata;
 
         return $this;
     }

@@ -64,6 +64,11 @@ class CSIVolumeSource implements JsonSerializable
         return $this->fsType;
     }
 
+    public function getNodePublishSecretRef(): LocalObjectReference|null
+    {
+        return $this->nodePublishSecretRef;
+    }
+
     public function getReadOnly(): bool|null
     {
         return $this->readOnly;
@@ -88,9 +93,23 @@ class CSIVolumeSource implements JsonSerializable
         return $this;
     }
 
+    public function setNodePublishSecretRef(LocalObjectReference $nodePublishSecretRef): self
+    {
+        $this->nodePublishSecretRef = $nodePublishSecretRef;
+
+        return $this;
+    }
+
     public function setReadOnly(bool $readOnly): self
     {
         $this->readOnly = $readOnly;
+
+        return $this;
+    }
+
+    public function setVolumeAttributes(StringMap $volumeAttributes): self
+    {
+        $this->volumeAttributes = $volumeAttributes;
 
         return $this;
     }

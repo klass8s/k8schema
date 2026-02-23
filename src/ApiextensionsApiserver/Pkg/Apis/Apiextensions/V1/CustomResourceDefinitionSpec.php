@@ -128,6 +128,13 @@ class CustomResourceDefinitionSpec implements JsonSerializable
         return $this;
     }
 
+    public function setVersions(CustomResourceDefinitionVersionList $versions): self
+    {
+        $this->versions = $versions;
+
+        return $this;
+    }
+
     public function versions(): CustomResourceDefinitionVersionList
     {
         return $this->versions;

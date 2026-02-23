@@ -64,6 +64,11 @@ class ServiceAccount implements APIResourceInterface
         return $this->automountServiceAccountToken;
     }
 
+    public function getMetadata(): ObjectMeta|null
+    {
+        return $this->metadata;
+    }
+
     public function imagePullSecrets(): LocalObjectReferenceList
     {
         return $this->imagePullSecrets;
@@ -82,6 +87,27 @@ class ServiceAccount implements APIResourceInterface
     public function setAutomountServiceAccountToken(bool $automountServiceAccountToken): self
     {
         $this->automountServiceAccountToken = $automountServiceAccountToken;
+
+        return $this;
+    }
+
+    public function setImagePullSecrets(LocalObjectReferenceList $imagePullSecrets): self
+    {
+        $this->imagePullSecrets = $imagePullSecrets;
+
+        return $this;
+    }
+
+    public function setMetadata(ObjectMeta $metadata): self
+    {
+        $this->metadata = $metadata;
+
+        return $this;
+    }
+
+    public function setSecrets(ObjectReferenceList $secrets): self
+    {
+        $this->secrets = $secrets;
 
         return $this;
     }

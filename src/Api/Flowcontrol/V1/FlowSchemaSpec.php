@@ -91,6 +91,13 @@ class FlowSchemaSpec implements JsonSerializable
         return $this;
     }
 
+    public function setRules(PolicyRulesWithSubjectsList $rules): self
+    {
+        $this->rules = $rules;
+
+        return $this;
+    }
+
     public function jsonSerialize(): ArrayObject
     {
         return new ArrayObject([

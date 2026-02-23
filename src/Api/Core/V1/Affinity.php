@@ -33,6 +33,21 @@ class Affinity implements JsonSerializable
     {
     }
 
+    public function getNodeAffinity(): NodeAffinity|null
+    {
+        return $this->nodeAffinity;
+    }
+
+    public function getPodAffinity(): PodAffinity|null
+    {
+        return $this->podAffinity;
+    }
+
+    public function getPodAntiAffinity(): PodAntiAffinity|null
+    {
+        return $this->podAntiAffinity;
+    }
+
     public function nodeAffinity(): NodeAffinity
     {
         return $this->nodeAffinity ??= new NodeAffinity();
@@ -46,6 +61,27 @@ class Affinity implements JsonSerializable
     public function podAntiAffinity(): PodAntiAffinity
     {
         return $this->podAntiAffinity ??= new PodAntiAffinity();
+    }
+
+    public function setNodeAffinity(NodeAffinity $nodeAffinity): self
+    {
+        $this->nodeAffinity = $nodeAffinity;
+
+        return $this;
+    }
+
+    public function setPodAffinity(PodAffinity $podAffinity): self
+    {
+        $this->podAffinity = $podAffinity;
+
+        return $this;
+    }
+
+    public function setPodAntiAffinity(PodAntiAffinity $podAntiAffinity): self
+    {
+        $this->podAntiAffinity = $podAntiAffinity;
+
+        return $this;
     }
 
     public function jsonSerialize(): ArrayObject

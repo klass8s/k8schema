@@ -54,8 +54,8 @@ class FieldSelectorRequirementList implements JsonSerializable
         return count($this->items);
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): array|null
     {
-        return $this->items;
+        return count($this->items) > 0 ? $this->items : null;
     }
 }

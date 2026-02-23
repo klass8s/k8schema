@@ -76,6 +76,11 @@ class PodDisruptionBudgetSpec implements JsonSerializable
         return $this->minAvailable;
     }
 
+    public function getSelector(): LabelSelector|null
+    {
+        return $this->selector;
+    }
+
     public function getUnhealthyPodEvictionPolicy(): string|null
     {
         return $this->unhealthyPodEvictionPolicy;
@@ -96,6 +101,13 @@ class PodDisruptionBudgetSpec implements JsonSerializable
     public function setMinAvailable(string|int $minAvailable): self
     {
         $this->minAvailable = $minAvailable;
+
+        return $this;
+    }
+
+    public function setSelector(LabelSelector $selector): self
+    {
+        $this->selector = $selector;
 
         return $this;
     }

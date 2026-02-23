@@ -123,6 +123,16 @@ class MatchResources implements JsonSerializable
         return $this->matchPolicy;
     }
 
+    public function getNamespaceSelector(): LabelSelector|null
+    {
+        return $this->namespaceSelector;
+    }
+
+    public function getObjectSelector(): LabelSelector|null
+    {
+        return $this->objectSelector;
+    }
+
     public function namespaceSelector(): LabelSelector
     {
         return $this->namespaceSelector ??= new LabelSelector();
@@ -138,9 +148,37 @@ class MatchResources implements JsonSerializable
         return $this->resourceRules;
     }
 
+    public function setExcludeResourceRules(NamedRuleWithOperationsList $excludeResourceRules): self
+    {
+        $this->excludeResourceRules = $excludeResourceRules;
+
+        return $this;
+    }
+
     public function setMatchPolicy(string $matchPolicy): self
     {
         $this->matchPolicy = $matchPolicy;
+
+        return $this;
+    }
+
+    public function setNamespaceSelector(LabelSelector $namespaceSelector): self
+    {
+        $this->namespaceSelector = $namespaceSelector;
+
+        return $this;
+    }
+
+    public function setObjectSelector(LabelSelector $objectSelector): self
+    {
+        $this->objectSelector = $objectSelector;
+
+        return $this;
+    }
+
+    public function setResourceRules(NamedRuleWithOperationsList $resourceRules): self
+    {
+        $this->resourceRules = $resourceRules;
 
         return $this;
     }

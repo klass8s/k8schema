@@ -104,6 +104,41 @@ class NamedRuleWithOperations implements JsonSerializable
         return $this->resources;
     }
 
+    public function setApiGroups(StringList $apiGroups): self
+    {
+        $this->apiGroups = $apiGroups;
+
+        return $this;
+    }
+
+    public function setApiVersions(StringList $apiVersions): self
+    {
+        $this->apiVersions = $apiVersions;
+
+        return $this;
+    }
+
+    public function setOperations(StringList $operations): self
+    {
+        $this->operations = $operations;
+
+        return $this;
+    }
+
+    public function setResourceNames(StringList $resourceNames): self
+    {
+        $this->resourceNames = $resourceNames;
+
+        return $this;
+    }
+
+    public function setResources(StringList $resources): self
+    {
+        $this->resources = $resources;
+
+        return $this;
+    }
+
     public function setScope(string $scope): self
     {
         $this->scope = $scope;

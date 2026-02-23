@@ -59,6 +59,11 @@ class VolumeAttributesClass implements APIResourceInterface
         return $this->driverName;
     }
 
+    public function getMetadata(): ObjectMeta|null
+    {
+        return $this->metadata;
+    }
+
     public function metadata(): ObjectMeta
     {
         return $this->metadata ??= new ObjectMeta();
@@ -72,6 +77,20 @@ class VolumeAttributesClass implements APIResourceInterface
     public function setDriverName(string $driverName): self
     {
         $this->driverName = $driverName;
+
+        return $this;
+    }
+
+    public function setMetadata(ObjectMeta $metadata): self
+    {
+        $this->metadata = $metadata;
+
+        return $this;
+    }
+
+    public function setParameters(StringMap $parameters): self
+    {
+        $this->parameters = $parameters;
 
         return $this;
     }

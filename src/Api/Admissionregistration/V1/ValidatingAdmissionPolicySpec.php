@@ -115,6 +115,16 @@ class ValidatingAdmissionPolicySpec implements JsonSerializable
         return $this->failurePolicy;
     }
 
+    public function getMatchConstraints(): MatchResources|null
+    {
+        return $this->matchConstraints;
+    }
+
+    public function getParamKind(): ParamKind|null
+    {
+        return $this->paramKind;
+    }
+
     public function matchConditions(): MatchConditionList
     {
         return $this->matchConditions;
@@ -130,9 +140,51 @@ class ValidatingAdmissionPolicySpec implements JsonSerializable
         return $this->paramKind ??= new ParamKind();
     }
 
+    public function setAuditAnnotations(AuditAnnotationList $auditAnnotations): self
+    {
+        $this->auditAnnotations = $auditAnnotations;
+
+        return $this;
+    }
+
     public function setFailurePolicy(string $failurePolicy): self
     {
         $this->failurePolicy = $failurePolicy;
+
+        return $this;
+    }
+
+    public function setMatchConditions(MatchConditionList $matchConditions): self
+    {
+        $this->matchConditions = $matchConditions;
+
+        return $this;
+    }
+
+    public function setMatchConstraints(MatchResources $matchConstraints): self
+    {
+        $this->matchConstraints = $matchConstraints;
+
+        return $this;
+    }
+
+    public function setParamKind(ParamKind $paramKind): self
+    {
+        $this->paramKind = $paramKind;
+
+        return $this;
+    }
+
+    public function setValidations(ValidationList $validations): self
+    {
+        $this->validations = $validations;
+
+        return $this;
+    }
+
+    public function setVariables(VariableList $variables): self
+    {
+        $this->variables = $variables;
 
         return $this;
     }

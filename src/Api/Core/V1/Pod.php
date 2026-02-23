@@ -40,6 +40,20 @@ class Pod implements APIResourceInterface
         return $this->metadata;
     }
 
+    public function setMetadata(ObjectMeta $metadata): self
+    {
+        $this->metadata = $metadata;
+
+        return $this;
+    }
+
+    public function setSpec(PodSpec $spec): self
+    {
+        $this->spec = $spec;
+
+        return $this;
+    }
+
     public function spec(): PodSpec
     {
         return $this->spec;

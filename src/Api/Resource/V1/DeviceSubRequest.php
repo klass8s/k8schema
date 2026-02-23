@@ -127,6 +127,11 @@ class DeviceSubRequest implements JsonSerializable
         return $this->allocationMode;
     }
 
+    public function getCapacity(): CapacityRequirements|null
+    {
+        return $this->capacity;
+    }
+
     public function getCount(): int|null
     {
         return $this->count;
@@ -154,6 +159,13 @@ class DeviceSubRequest implements JsonSerializable
         return $this;
     }
 
+    public function setCapacity(CapacityRequirements $capacity): self
+    {
+        $this->capacity = $capacity;
+
+        return $this;
+    }
+
     public function setCount(int $count): self
     {
         $this->count = $count;
@@ -171,6 +183,20 @@ class DeviceSubRequest implements JsonSerializable
     public function setName(string $name): self
     {
         $this->name = $name;
+
+        return $this;
+    }
+
+    public function setSelectors(DeviceSelectorList $selectors): self
+    {
+        $this->selectors = $selectors;
+
+        return $this;
+    }
+
+    public function setTolerations(DeviceTolerationList $tolerations): self
+    {
+        $this->tolerations = $tolerations;
 
         return $this;
     }

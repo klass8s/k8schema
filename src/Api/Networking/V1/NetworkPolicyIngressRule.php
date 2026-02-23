@@ -48,6 +48,20 @@ class NetworkPolicyIngressRule implements JsonSerializable
         return $this->ports;
     }
 
+    public function setFrom(NetworkPolicyPeerList $from): self
+    {
+        $this->from = $from;
+
+        return $this;
+    }
+
+    public function setPorts(NetworkPolicyPortList $ports): self
+    {
+        $this->ports = $ports;
+
+        return $this;
+    }
+
     public function jsonSerialize(): ArrayObject
     {
         return new ArrayObject([

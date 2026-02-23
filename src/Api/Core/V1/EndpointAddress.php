@@ -56,6 +56,11 @@ class EndpointAddress implements JsonSerializable
         return $this->nodeName;
     }
 
+    public function getTargetRef(): ObjectReference|null
+    {
+        return $this->targetRef;
+    }
+
     public function setHostname(string $hostname): self
     {
         $this->hostname = $hostname;
@@ -73,6 +78,13 @@ class EndpointAddress implements JsonSerializable
     public function setNodeName(string $nodeName): self
     {
         $this->nodeName = $nodeName;
+
+        return $this;
+    }
+
+    public function setTargetRef(ObjectReference $targetRef): self
+    {
+        $this->targetRef = $targetRef;
 
         return $this;
     }

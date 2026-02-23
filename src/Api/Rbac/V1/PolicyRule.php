@@ -80,6 +80,41 @@ class PolicyRule implements JsonSerializable
         return $this->resources;
     }
 
+    public function setApiGroups(StringList $apiGroups): self
+    {
+        $this->apiGroups = $apiGroups;
+
+        return $this;
+    }
+
+    public function setNonResourceURLs(StringList $nonResourceURLs): self
+    {
+        $this->nonResourceURLs = $nonResourceURLs;
+
+        return $this;
+    }
+
+    public function setResourceNames(StringList $resourceNames): self
+    {
+        $this->resourceNames = $resourceNames;
+
+        return $this;
+    }
+
+    public function setResources(StringList $resources): self
+    {
+        $this->resources = $resources;
+
+        return $this;
+    }
+
+    public function setVerbs(StringList $verbs): self
+    {
+        $this->verbs = $verbs;
+
+        return $this;
+    }
+
     public function verbs(): StringList
     {
         return $this->verbs;

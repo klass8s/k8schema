@@ -153,6 +153,13 @@ class ScaleIOVolumeSource implements JsonSerializable
         return $this;
     }
 
+    public function setSecretRef(LocalObjectReference $secretRef): self
+    {
+        $this->secretRef = $secretRef;
+
+        return $this;
+    }
+
     public function setSslEnabled(bool $sslEnabled): self
     {
         $this->sslEnabled = $sslEnabled;

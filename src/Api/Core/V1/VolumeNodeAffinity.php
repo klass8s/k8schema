@@ -22,9 +22,21 @@ class VolumeNodeAffinity implements JsonSerializable
     {
     }
 
+    public function getRequired(): NodeSelector|null
+    {
+        return $this->required;
+    }
+
     public function required(): NodeSelector
     {
         return $this->required ??= new NodeSelector();
+    }
+
+    public function setRequired(NodeSelector $required): self
+    {
+        $this->required = $required;
+
+        return $this;
     }
 
     public function jsonSerialize(): ArrayObject

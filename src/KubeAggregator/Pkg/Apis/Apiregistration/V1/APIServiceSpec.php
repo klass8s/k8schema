@@ -102,6 +102,11 @@ class APIServiceSpec implements JsonSerializable
         return $this->insecureSkipTLSVerify;
     }
 
+    public function getService(): ServiceReference|null
+    {
+        return $this->service;
+    }
+
     public function getVersion(): string|null
     {
         return $this->version;
@@ -141,6 +146,13 @@ class APIServiceSpec implements JsonSerializable
     public function setInsecureSkipTLSVerify(bool $insecureSkipTLSVerify): self
     {
         $this->insecureSkipTLSVerify = $insecureSkipTLSVerify;
+
+        return $this;
+    }
+
+    public function setService(ServiceReference $service): self
+    {
+        $this->service = $service;
 
         return $this;
     }

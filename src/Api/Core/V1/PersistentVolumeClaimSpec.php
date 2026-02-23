@@ -125,6 +125,16 @@ class PersistentVolumeClaimSpec implements JsonSerializable
         return $this->dataSourceRef;
     }
 
+    public function getResources(): VolumeResourceRequirements|null
+    {
+        return $this->resources;
+    }
+
+    public function getSelector(): LabelSelector|null
+    {
+        return $this->selector;
+    }
+
     public function getStorageClassName(): string|null
     {
         return $this->storageClassName;
@@ -155,6 +165,13 @@ class PersistentVolumeClaimSpec implements JsonSerializable
         return $this->selector ??= new LabelSelector();
     }
 
+    public function setAccessModes(StringList $accessModes): self
+    {
+        $this->accessModes = $accessModes;
+
+        return $this;
+    }
+
     public function setDataSource(TypedLocalObjectReference $dataSource): self
     {
         $this->dataSource = $dataSource;
@@ -165,6 +182,20 @@ class PersistentVolumeClaimSpec implements JsonSerializable
     public function setDataSourceRef(TypedObjectReference $dataSourceRef): self
     {
         $this->dataSourceRef = $dataSourceRef;
+
+        return $this;
+    }
+
+    public function setResources(VolumeResourceRequirements $resources): self
+    {
+        $this->resources = $resources;
+
+        return $this;
+    }
+
+    public function setSelector(LabelSelector $selector): self
+    {
+        $this->selector = $selector;
 
         return $this;
     }

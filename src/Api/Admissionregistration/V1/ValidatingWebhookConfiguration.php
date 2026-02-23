@@ -33,9 +33,28 @@ class ValidatingWebhookConfiguration implements APIResourceInterface
         $this->webhooks = new ValidatingWebhookList();
     }
 
+    public function getMetadata(): ObjectMeta|null
+    {
+        return $this->metadata;
+    }
+
     public function metadata(): ObjectMeta
     {
         return $this->metadata ??= new ObjectMeta();
+    }
+
+    public function setMetadata(ObjectMeta $metadata): self
+    {
+        $this->metadata = $metadata;
+
+        return $this;
+    }
+
+    public function setWebhooks(ValidatingWebhookList $webhooks): self
+    {
+        $this->webhooks = $webhooks;
+
+        return $this;
     }
 
     public function webhooks(): ValidatingWebhookList

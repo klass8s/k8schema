@@ -66,6 +66,11 @@ class HorizontalPodAutoscalerSpec implements JsonSerializable
         return $this->behavior ??= new HorizontalPodAutoscalerBehavior();
     }
 
+    public function getBehavior(): HorizontalPodAutoscalerBehavior|null
+    {
+        return $this->behavior;
+    }
+
     public function getMaxReplicas(): int
     {
         return $this->maxReplicas;
@@ -86,9 +91,23 @@ class HorizontalPodAutoscalerSpec implements JsonSerializable
         return $this->metrics;
     }
 
+    public function setBehavior(HorizontalPodAutoscalerBehavior $behavior): self
+    {
+        $this->behavior = $behavior;
+
+        return $this;
+    }
+
     public function setMaxReplicas(int $maxReplicas): self
     {
         $this->maxReplicas = $maxReplicas;
+
+        return $this;
+    }
+
+    public function setMetrics(MetricSpecList $metrics): self
+    {
+        $this->metrics = $metrics;
 
         return $this;
     }

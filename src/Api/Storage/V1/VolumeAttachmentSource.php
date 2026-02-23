@@ -33,6 +33,11 @@ class VolumeAttachmentSource implements JsonSerializable
     {
     }
 
+    public function getInlineVolumeSpec(): PersistentVolumeSpec|null
+    {
+        return $this->inlineVolumeSpec;
+    }
+
     public function getPersistentVolumeName(): string|null
     {
         return $this->persistentVolumeName;
@@ -41,6 +46,13 @@ class VolumeAttachmentSource implements JsonSerializable
     public function inlineVolumeSpec(): PersistentVolumeSpec
     {
         return $this->inlineVolumeSpec ??= new PersistentVolumeSpec();
+    }
+
+    public function setInlineVolumeSpec(PersistentVolumeSpec $inlineVolumeSpec): self
+    {
+        $this->inlineVolumeSpec = $inlineVolumeSpec;
+
+        return $this;
     }
 
     public function setPersistentVolumeName(string $persistentVolumeName): self

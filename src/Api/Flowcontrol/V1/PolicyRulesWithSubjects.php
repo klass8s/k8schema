@@ -55,6 +55,27 @@ class PolicyRulesWithSubjects implements JsonSerializable
         return $this->resourceRules;
     }
 
+    public function setNonResourceRules(NonResourcePolicyRuleList $nonResourceRules): self
+    {
+        $this->nonResourceRules = $nonResourceRules;
+
+        return $this;
+    }
+
+    public function setResourceRules(ResourcePolicyRuleList $resourceRules): self
+    {
+        $this->resourceRules = $resourceRules;
+
+        return $this;
+    }
+
+    public function setSubjects(SubjectList $subjects): self
+    {
+        $this->subjects = $subjects;
+
+        return $this;
+    }
+
     public function subjects(): SubjectList
     {
         return $this->subjects;

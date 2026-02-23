@@ -69,6 +69,11 @@ class EndpointSlice implements APIResourceInterface
         return $this->addressType;
     }
 
+    public function getMetadata(): ObjectMeta|null
+    {
+        return $this->metadata;
+    }
+
     public function metadata(): ObjectMeta
     {
         return $this->metadata ??= new ObjectMeta();
@@ -82,6 +87,27 @@ class EndpointSlice implements APIResourceInterface
     public function setAddressType(string $addressType): self
     {
         $this->addressType = $addressType;
+
+        return $this;
+    }
+
+    public function setEndpoints(EndpointList $endpoints): self
+    {
+        $this->endpoints = $endpoints;
+
+        return $this;
+    }
+
+    public function setMetadata(ObjectMeta $metadata): self
+    {
+        $this->metadata = $metadata;
+
+        return $this;
+    }
+
+    public function setPorts(EndpointPortList $ports): self
+    {
+        $this->ports = $ports;
 
         return $this;
     }

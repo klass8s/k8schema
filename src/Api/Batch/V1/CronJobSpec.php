@@ -131,6 +131,13 @@ class CronJobSpec implements JsonSerializable
         return $this;
     }
 
+    public function setJobTemplate(JobTemplateSpec $jobTemplate): self
+    {
+        $this->jobTemplate = $jobTemplate;
+
+        return $this;
+    }
+
     public function setSchedule(string $schedule): self
     {
         $this->schedule = $schedule;

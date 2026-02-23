@@ -51,6 +51,13 @@ class DeviceCounterConsumption implements JsonSerializable
         return $this;
     }
 
+    public function setCounters(CounterMap $counters): self
+    {
+        $this->counters = $counters;
+
+        return $this;
+    }
+
     public function jsonSerialize(): ArrayObject
     {
         return new ArrayObject([

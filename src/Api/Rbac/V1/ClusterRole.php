@@ -44,6 +44,16 @@ class ClusterRole implements APIResourceInterface
         return $this->aggregationRule ??= new AggregationRule();
     }
 
+    public function getAggregationRule(): AggregationRule|null
+    {
+        return $this->aggregationRule;
+    }
+
+    public function getMetadata(): ObjectMeta|null
+    {
+        return $this->metadata;
+    }
+
     public function metadata(): ObjectMeta
     {
         return $this->metadata ??= new ObjectMeta();
@@ -52,6 +62,27 @@ class ClusterRole implements APIResourceInterface
     public function rules(): PolicyRuleList
     {
         return $this->rules;
+    }
+
+    public function setAggregationRule(AggregationRule $aggregationRule): self
+    {
+        $this->aggregationRule = $aggregationRule;
+
+        return $this;
+    }
+
+    public function setMetadata(ObjectMeta $metadata): self
+    {
+        $this->metadata = $metadata;
+
+        return $this;
+    }
+
+    public function setRules(PolicyRuleList $rules): self
+    {
+        $this->rules = $rules;
+
+        return $this;
     }
 
     public function jsonSerialize(): ArrayObject

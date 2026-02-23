@@ -52,6 +52,11 @@ class ClusterTrustBundleProjection implements JsonSerializable
         $this->path = $path;
     }
 
+    public function getLabelSelector(): LabelSelector|null
+    {
+        return $this->labelSelector;
+    }
+
     public function getName(): string|null
     {
         return $this->name;
@@ -75,6 +80,13 @@ class ClusterTrustBundleProjection implements JsonSerializable
     public function labelSelector(): LabelSelector
     {
         return $this->labelSelector ??= new LabelSelector();
+    }
+
+    public function setLabelSelector(LabelSelector $labelSelector): self
+    {
+        $this->labelSelector = $labelSelector;
+
+        return $this;
     }
 
     public function setName(string $name): self

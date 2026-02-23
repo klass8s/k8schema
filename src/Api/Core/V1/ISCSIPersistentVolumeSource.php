@@ -128,6 +128,11 @@ class ISCSIPersistentVolumeSource implements JsonSerializable
         return $this->readOnly;
     }
 
+    public function getSecretRef(): SecretReference|null
+    {
+        return $this->secretRef;
+    }
+
     public function getTargetPortal(): string
     {
         return $this->targetPortal;
@@ -192,9 +197,23 @@ class ISCSIPersistentVolumeSource implements JsonSerializable
         return $this;
     }
 
+    public function setPortals(StringList $portals): self
+    {
+        $this->portals = $portals;
+
+        return $this;
+    }
+
     public function setReadOnly(bool $readOnly): self
     {
         $this->readOnly = $readOnly;
+
+        return $this;
+    }
+
+    public function setSecretRef(SecretReference $secretRef): self
+    {
+        $this->secretRef = $secretRef;
 
         return $this;
     }

@@ -87,6 +87,13 @@ class HPAScalingRules implements JsonSerializable
         return $this->policies;
     }
 
+    public function setPolicies(HPAScalingPolicyList $policies): self
+    {
+        $this->policies = $policies;
+
+        return $this;
+    }
+
     public function setSelectPolicy(string $selectPolicy): self
     {
         $this->selectPolicy = $selectPolicy;

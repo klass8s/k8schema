@@ -31,6 +31,13 @@ class ServiceCIDRSpec implements JsonSerializable
         return $this->cidrs;
     }
 
+    public function setCidrs(StringList $cidrs): self
+    {
+        $this->cidrs = $cidrs;
+
+        return $this;
+    }
+
     public function jsonSerialize(): ArrayObject
     {
         return new ArrayObject([

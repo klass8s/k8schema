@@ -63,6 +63,13 @@ class LabelSelectorAttributes implements JsonSerializable
         return $this;
     }
 
+    public function setRequirements(LabelSelectorRequirementList $requirements): self
+    {
+        $this->requirements = $requirements;
+
+        return $this;
+    }
+
     public function jsonSerialize(): ArrayObject
     {
         return new ArrayObject([

@@ -59,6 +59,11 @@ class ReplicationControllerSpec implements JsonSerializable
         return $this->replicas;
     }
 
+    public function getTemplate(): PodTemplateSpec|null
+    {
+        return $this->template;
+    }
+
     public function selector(): StringMap
     {
         return $this->selector;
@@ -74,6 +79,20 @@ class ReplicationControllerSpec implements JsonSerializable
     public function setReplicas(int $replicas): self
     {
         $this->replicas = $replicas;
+
+        return $this;
+    }
+
+    public function setSelector(StringMap $selector): self
+    {
+        $this->selector = $selector;
+
+        return $this;
+    }
+
+    public function setTemplate(PodTemplateSpec $template): self
+    {
+        $this->template = $template;
 
         return $this;
     }

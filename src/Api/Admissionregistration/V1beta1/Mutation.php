@@ -42,6 +42,16 @@ class Mutation implements JsonSerializable
         return $this->applyConfiguration ??= new ApplyConfiguration();
     }
 
+    public function getApplyConfiguration(): ApplyConfiguration|null
+    {
+        return $this->applyConfiguration;
+    }
+
+    public function getJsonPatch(): JSONPatch|null
+    {
+        return $this->jsonPatch;
+    }
+
     public function getPatchType(): string
     {
         return $this->patchType;
@@ -50,6 +60,20 @@ class Mutation implements JsonSerializable
     public function jsonPatch(): JSONPatch
     {
         return $this->jsonPatch ??= new JSONPatch();
+    }
+
+    public function setApplyConfiguration(ApplyConfiguration $applyConfiguration): self
+    {
+        $this->applyConfiguration = $applyConfiguration;
+
+        return $this;
+    }
+
+    public function setJsonPatch(JSONPatch $jsonPatch): self
+    {
+        $this->jsonPatch = $jsonPatch;
+
+        return $this;
     }
 
     public function setPatchType(string $patchType): self

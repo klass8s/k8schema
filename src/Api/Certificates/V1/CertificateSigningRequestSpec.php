@@ -178,6 +178,20 @@ class CertificateSigningRequestSpec implements JsonSerializable
         return $this;
     }
 
+    public function setExtra(StringListMap $extra): self
+    {
+        $this->extra = $extra;
+
+        return $this;
+    }
+
+    public function setGroups(StringList $groups): self
+    {
+        $this->groups = $groups;
+
+        return $this;
+    }
+
     public function setRequest(string $request): self
     {
         $this->request = $request;
@@ -195,6 +209,13 @@ class CertificateSigningRequestSpec implements JsonSerializable
     public function setUid(string $uid): self
     {
         $this->uid = $uid;
+
+        return $this;
+    }
+
+    public function setUsages(StringList $usages): self
+    {
+        $this->usages = $usages;
 
         return $this;
     }

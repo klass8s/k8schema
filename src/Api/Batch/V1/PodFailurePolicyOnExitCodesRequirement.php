@@ -80,6 +80,13 @@ class PodFailurePolicyOnExitCodesRequirement implements JsonSerializable
         return $this;
     }
 
+    public function setValues(IntList $values): self
+    {
+        $this->values = $values;
+
+        return $this;
+    }
+
     public function values(): IntList
     {
         return $this->values;

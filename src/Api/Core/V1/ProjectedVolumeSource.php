@@ -45,6 +45,13 @@ class ProjectedVolumeSource implements JsonSerializable
         return $this;
     }
 
+    public function setSources(VolumeProjectionList $sources): self
+    {
+        $this->sources = $sources;
+
+        return $this;
+    }
+
     public function sources(): VolumeProjectionList
     {
         return $this->sources;

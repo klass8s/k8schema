@@ -48,6 +48,16 @@ class Lifecycle implements JsonSerializable
     {
     }
 
+    public function getPostStart(): LifecycleHandler|null
+    {
+        return $this->postStart;
+    }
+
+    public function getPreStop(): LifecycleHandler|null
+    {
+        return $this->preStop;
+    }
+
     public function getStopSignal(): string|null
     {
         return $this->stopSignal;
@@ -61,6 +71,20 @@ class Lifecycle implements JsonSerializable
     public function preStop(): LifecycleHandler
     {
         return $this->preStop ??= new LifecycleHandler();
+    }
+
+    public function setPostStart(LifecycleHandler $postStart): self
+    {
+        $this->postStart = $postStart;
+
+        return $this;
+    }
+
+    public function setPreStop(LifecycleHandler $preStop): self
+    {
+        $this->preStop = $preStop;
+
+        return $this;
     }
 
     public function setStopSignal(string $stopSignal): self

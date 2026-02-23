@@ -81,6 +81,16 @@ class PodAffinityTerm implements JsonSerializable
         $this->topologyKey = $topologyKey;
     }
 
+    public function getLabelSelector(): LabelSelector|null
+    {
+        return $this->labelSelector;
+    }
+
+    public function getNamespaceSelector(): LabelSelector|null
+    {
+        return $this->namespaceSelector;
+    }
+
     public function getTopologyKey(): string
     {
         return $this->topologyKey;
@@ -109,6 +119,41 @@ class PodAffinityTerm implements JsonSerializable
     public function namespaces(): StringList
     {
         return $this->namespaces;
+    }
+
+    public function setLabelSelector(LabelSelector $labelSelector): self
+    {
+        $this->labelSelector = $labelSelector;
+
+        return $this;
+    }
+
+    public function setMatchLabelKeys(StringList $matchLabelKeys): self
+    {
+        $this->matchLabelKeys = $matchLabelKeys;
+
+        return $this;
+    }
+
+    public function setMismatchLabelKeys(StringList $mismatchLabelKeys): self
+    {
+        $this->mismatchLabelKeys = $mismatchLabelKeys;
+
+        return $this;
+    }
+
+    public function setNamespaceSelector(LabelSelector $namespaceSelector): self
+    {
+        $this->namespaceSelector = $namespaceSelector;
+
+        return $this;
+    }
+
+    public function setNamespaces(StringList $namespaces): self
+    {
+        $this->namespaces = $namespaces;
+
+        return $this;
     }
 
     public function setTopologyKey(string $topologyKey): self

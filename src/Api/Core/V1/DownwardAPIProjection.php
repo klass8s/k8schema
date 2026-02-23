@@ -28,6 +28,13 @@ class DownwardAPIProjection implements JsonSerializable
         return $this->items;
     }
 
+    public function setItems(DownwardAPIVolumeFileList $items): self
+    {
+        $this->items = $items;
+
+        return $this;
+    }
+
     public function jsonSerialize(): ArrayObject
     {
         return new ArrayObject([

@@ -261,6 +261,20 @@ class CSIDriverSpec implements JsonSerializable
         return $this;
     }
 
+    public function setTokenRequests(TokenRequestList $tokenRequests): self
+    {
+        $this->tokenRequests = $tokenRequests;
+
+        return $this;
+    }
+
+    public function setVolumeLifecycleModes(StringList $volumeLifecycleModes): self
+    {
+        $this->volumeLifecycleModes = $volumeLifecycleModes;
+
+        return $this;
+    }
+
     public function tokenRequests(): TokenRequestList
     {
         return $this->tokenRequests;

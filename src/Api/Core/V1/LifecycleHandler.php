@@ -44,6 +44,11 @@ class LifecycleHandler implements JsonSerializable
         return $this->exec ??= new ExecAction();
     }
 
+    public function getExec(): ExecAction|null
+    {
+        return $this->exec;
+    }
+
     public function getHttpGet(): HTTPGetAction|null
     {
         return $this->httpGet;
@@ -57,6 +62,13 @@ class LifecycleHandler implements JsonSerializable
     public function getTcpSocket(): TCPSocketAction|null
     {
         return $this->tcpSocket;
+    }
+
+    public function setExec(ExecAction $exec): self
+    {
+        $this->exec = $exec;
+
+        return $this;
     }
 
     public function setHttpGet(HTTPGetAction $httpGet): self

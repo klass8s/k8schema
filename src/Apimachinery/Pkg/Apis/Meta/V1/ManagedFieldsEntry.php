@@ -82,6 +82,11 @@ class ManagedFieldsEntry implements JsonSerializable
         return $this->fieldsType;
     }
 
+    public function getFieldsV1(): FieldsV1|null
+    {
+        return $this->fieldsV1;
+    }
+
     public function getManager(): string|null
     {
         return $this->manager;
@@ -112,6 +117,13 @@ class ManagedFieldsEntry implements JsonSerializable
     public function setFieldsType(string $fieldsType): self
     {
         $this->fieldsType = $fieldsType;
+
+        return $this;
+    }
+
+    public function setFieldsV1(FieldsV1 $fieldsV1): self
+    {
+        $this->fieldsV1 = $fieldsV1;
 
         return $this;
     }

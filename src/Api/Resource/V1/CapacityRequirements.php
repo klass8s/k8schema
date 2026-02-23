@@ -53,6 +53,13 @@ class CapacityRequirements implements JsonSerializable
         return $this->requests;
     }
 
+    public function setRequests(StringOrFloatMap $requests): self
+    {
+        $this->requests = $requests;
+
+        return $this;
+    }
+
     public function jsonSerialize(): ArrayObject
     {
         return new ArrayObject([

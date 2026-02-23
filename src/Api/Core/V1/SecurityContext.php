@@ -129,6 +129,11 @@ class SecurityContext implements JsonSerializable
         return $this->appArmorProfile;
     }
 
+    public function getCapabilities(): Capabilities|null
+    {
+        return $this->capabilities;
+    }
+
     public function getPrivileged(): bool|null
     {
         return $this->privileged;
@@ -159,9 +164,19 @@ class SecurityContext implements JsonSerializable
         return $this->runAsUser;
     }
 
+    public function getSeLinuxOptions(): SELinuxOptions|null
+    {
+        return $this->seLinuxOptions;
+    }
+
     public function getSeccompProfile(): SeccompProfile|null
     {
         return $this->seccompProfile;
+    }
+
+    public function getWindowsOptions(): WindowsSecurityContextOptions|null
+    {
+        return $this->windowsOptions;
     }
 
     public function seLinuxOptions(): SELinuxOptions
@@ -179,6 +194,13 @@ class SecurityContext implements JsonSerializable
     public function setAppArmorProfile(AppArmorProfile $appArmorProfile): self
     {
         $this->appArmorProfile = $appArmorProfile;
+
+        return $this;
+    }
+
+    public function setCapabilities(Capabilities $capabilities): self
+    {
+        $this->capabilities = $capabilities;
 
         return $this;
     }
@@ -225,9 +247,23 @@ class SecurityContext implements JsonSerializable
         return $this;
     }
 
+    public function setSeLinuxOptions(SELinuxOptions $seLinuxOptions): self
+    {
+        $this->seLinuxOptions = $seLinuxOptions;
+
+        return $this;
+    }
+
     public function setSeccompProfile(SeccompProfile $seccompProfile): self
     {
         $this->seccompProfile = $seccompProfile;
+
+        return $this;
+    }
+
+    public function setWindowsOptions(WindowsSecurityContextOptions $windowsOptions): self
+    {
+        $this->windowsOptions = $windowsOptions;
 
         return $this;
     }

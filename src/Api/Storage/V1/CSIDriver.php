@@ -46,6 +46,20 @@ class CSIDriver implements APIResourceInterface
         return $this->metadata;
     }
 
+    public function setMetadata(ObjectMeta $metadata): self
+    {
+        $this->metadata = $metadata;
+
+        return $this;
+    }
+
+    public function setSpec(CSIDriverSpec $spec): self
+    {
+        $this->spec = $spec;
+
+        return $this;
+    }
+
     public function spec(): CSIDriverSpec
     {
         return $this->spec;

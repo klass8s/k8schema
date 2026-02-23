@@ -29,6 +29,13 @@ class Overhead implements JsonSerializable
         return $this->podFixed;
     }
 
+    public function setPodFixed(StringOrFloatMap $podFixed): self
+    {
+        $this->podFixed = $podFixed;
+
+        return $this;
+    }
+
     public function jsonSerialize(): ArrayObject
     {
         return new ArrayObject([

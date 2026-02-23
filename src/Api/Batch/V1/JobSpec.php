@@ -238,9 +238,24 @@ class JobSpec implements JsonSerializable
         return $this->parallelism;
     }
 
+    public function getPodFailurePolicy(): PodFailurePolicy|null
+    {
+        return $this->podFailurePolicy;
+    }
+
     public function getPodReplacementPolicy(): string|null
     {
         return $this->podReplacementPolicy;
+    }
+
+    public function getSelector(): LabelSelector|null
+    {
+        return $this->selector;
+    }
+
+    public function getSuccessPolicy(): SuccessPolicy|null
+    {
+        return $this->successPolicy;
     }
 
     public function getSuspend(): bool|null
@@ -326,6 +341,13 @@ class JobSpec implements JsonSerializable
         return $this;
     }
 
+    public function setPodFailurePolicy(PodFailurePolicy $podFailurePolicy): self
+    {
+        $this->podFailurePolicy = $podFailurePolicy;
+
+        return $this;
+    }
+
     public function setPodReplacementPolicy(string $podReplacementPolicy): self
     {
         $this->podReplacementPolicy = $podReplacementPolicy;
@@ -333,9 +355,30 @@ class JobSpec implements JsonSerializable
         return $this;
     }
 
+    public function setSelector(LabelSelector $selector): self
+    {
+        $this->selector = $selector;
+
+        return $this;
+    }
+
+    public function setSuccessPolicy(SuccessPolicy $successPolicy): self
+    {
+        $this->successPolicy = $successPolicy;
+
+        return $this;
+    }
+
     public function setSuspend(bool $suspend): self
     {
         $this->suspend = $suspend;
+
+        return $this;
+    }
+
+    public function setTemplate(PodTemplateSpec $template): self
+    {
+        $this->template = $template;
 
         return $this;
     }

@@ -45,6 +45,13 @@ class IngressTLS implements JsonSerializable
         return $this->hosts;
     }
 
+    public function setHosts(StringList $hosts): self
+    {
+        $this->hosts = $hosts;
+
+        return $this;
+    }
+
     public function setSecretName(string $secretName): self
     {
         $this->secretName = $secretName;

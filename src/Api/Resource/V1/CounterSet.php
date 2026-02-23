@@ -46,6 +46,13 @@ class CounterSet implements JsonSerializable
         return $this->name;
     }
 
+    public function setCounters(CounterMap $counters): self
+    {
+        $this->counters = $counters;
+
+        return $this;
+    }
+
     public function setName(string $name): self
     {
         $this->name = $name;

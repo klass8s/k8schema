@@ -38,6 +38,11 @@ class NodeAffinity implements JsonSerializable
         $this->preferredDuringSchedulingIgnoredDuringExecution = new PreferredSchedulingTermList();
     }
 
+    public function getRequiredDuringSchedulingIgnoredDuringExecution(): NodeSelector|null
+    {
+        return $this->requiredDuringSchedulingIgnoredDuringExecution;
+    }
+
     public function preferredDuringSchedulingIgnoredDuringExecution(): PreferredSchedulingTermList
     {
         return $this->preferredDuringSchedulingIgnoredDuringExecution;
@@ -46,6 +51,22 @@ class NodeAffinity implements JsonSerializable
     public function requiredDuringSchedulingIgnoredDuringExecution(): NodeSelector
     {
         return $this->requiredDuringSchedulingIgnoredDuringExecution ??= new NodeSelector();
+    }
+
+    public function setPreferredDuringSchedulingIgnoredDuringExecution(
+        PreferredSchedulingTermList $preferredDuringSchedulingIgnoredDuringExecution,
+    ): self {
+        $this->preferredDuringSchedulingIgnoredDuringExecution = $preferredDuringSchedulingIgnoredDuringExecution;
+
+        return $this;
+    }
+
+    public function setRequiredDuringSchedulingIgnoredDuringExecution(
+        NodeSelector $requiredDuringSchedulingIgnoredDuringExecution,
+    ): self {
+        $this->requiredDuringSchedulingIgnoredDuringExecution = $requiredDuringSchedulingIgnoredDuringExecution;
+
+        return $this;
     }
 
     public function jsonSerialize(): ArrayObject

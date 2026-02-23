@@ -30,6 +30,13 @@ class NamespaceSpec implements JsonSerializable
         return $this->finalizers;
     }
 
+    public function setFinalizers(StringList $finalizers): self
+    {
+        $this->finalizers = $finalizers;
+
+        return $this;
+    }
+
     public function jsonSerialize(): ArrayObject
     {
         return new ArrayObject([

@@ -28,6 +28,13 @@ class ScopeSelector implements JsonSerializable
         return $this->matchExpressions;
     }
 
+    public function setMatchExpressions(ScopedResourceSelectorRequirementList $matchExpressions): self
+    {
+        $this->matchExpressions = $matchExpressions;
+
+        return $this;
+    }
+
     public function jsonSerialize(): ArrayObject
     {
         return new ArrayObject([

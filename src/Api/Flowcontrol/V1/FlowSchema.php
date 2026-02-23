@@ -46,6 +46,13 @@ class FlowSchema implements APIResourceInterface
         return $this->metadata;
     }
 
+    public function setMetadata(ObjectMeta $metadata): self
+    {
+        $this->metadata = $metadata;
+
+        return $this;
+    }
+
     public function setSpec(FlowSchemaSpec $spec): self
     {
         $this->spec = $spec;

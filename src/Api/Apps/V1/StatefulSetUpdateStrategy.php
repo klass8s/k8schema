@@ -30,6 +30,11 @@ class StatefulSetUpdateStrategy implements JsonSerializable
     {
     }
 
+    public function getRollingUpdate(): RollingUpdateStatefulSetStrategy|null
+    {
+        return $this->rollingUpdate;
+    }
+
     public function getType(): string|null
     {
         return $this->type;
@@ -38,6 +43,13 @@ class StatefulSetUpdateStrategy implements JsonSerializable
     public function rollingUpdate(): RollingUpdateStatefulSetStrategy
     {
         return $this->rollingUpdate ??= new RollingUpdateStatefulSetStrategy();
+    }
+
+    public function setRollingUpdate(RollingUpdateStatefulSetStrategy $rollingUpdate): self
+    {
+        $this->rollingUpdate = $rollingUpdate;
+
+        return $this;
     }
 
     public function setType(string $type): self

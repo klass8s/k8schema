@@ -49,6 +49,11 @@ class IngressRule implements JsonSerializable
         return $this->host;
     }
 
+    public function getHttp(): HTTPIngressRuleValue|null
+    {
+        return $this->http;
+    }
+
     public function http(): HTTPIngressRuleValue
     {
         return $this->http ??= new HTTPIngressRuleValue();
@@ -57,6 +62,13 @@ class IngressRule implements JsonSerializable
     public function setHost(string $host): self
     {
         $this->host = $host;
+
+        return $this;
+    }
+
+    public function setHttp(HTTPIngressRuleValue $http): self
+    {
+        $this->http = $http;
 
         return $this;
     }
