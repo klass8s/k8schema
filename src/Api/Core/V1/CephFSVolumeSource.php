@@ -73,6 +73,11 @@ class CephFSVolumeSource implements JsonSerializable
         return $this->secretFile;
     }
 
+    public function getSecretRef(): LocalObjectReference|null
+    {
+        return $this->secretRef;
+    }
+
     public function getUser(): string|null
     {
         return $this->user;
@@ -86,6 +91,13 @@ class CephFSVolumeSource implements JsonSerializable
     public function secretRef(): LocalObjectReference
     {
         return $this->secretRef ??= new LocalObjectReference();
+    }
+
+    public function setMonitors(StringList $monitors): self
+    {
+        $this->monitors = $monitors;
+
+        return $this;
     }
 
     public function setPath(string $path): self
@@ -105,6 +117,13 @@ class CephFSVolumeSource implements JsonSerializable
     public function setSecretFile(string $secretFile): self
     {
         $this->secretFile = $secretFile;
+
+        return $this;
+    }
+
+    public function setSecretRef(LocalObjectReference $secretRef): self
+    {
+        $this->secretRef = $secretRef;
 
         return $this;
     }

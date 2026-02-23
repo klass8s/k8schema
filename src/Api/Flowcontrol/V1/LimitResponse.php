@@ -31,6 +31,11 @@ class LimitResponse implements JsonSerializable
         $this->type = $type;
     }
 
+    public function getQueuing(): QueuingConfiguration|null
+    {
+        return $this->queuing;
+    }
+
     public function getType(): string
     {
         return $this->type;
@@ -39,6 +44,13 @@ class LimitResponse implements JsonSerializable
     public function queuing(): QueuingConfiguration
     {
         return $this->queuing ??= new QueuingConfiguration();
+    }
+
+    public function setQueuing(QueuingConfiguration $queuing): self
+    {
+        $this->queuing = $queuing;
+
+        return $this;
     }
 
     public function setType(string $type): self

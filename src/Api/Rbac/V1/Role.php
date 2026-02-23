@@ -32,6 +32,11 @@ class Role implements APIResourceInterface
         $this->rules = new PolicyRuleList();
     }
 
+    public function getMetadata(): ObjectMeta|null
+    {
+        return $this->metadata;
+    }
+
     public function metadata(): ObjectMeta
     {
         return $this->metadata ??= new ObjectMeta();
@@ -40,6 +45,20 @@ class Role implements APIResourceInterface
     public function rules(): PolicyRuleList
     {
         return $this->rules;
+    }
+
+    public function setMetadata(ObjectMeta $metadata): self
+    {
+        $this->metadata = $metadata;
+
+        return $this;
+    }
+
+    public function setRules(PolicyRuleList $rules): self
+    {
+        $this->rules = $rules;
+
+        return $this;
     }
 
     public function jsonSerialize(): ArrayObject

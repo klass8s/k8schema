@@ -62,6 +62,13 @@ class ConfigMapProjection implements JsonSerializable
         return $this->items;
     }
 
+    public function setItems(KeyToPathList $items): self
+    {
+        $this->items = $items;
+
+        return $this;
+    }
+
     public function setName(string $name): self
     {
         $this->name = $name;

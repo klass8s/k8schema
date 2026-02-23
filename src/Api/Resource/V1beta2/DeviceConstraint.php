@@ -61,6 +61,13 @@ class DeviceConstraint implements JsonSerializable
         return $this;
     }
 
+    public function setRequests(StringList $requests): self
+    {
+        $this->requests = $requests;
+
+        return $this;
+    }
+
     public function jsonSerialize(): ArrayObject
     {
         return new ArrayObject([

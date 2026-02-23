@@ -45,6 +45,20 @@ class DeviceClassSpec implements JsonSerializable
         return $this->selectors;
     }
 
+    public function setConfig(DeviceClassConfigurationList $config): self
+    {
+        $this->config = $config;
+
+        return $this;
+    }
+
+    public function setSelectors(DeviceSelectorList $selectors): self
+    {
+        $this->selectors = $selectors;
+
+        return $this;
+    }
+
     public function jsonSerialize(): ArrayObject
     {
         return new ArrayObject([

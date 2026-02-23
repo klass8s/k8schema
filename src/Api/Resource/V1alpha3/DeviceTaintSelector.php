@@ -108,6 +108,13 @@ class DeviceTaintSelector implements JsonSerializable
         return $this;
     }
 
+    public function setSelectors(DeviceSelectorList $selectors): self
+    {
+        $this->selectors = $selectors;
+
+        return $this;
+    }
+
     public function jsonSerialize(): ArrayObject
     {
         return new ArrayObject([

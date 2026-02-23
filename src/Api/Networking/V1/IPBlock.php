@@ -51,6 +51,13 @@ class IPBlock implements JsonSerializable
         return $this;
     }
 
+    public function setExcept(StringList $except): self
+    {
+        $this->except = $except;
+
+        return $this;
+    }
+
     public function jsonSerialize(): ArrayObject
     {
         return new ArrayObject([

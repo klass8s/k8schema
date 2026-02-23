@@ -33,6 +33,13 @@ class ExecAction implements JsonSerializable
         return $this->command;
     }
 
+    public function setCommand(StringList $command): self
+    {
+        $this->command = $command;
+
+        return $this;
+    }
+
     public function jsonSerialize(): ArrayObject
     {
         return new ArrayObject([

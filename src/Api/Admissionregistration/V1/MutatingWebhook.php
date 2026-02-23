@@ -225,6 +225,16 @@ class MutatingWebhook implements JsonSerializable
         return $this->name;
     }
 
+    public function getNamespaceSelector(): LabelSelector|null
+    {
+        return $this->namespaceSelector;
+    }
+
+    public function getObjectSelector(): LabelSelector|null
+    {
+        return $this->objectSelector;
+    }
+
     public function getReinvocationPolicy(): string|null
     {
         return $this->reinvocationPolicy;
@@ -260,9 +270,30 @@ class MutatingWebhook implements JsonSerializable
         return $this->rules;
     }
 
+    public function setAdmissionReviewVersions(StringList $admissionReviewVersions): self
+    {
+        $this->admissionReviewVersions = $admissionReviewVersions;
+
+        return $this;
+    }
+
+    public function setClientConfig(WebhookClientConfig $clientConfig): self
+    {
+        $this->clientConfig = $clientConfig;
+
+        return $this;
+    }
+
     public function setFailurePolicy(string $failurePolicy): self
     {
         $this->failurePolicy = $failurePolicy;
+
+        return $this;
+    }
+
+    public function setMatchConditions(MatchConditionList $matchConditions): self
+    {
+        $this->matchConditions = $matchConditions;
 
         return $this;
     }
@@ -281,9 +312,30 @@ class MutatingWebhook implements JsonSerializable
         return $this;
     }
 
+    public function setNamespaceSelector(LabelSelector $namespaceSelector): self
+    {
+        $this->namespaceSelector = $namespaceSelector;
+
+        return $this;
+    }
+
+    public function setObjectSelector(LabelSelector $objectSelector): self
+    {
+        $this->objectSelector = $objectSelector;
+
+        return $this;
+    }
+
     public function setReinvocationPolicy(string $reinvocationPolicy): self
     {
         $this->reinvocationPolicy = $reinvocationPolicy;
+
+        return $this;
+    }
+
+    public function setRules(RuleWithOperationsList $rules): self
+    {
+        $this->rules = $rules;
 
         return $this;
     }

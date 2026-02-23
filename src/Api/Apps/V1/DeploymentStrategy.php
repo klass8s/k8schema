@@ -28,6 +28,11 @@ class DeploymentStrategy implements JsonSerializable
     {
     }
 
+    public function getRollingUpdate(): RollingUpdateDeployment|null
+    {
+        return $this->rollingUpdate;
+    }
+
     public function getType(): string|null
     {
         return $this->type;
@@ -36,6 +41,13 @@ class DeploymentStrategy implements JsonSerializable
     public function rollingUpdate(): RollingUpdateDeployment
     {
         return $this->rollingUpdate ??= new RollingUpdateDeployment();
+    }
+
+    public function setRollingUpdate(RollingUpdateDeployment $rollingUpdate): self
+    {
+        $this->rollingUpdate = $rollingUpdate;
+
+        return $this;
     }
 
     public function setType(string $type): self

@@ -28,6 +28,11 @@ class DaemonSetUpdateStrategy implements JsonSerializable
     {
     }
 
+    public function getRollingUpdate(): RollingUpdateDaemonSet|null
+    {
+        return $this->rollingUpdate;
+    }
+
     public function getType(): string|null
     {
         return $this->type;
@@ -36,6 +41,13 @@ class DaemonSetUpdateStrategy implements JsonSerializable
     public function rollingUpdate(): RollingUpdateDaemonSet
     {
         return $this->rollingUpdate ??= new RollingUpdateDaemonSet();
+    }
+
+    public function setRollingUpdate(RollingUpdateDaemonSet $rollingUpdate): self
+    {
+        $this->rollingUpdate = $rollingUpdate;
+
+        return $this;
     }
 
     public function setType(string $type): self

@@ -42,6 +42,20 @@ class LocalSubjectAccessReview implements APIResourceInterface
         return $this->metadata;
     }
 
+    public function setMetadata(ObjectMeta $metadata): self
+    {
+        $this->metadata = $metadata;
+
+        return $this;
+    }
+
+    public function setSpec(SubjectAccessReviewSpec $spec): self
+    {
+        $this->spec = $spec;
+
+        return $this;
+    }
+
     public function spec(): SubjectAccessReviewSpec
     {
         return $this->spec;

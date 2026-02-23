@@ -90,6 +90,16 @@ class Endpoint implements JsonSerializable
         return $this->deprecatedTopology;
     }
 
+    public function getConditions(): EndpointConditions|null
+    {
+        return $this->conditions;
+    }
+
+    public function getHints(): EndpointHints|null
+    {
+        return $this->hints;
+    }
+
     public function getHostname(): string|null
     {
         return $this->hostname;
@@ -98,6 +108,11 @@ class Endpoint implements JsonSerializable
     public function getNodeName(): string|null
     {
         return $this->nodeName;
+    }
+
+    public function getTargetRef(): ObjectReference|null
+    {
+        return $this->targetRef;
     }
 
     public function getZone(): string|null
@@ -110,6 +125,34 @@ class Endpoint implements JsonSerializable
         return $this->hints ??= new EndpointHints();
     }
 
+    public function setAddresses(StringList $addresses): self
+    {
+        $this->addresses = $addresses;
+
+        return $this;
+    }
+
+    public function setConditions(EndpointConditions $conditions): self
+    {
+        $this->conditions = $conditions;
+
+        return $this;
+    }
+
+    public function setDeprecatedTopology(StringMap $deprecatedTopology): self
+    {
+        $this->deprecatedTopology = $deprecatedTopology;
+
+        return $this;
+    }
+
+    public function setHints(EndpointHints $hints): self
+    {
+        $this->hints = $hints;
+
+        return $this;
+    }
+
     public function setHostname(string $hostname): self
     {
         $this->hostname = $hostname;
@@ -120,6 +163,13 @@ class Endpoint implements JsonSerializable
     public function setNodeName(string $nodeName): self
     {
         $this->nodeName = $nodeName;
+
+        return $this;
+    }
+
+    public function setTargetRef(ObjectReference $targetRef): self
+    {
+        $this->targetRef = $targetRef;
 
         return $this;
     }

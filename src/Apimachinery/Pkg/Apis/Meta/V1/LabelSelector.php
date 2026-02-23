@@ -45,6 +45,20 @@ class LabelSelector implements JsonSerializable
         return $this->matchLabels;
     }
 
+    public function setMatchExpressions(LabelSelectorRequirementList $matchExpressions): self
+    {
+        $this->matchExpressions = $matchExpressions;
+
+        return $this;
+    }
+
+    public function setMatchLabels(StringMap $matchLabels): self
+    {
+        $this->matchLabels = $matchLabels;
+
+        return $this;
+    }
+
     public function jsonSerialize(): ArrayObject
     {
         return new ArrayObject([

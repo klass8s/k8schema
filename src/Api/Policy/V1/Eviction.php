@@ -38,9 +38,33 @@ class Eviction implements APIResourceInterface
         return $this->deleteOptions ??= new DeleteOptions();
     }
 
+    public function getDeleteOptions(): DeleteOptions|null
+    {
+        return $this->deleteOptions;
+    }
+
+    public function getMetadata(): ObjectMeta|null
+    {
+        return $this->metadata;
+    }
+
     public function metadata(): ObjectMeta
     {
         return $this->metadata ??= new ObjectMeta();
+    }
+
+    public function setDeleteOptions(DeleteOptions $deleteOptions): self
+    {
+        $this->deleteOptions = $deleteOptions;
+
+        return $this;
+    }
+
+    public function setMetadata(ObjectMeta $metadata): self
+    {
+        $this->metadata = $metadata;
+
+        return $this;
     }
 
     public function jsonSerialize(): ArrayObject

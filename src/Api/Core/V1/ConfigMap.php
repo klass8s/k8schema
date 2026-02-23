@@ -68,14 +68,40 @@ class ConfigMap implements APIResourceInterface
         return $this->immutable;
     }
 
+    public function getMetadata(): ObjectMeta|null
+    {
+        return $this->metadata;
+    }
+
     public function metadata(): ObjectMeta
     {
         return $this->metadata ??= new ObjectMeta();
     }
 
+    public function setBinaryData(StringMap $binaryData): self
+    {
+        $this->binaryData = $binaryData;
+
+        return $this;
+    }
+
+    public function setData(StringMap $data): self
+    {
+        $this->data = $data;
+
+        return $this;
+    }
+
     public function setImmutable(bool $immutable): self
     {
         $this->immutable = $immutable;
+
+        return $this;
+    }
+
+    public function setMetadata(ObjectMeta $metadata): self
+    {
+        $this->metadata = $metadata;
 
         return $this;
     }

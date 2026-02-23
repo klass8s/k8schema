@@ -44,6 +44,25 @@ class WebhookConversion implements JsonSerializable
         return $this->conversionReviewVersions;
     }
 
+    public function getClientConfig(): WebhookClientConfig|null
+    {
+        return $this->clientConfig;
+    }
+
+    public function setClientConfig(WebhookClientConfig $clientConfig): self
+    {
+        $this->clientConfig = $clientConfig;
+
+        return $this;
+    }
+
+    public function setConversionReviewVersions(StringList $conversionReviewVersions): self
+    {
+        $this->conversionReviewVersions = $conversionReviewVersions;
+
+        return $this;
+    }
+
     public function jsonSerialize(): ArrayObject
     {
         return new ArrayObject([

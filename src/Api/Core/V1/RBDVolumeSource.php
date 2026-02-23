@@ -96,6 +96,11 @@ class RBDVolumeSource implements JsonSerializable
         return $this->readOnly;
     }
 
+    public function getSecretRef(): LocalObjectReference|null
+    {
+        return $this->secretRef;
+    }
+
     public function getUser(): string|null
     {
         return $this->user;
@@ -132,6 +137,13 @@ class RBDVolumeSource implements JsonSerializable
         return $this;
     }
 
+    public function setMonitors(StringList $monitors): self
+    {
+        $this->monitors = $monitors;
+
+        return $this;
+    }
+
     public function setPool(string $pool): self
     {
         $this->pool = $pool;
@@ -142,6 +154,13 @@ class RBDVolumeSource implements JsonSerializable
     public function setReadOnly(bool $readOnly): self
     {
         $this->readOnly = $readOnly;
+
+        return $this;
+    }
+
+    public function setSecretRef(LocalObjectReference $secretRef): self
+    {
+        $this->secretRef = $secretRef;
 
         return $this;
     }

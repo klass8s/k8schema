@@ -32,9 +32,33 @@ class PodTemplate implements APIResourceInterface
     {
     }
 
+    public function getMetadata(): ObjectMeta|null
+    {
+        return $this->metadata;
+    }
+
+    public function getTemplate(): PodTemplateSpec|null
+    {
+        return $this->template;
+    }
+
     public function metadata(): ObjectMeta
     {
         return $this->metadata ??= new ObjectMeta();
+    }
+
+    public function setMetadata(ObjectMeta $metadata): self
+    {
+        $this->metadata = $metadata;
+
+        return $this;
+    }
+
+    public function setTemplate(PodTemplateSpec $template): self
+    {
+        $this->template = $template;
+
+        return $this;
     }
 
     public function template(): PodTemplateSpec

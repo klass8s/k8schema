@@ -107,6 +107,16 @@ class CSIStorageCapacity implements APIResourceInterface
         return $this->maximumVolumeSize;
     }
 
+    public function getMetadata(): ObjectMeta|null
+    {
+        return $this->metadata;
+    }
+
+    public function getNodeTopology(): LabelSelector|null
+    {
+        return $this->nodeTopology;
+    }
+
     public function getStorageClassName(): string
     {
         return $this->storageClassName;
@@ -132,6 +142,20 @@ class CSIStorageCapacity implements APIResourceInterface
     public function setMaximumVolumeSize(string|float $maximumVolumeSize): self
     {
         $this->maximumVolumeSize = $maximumVolumeSize;
+
+        return $this;
+    }
+
+    public function setMetadata(ObjectMeta $metadata): self
+    {
+        $this->metadata = $metadata;
+
+        return $this;
+    }
+
+    public function setNodeTopology(LabelSelector $nodeTopology): self
+    {
+        $this->nodeTopology = $nodeTopology;
 
         return $this;
     }

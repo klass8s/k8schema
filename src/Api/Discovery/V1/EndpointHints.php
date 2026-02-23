@@ -42,6 +42,20 @@ class EndpointHints implements JsonSerializable
         return $this->forZones;
     }
 
+    public function setForNodes(ForNodeList $forNodes): self
+    {
+        $this->forNodes = $forNodes;
+
+        return $this;
+    }
+
+    public function setForZones(ForZoneList $forZones): self
+    {
+        $this->forZones = $forZones;
+
+        return $this;
+    }
+
     public function jsonSerialize(): ArrayObject
     {
         return new ArrayObject([

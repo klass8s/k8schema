@@ -136,6 +136,11 @@ class TopologySpreadConstraint implements JsonSerializable
         $this->whenUnsatisfiable = $whenUnsatisfiable;
     }
 
+    public function getLabelSelector(): LabelSelector|null
+    {
+        return $this->labelSelector;
+    }
+
     public function getMaxSkew(): int
     {
         return $this->maxSkew;
@@ -174,6 +179,20 @@ class TopologySpreadConstraint implements JsonSerializable
     public function matchLabelKeys(): StringList
     {
         return $this->matchLabelKeys;
+    }
+
+    public function setLabelSelector(LabelSelector $labelSelector): self
+    {
+        $this->labelSelector = $labelSelector;
+
+        return $this;
+    }
+
+    public function setMatchLabelKeys(StringList $matchLabelKeys): self
+    {
+        $this->matchLabelKeys = $matchLabelKeys;
+
+        return $this;
     }
 
     public function setMaxSkew(int $maxSkew): self

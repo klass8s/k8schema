@@ -293,9 +293,19 @@ class PersistentVolumeSpec implements JsonSerializable
         return $this->azureFile;
     }
 
+    public function getCephfs(): CephFSPersistentVolumeSource|null
+    {
+        return $this->cephfs;
+    }
+
     public function getCinder(): CinderPersistentVolumeSource|null
     {
         return $this->cinder;
+    }
+
+    public function getClaimRef(): ObjectReference|null
+    {
+        return $this->claimRef;
     }
 
     public function getCsi(): CSIPersistentVolumeSource|null
@@ -303,9 +313,19 @@ class PersistentVolumeSpec implements JsonSerializable
         return $this->csi;
     }
 
+    public function getFc(): FCVolumeSource|null
+    {
+        return $this->fc;
+    }
+
     public function getFlexVolume(): FlexPersistentVolumeSource|null
     {
         return $this->flexVolume;
+    }
+
+    public function getFlocker(): FlockerVolumeSource|null
+    {
+        return $this->flocker;
     }
 
     public function getGcePersistentDisk(): GCEPersistentDiskVolumeSource|null
@@ -336,6 +356,11 @@ class PersistentVolumeSpec implements JsonSerializable
     public function getNfs(): NFSVolumeSource|null
     {
         return $this->nfs;
+    }
+
+    public function getNodeAffinity(): VolumeNodeAffinity|null
+    {
+        return $this->nodeAffinity;
     }
 
     public function getPersistentVolumeReclaimPolicy(): string|null
@@ -373,6 +398,11 @@ class PersistentVolumeSpec implements JsonSerializable
         return $this->storageClassName;
     }
 
+    public function getStorageos(): StorageOSPersistentVolumeSource|null
+    {
+        return $this->storageos;
+    }
+
     public function getVolumeAttributesClassName(): string|null
     {
         return $this->volumeAttributesClassName;
@@ -398,6 +428,13 @@ class PersistentVolumeSpec implements JsonSerializable
         return $this->nodeAffinity ??= new VolumeNodeAffinity();
     }
 
+    public function setAccessModes(StringList $accessModes): self
+    {
+        $this->accessModes = $accessModes;
+
+        return $this;
+    }
+
     public function setAwsElasticBlockStore(AWSElasticBlockStoreVolumeSource $awsElasticBlockStore): self
     {
         $this->awsElasticBlockStore = $awsElasticBlockStore;
@@ -419,9 +456,30 @@ class PersistentVolumeSpec implements JsonSerializable
         return $this;
     }
 
+    public function setCapacity(StringOrFloatMap $capacity): self
+    {
+        $this->capacity = $capacity;
+
+        return $this;
+    }
+
+    public function setCephfs(CephFSPersistentVolumeSource $cephfs): self
+    {
+        $this->cephfs = $cephfs;
+
+        return $this;
+    }
+
     public function setCinder(CinderPersistentVolumeSource $cinder): self
     {
         $this->cinder = $cinder;
+
+        return $this;
+    }
+
+    public function setClaimRef(ObjectReference $claimRef): self
+    {
+        $this->claimRef = $claimRef;
 
         return $this;
     }
@@ -433,9 +491,23 @@ class PersistentVolumeSpec implements JsonSerializable
         return $this;
     }
 
+    public function setFc(FCVolumeSource $fc): self
+    {
+        $this->fc = $fc;
+
+        return $this;
+    }
+
     public function setFlexVolume(FlexPersistentVolumeSource $flexVolume): self
     {
         $this->flexVolume = $flexVolume;
+
+        return $this;
+    }
+
+    public function setFlocker(FlockerVolumeSource $flocker): self
+    {
+        $this->flocker = $flocker;
 
         return $this;
     }
@@ -475,9 +547,23 @@ class PersistentVolumeSpec implements JsonSerializable
         return $this;
     }
 
+    public function setMountOptions(StringList $mountOptions): self
+    {
+        $this->mountOptions = $mountOptions;
+
+        return $this;
+    }
+
     public function setNfs(NFSVolumeSource $nfs): self
     {
         $this->nfs = $nfs;
+
+        return $this;
+    }
+
+    public function setNodeAffinity(VolumeNodeAffinity $nodeAffinity): self
+    {
+        $this->nodeAffinity = $nodeAffinity;
 
         return $this;
     }
@@ -527,6 +613,13 @@ class PersistentVolumeSpec implements JsonSerializable
     public function setStorageClassName(string $storageClassName): self
     {
         $this->storageClassName = $storageClassName;
+
+        return $this;
+    }
+
+    public function setStorageos(StorageOSPersistentVolumeSource $storageos): self
+    {
+        $this->storageos = $storageos;
 
         return $this;
     }

@@ -52,6 +52,22 @@ class PodAntiAffinity implements JsonSerializable
         return $this->requiredDuringSchedulingIgnoredDuringExecution;
     }
 
+    public function setPreferredDuringSchedulingIgnoredDuringExecution(
+        WeightedPodAffinityTermList $preferredDuringSchedulingIgnoredDuringExecution,
+    ): self {
+        $this->preferredDuringSchedulingIgnoredDuringExecution = $preferredDuringSchedulingIgnoredDuringExecution;
+
+        return $this;
+    }
+
+    public function setRequiredDuringSchedulingIgnoredDuringExecution(
+        PodAffinityTermList $requiredDuringSchedulingIgnoredDuringExecution,
+    ): self {
+        $this->requiredDuringSchedulingIgnoredDuringExecution = $requiredDuringSchedulingIgnoredDuringExecution;
+
+        return $this;
+    }
+
     public function jsonSerialize(): ArrayObject
     {
         return new ArrayObject([

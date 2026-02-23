@@ -69,6 +69,21 @@ class VolumeProjection implements JsonSerializable
         return $this->clusterTrustBundle;
     }
 
+    public function getConfigMap(): ConfigMapProjection|null
+    {
+        return $this->configMap;
+    }
+
+    public function getDownwardAPI(): DownwardAPIProjection|null
+    {
+        return $this->downwardAPI;
+    }
+
+    public function getSecret(): SecretProjection|null
+    {
+        return $this->secret;
+    }
+
     public function getServiceAccountToken(): ServiceAccountTokenProjection|null
     {
         return $this->serviceAccountToken;
@@ -82,6 +97,27 @@ class VolumeProjection implements JsonSerializable
     public function setClusterTrustBundle(ClusterTrustBundleProjection $clusterTrustBundle): self
     {
         $this->clusterTrustBundle = $clusterTrustBundle;
+
+        return $this;
+    }
+
+    public function setConfigMap(ConfigMapProjection $configMap): self
+    {
+        $this->configMap = $configMap;
+
+        return $this;
+    }
+
+    public function setDownwardAPI(DownwardAPIProjection $downwardAPI): self
+    {
+        $this->downwardAPI = $downwardAPI;
+
+        return $this;
+    }
+
+    public function setSecret(SecretProjection $secret): self
+    {
+        $this->secret = $secret;
 
         return $this;
     }

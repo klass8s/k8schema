@@ -155,6 +155,20 @@ class DeviceSubRequest implements JsonSerializable
         return $this;
     }
 
+    public function setSelectors(DeviceSelectorList $selectors): self
+    {
+        $this->selectors = $selectors;
+
+        return $this;
+    }
+
+    public function setTolerations(DeviceTolerationList $tolerations): self
+    {
+        $this->tolerations = $tolerations;
+
+        return $this;
+    }
+
     public function tolerations(): DeviceTolerationList
     {
         return $this->tolerations;

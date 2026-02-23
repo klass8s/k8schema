@@ -82,6 +82,11 @@ class ParamRef implements JsonSerializable
         return $this->parameterNotFoundAction;
     }
 
+    public function getSelector(): LabelSelector|null
+    {
+        return $this->selector;
+    }
+
     public function selector(): LabelSelector
     {
         return $this->selector ??= new LabelSelector();
@@ -104,6 +109,13 @@ class ParamRef implements JsonSerializable
     public function setParameterNotFoundAction(string $parameterNotFoundAction): self
     {
         $this->parameterNotFoundAction = $parameterNotFoundAction;
+
+        return $this;
+    }
+
+    public function setSelector(LabelSelector $selector): self
+    {
+        $this->selector = $selector;
 
         return $this;
     }

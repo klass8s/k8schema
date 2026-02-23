@@ -41,6 +41,13 @@ class PreferredSchedulingTerm implements JsonSerializable
         return $this->preference;
     }
 
+    public function setPreference(NodeSelectorTerm $preference): self
+    {
+        $this->preference = $preference;
+
+        return $this;
+    }
+
     public function setWeight(int $weight): self
     {
         $this->weight = $weight;

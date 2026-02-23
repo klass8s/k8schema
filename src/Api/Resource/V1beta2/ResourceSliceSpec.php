@@ -117,6 +117,11 @@ class ResourceSliceSpec implements JsonSerializable
         return $this->nodeName;
     }
 
+    public function getNodeSelector(): NodeSelector|null
+    {
+        return $this->nodeSelector;
+    }
+
     public function getPerDeviceNodeSelection(): bool|null
     {
         return $this->perDeviceNodeSelection;
@@ -139,6 +144,13 @@ class ResourceSliceSpec implements JsonSerializable
         return $this;
     }
 
+    public function setDevices(DeviceList $devices): self
+    {
+        $this->devices = $devices;
+
+        return $this;
+    }
+
     public function setDriver(string $driver): self
     {
         $this->driver = $driver;
@@ -153,6 +165,13 @@ class ResourceSliceSpec implements JsonSerializable
         return $this;
     }
 
+    public function setNodeSelector(NodeSelector $nodeSelector): self
+    {
+        $this->nodeSelector = $nodeSelector;
+
+        return $this;
+    }
+
     public function setPerDeviceNodeSelection(bool $perDeviceNodeSelection): self
     {
         $this->perDeviceNodeSelection = $perDeviceNodeSelection;
@@ -163,6 +182,13 @@ class ResourceSliceSpec implements JsonSerializable
     public function setPool(ResourcePool $pool): self
     {
         $this->pool = $pool;
+
+        return $this;
+    }
+
+    public function setSharedCounters(CounterSetList $sharedCounters): self
+    {
+        $this->sharedCounters = $sharedCounters;
 
         return $this;
     }

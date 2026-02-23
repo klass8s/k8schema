@@ -30,6 +30,13 @@ class HTTPIngressRuleValue implements JsonSerializable
         return $this->paths;
     }
 
+    public function setPaths(HTTPIngressPathList $paths): self
+    {
+        $this->paths = $paths;
+
+        return $this;
+    }
+
     public function jsonSerialize(): ArrayObject
     {
         return new ArrayObject([

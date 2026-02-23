@@ -63,6 +63,13 @@ class FieldSelectorAttributes implements JsonSerializable
         return $this;
     }
 
+    public function setRequirements(FieldSelectorRequirementList $requirements): self
+    {
+        $this->requirements = $requirements;
+
+        return $this;
+    }
+
     public function jsonSerialize(): ArrayObject
     {
         return new ArrayObject([

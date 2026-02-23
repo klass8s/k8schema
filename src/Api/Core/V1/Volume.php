@@ -323,9 +323,19 @@ class Volume implements JsonSerializable
         return $this->azureFile;
     }
 
+    public function getCephfs(): CephFSVolumeSource|null
+    {
+        return $this->cephfs;
+    }
+
     public function getCinder(): CinderVolumeSource|null
     {
         return $this->cinder;
+    }
+
+    public function getConfigMap(): ConfigMapVolumeSource|null
+    {
+        return $this->configMap;
     }
 
     public function getCsi(): CSIVolumeSource|null
@@ -333,9 +343,34 @@ class Volume implements JsonSerializable
         return $this->csi;
     }
 
+    public function getDownwardAPI(): DownwardAPIVolumeSource|null
+    {
+        return $this->downwardAPI;
+    }
+
+    public function getEmptyDir(): EmptyDirVolumeSource|null
+    {
+        return $this->emptyDir;
+    }
+
+    public function getEphemeral(): EphemeralVolumeSource|null
+    {
+        return $this->ephemeral;
+    }
+
+    public function getFc(): FCVolumeSource|null
+    {
+        return $this->fc;
+    }
+
     public function getFlexVolume(): FlexVolumeSource|null
     {
         return $this->flexVolume;
+    }
+
+    public function getFlocker(): FlockerVolumeSource|null
+    {
+        return $this->flocker;
     }
 
     public function getGcePersistentDisk(): GCEPersistentDiskVolumeSource|null
@@ -356,6 +391,11 @@ class Volume implements JsonSerializable
     public function getHostPath(): HostPathVolumeSource|null
     {
         return $this->hostPath;
+    }
+
+    public function getImage(): ImageVolumeSource|null
+    {
+        return $this->image;
     }
 
     public function getIscsi(): ISCSIVolumeSource|null
@@ -388,6 +428,11 @@ class Volume implements JsonSerializable
         return $this->portworxVolume;
     }
 
+    public function getProjected(): ProjectedVolumeSource|null
+    {
+        return $this->projected;
+    }
+
     public function getQuobyte(): QuobyteVolumeSource|null
     {
         return $this->quobyte;
@@ -401,6 +446,16 @@ class Volume implements JsonSerializable
     public function getScaleIO(): ScaleIOVolumeSource|null
     {
         return $this->scaleIO;
+    }
+
+    public function getSecret(): SecretVolumeSource|null
+    {
+        return $this->secret;
+    }
+
+    public function getStorageos(): StorageOSVolumeSource|null
+    {
+        return $this->storageos;
     }
 
     public function getVsphereVolume(): VsphereVirtualDiskVolumeSource|null
@@ -444,9 +499,23 @@ class Volume implements JsonSerializable
         return $this;
     }
 
+    public function setCephfs(CephFSVolumeSource $cephfs): self
+    {
+        $this->cephfs = $cephfs;
+
+        return $this;
+    }
+
     public function setCinder(CinderVolumeSource $cinder): self
     {
         $this->cinder = $cinder;
+
+        return $this;
+    }
+
+    public function setConfigMap(ConfigMapVolumeSource $configMap): self
+    {
+        $this->configMap = $configMap;
 
         return $this;
     }
@@ -458,9 +527,44 @@ class Volume implements JsonSerializable
         return $this;
     }
 
+    public function setDownwardAPI(DownwardAPIVolumeSource $downwardAPI): self
+    {
+        $this->downwardAPI = $downwardAPI;
+
+        return $this;
+    }
+
+    public function setEmptyDir(EmptyDirVolumeSource $emptyDir): self
+    {
+        $this->emptyDir = $emptyDir;
+
+        return $this;
+    }
+
+    public function setEphemeral(EphemeralVolumeSource $ephemeral): self
+    {
+        $this->ephemeral = $ephemeral;
+
+        return $this;
+    }
+
+    public function setFc(FCVolumeSource $fc): self
+    {
+        $this->fc = $fc;
+
+        return $this;
+    }
+
     public function setFlexVolume(FlexVolumeSource $flexVolume): self
     {
         $this->flexVolume = $flexVolume;
+
+        return $this;
+    }
+
+    public function setFlocker(FlockerVolumeSource $flocker): self
+    {
+        $this->flocker = $flocker;
 
         return $this;
     }
@@ -489,6 +593,13 @@ class Volume implements JsonSerializable
     public function setHostPath(HostPathVolumeSource $hostPath): self
     {
         $this->hostPath = $hostPath;
+
+        return $this;
+    }
+
+    public function setImage(ImageVolumeSource $image): self
+    {
+        $this->image = $image;
 
         return $this;
     }
@@ -535,6 +646,13 @@ class Volume implements JsonSerializable
         return $this;
     }
 
+    public function setProjected(ProjectedVolumeSource $projected): self
+    {
+        $this->projected = $projected;
+
+        return $this;
+    }
+
     public function setQuobyte(QuobyteVolumeSource $quobyte): self
     {
         $this->quobyte = $quobyte;
@@ -552,6 +670,20 @@ class Volume implements JsonSerializable
     public function setScaleIO(ScaleIOVolumeSource $scaleIO): self
     {
         $this->scaleIO = $scaleIO;
+
+        return $this;
+    }
+
+    public function setSecret(SecretVolumeSource $secret): self
+    {
+        $this->secret = $secret;
+
+        return $this;
+    }
+
+    public function setStorageos(StorageOSVolumeSource $storageos): self
+    {
+        $this->storageos = $storageos;
 
         return $this;
     }

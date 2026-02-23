@@ -102,6 +102,16 @@ class CSIPersistentVolumeSource implements JsonSerializable
         return $this->controllerPublishSecretRef ??= new SecretReference();
     }
 
+    public function getControllerExpandSecretRef(): SecretReference|null
+    {
+        return $this->controllerExpandSecretRef;
+    }
+
+    public function getControllerPublishSecretRef(): SecretReference|null
+    {
+        return $this->controllerPublishSecretRef;
+    }
+
     public function getDriver(): string
     {
         return $this->driver;
@@ -110,6 +120,21 @@ class CSIPersistentVolumeSource implements JsonSerializable
     public function getFsType(): string|null
     {
         return $this->fsType;
+    }
+
+    public function getNodeExpandSecretRef(): SecretReference|null
+    {
+        return $this->nodeExpandSecretRef;
+    }
+
+    public function getNodePublishSecretRef(): SecretReference|null
+    {
+        return $this->nodePublishSecretRef;
+    }
+
+    public function getNodeStageSecretRef(): SecretReference|null
+    {
+        return $this->nodeStageSecretRef;
     }
 
     public function getReadOnly(): bool|null
@@ -137,6 +162,20 @@ class CSIPersistentVolumeSource implements JsonSerializable
         return $this->nodeStageSecretRef ??= new SecretReference();
     }
 
+    public function setControllerExpandSecretRef(SecretReference $controllerExpandSecretRef): self
+    {
+        $this->controllerExpandSecretRef = $controllerExpandSecretRef;
+
+        return $this;
+    }
+
+    public function setControllerPublishSecretRef(SecretReference $controllerPublishSecretRef): self
+    {
+        $this->controllerPublishSecretRef = $controllerPublishSecretRef;
+
+        return $this;
+    }
+
     public function setDriver(string $driver): self
     {
         $this->driver = $driver;
@@ -151,9 +190,37 @@ class CSIPersistentVolumeSource implements JsonSerializable
         return $this;
     }
 
+    public function setNodeExpandSecretRef(SecretReference $nodeExpandSecretRef): self
+    {
+        $this->nodeExpandSecretRef = $nodeExpandSecretRef;
+
+        return $this;
+    }
+
+    public function setNodePublishSecretRef(SecretReference $nodePublishSecretRef): self
+    {
+        $this->nodePublishSecretRef = $nodePublishSecretRef;
+
+        return $this;
+    }
+
+    public function setNodeStageSecretRef(SecretReference $nodeStageSecretRef): self
+    {
+        $this->nodeStageSecretRef = $nodeStageSecretRef;
+
+        return $this;
+    }
+
     public function setReadOnly(bool $readOnly): self
     {
         $this->readOnly = $readOnly;
+
+        return $this;
+    }
+
+    public function setVolumeAttributes(StringMap $volumeAttributes): self
+    {
+        $this->volumeAttributes = $volumeAttributes;
 
         return $this;
     }

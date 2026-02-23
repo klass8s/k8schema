@@ -58,6 +58,11 @@ class ReplicaSetSpec implements JsonSerializable
         return $this->replicas;
     }
 
+    public function getTemplate(): PodTemplateSpec|null
+    {
+        return $this->template;
+    }
+
     public function selector(): LabelSelector
     {
         return $this->selector;
@@ -73,6 +78,20 @@ class ReplicaSetSpec implements JsonSerializable
     public function setReplicas(int $replicas): self
     {
         $this->replicas = $replicas;
+
+        return $this;
+    }
+
+    public function setSelector(LabelSelector $selector): self
+    {
+        $this->selector = $selector;
+
+        return $this;
+    }
+
+    public function setTemplate(PodTemplateSpec $template): self
+    {
+        $this->template = $template;
 
         return $this;
     }

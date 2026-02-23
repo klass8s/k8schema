@@ -401,9 +401,19 @@ class PodSpec implements JsonSerializable
         return $this->activeDeadlineSeconds;
     }
 
+    public function getAffinity(): Affinity|null
+    {
+        return $this->affinity;
+    }
+
     public function getAutomountServiceAccountToken(): bool|null
     {
         return $this->automountServiceAccountToken;
+    }
+
+    public function getDnsConfig(): PodDNSConfig|null
+    {
+        return $this->dnsConfig;
     }
 
     public function getDnsPolicy(): string|null
@@ -466,6 +476,11 @@ class PodSpec implements JsonSerializable
         return $this->priorityClassName;
     }
 
+    public function getResources(): ResourceRequirements|null
+    {
+        return $this->resources;
+    }
+
     public function getRestartPolicy(): string|null
     {
         return $this->restartPolicy;
@@ -479,6 +494,11 @@ class PodSpec implements JsonSerializable
     public function getSchedulerName(): string|null
     {
         return $this->schedulerName;
+    }
+
+    public function getSecurityContext(): PodSecurityContext|null
+    {
+        return $this->securityContext;
     }
 
     public function getServiceAccount(): string|null
@@ -568,9 +588,30 @@ class PodSpec implements JsonSerializable
         return $this;
     }
 
+    public function setAffinity(Affinity $affinity): self
+    {
+        $this->affinity = $affinity;
+
+        return $this;
+    }
+
     public function setAutomountServiceAccountToken(bool $automountServiceAccountToken): self
     {
         $this->automountServiceAccountToken = $automountServiceAccountToken;
+
+        return $this;
+    }
+
+    public function setContainers(ContainerList $containers): self
+    {
+        $this->containers = $containers;
+
+        return $this;
+    }
+
+    public function setDnsConfig(PodDNSConfig $dnsConfig): self
+    {
+        $this->dnsConfig = $dnsConfig;
 
         return $this;
     }
@@ -585,6 +626,20 @@ class PodSpec implements JsonSerializable
     public function setEnableServiceLinks(bool $enableServiceLinks): self
     {
         $this->enableServiceLinks = $enableServiceLinks;
+
+        return $this;
+    }
+
+    public function setEphemeralContainers(EphemeralContainerList $ephemeralContainers): self
+    {
+        $this->ephemeralContainers = $ephemeralContainers;
+
+        return $this;
+    }
+
+    public function setHostAliases(HostAliasList $hostAliases): self
+    {
+        $this->hostAliases = $hostAliases;
 
         return $this;
     }
@@ -624,6 +679,20 @@ class PodSpec implements JsonSerializable
         return $this;
     }
 
+    public function setImagePullSecrets(LocalObjectReferenceList $imagePullSecrets): self
+    {
+        $this->imagePullSecrets = $imagePullSecrets;
+
+        return $this;
+    }
+
+    public function setInitContainers(ContainerList $initContainers): self
+    {
+        $this->initContainers = $initContainers;
+
+        return $this;
+    }
+
     public function setNodeName(string $nodeName): self
     {
         $this->nodeName = $nodeName;
@@ -631,9 +700,23 @@ class PodSpec implements JsonSerializable
         return $this;
     }
 
+    public function setNodeSelector(StringMap $nodeSelector): self
+    {
+        $this->nodeSelector = $nodeSelector;
+
+        return $this;
+    }
+
     public function setOs(PodOS $os): self
     {
         $this->os = $os;
+
+        return $this;
+    }
+
+    public function setOverhead(StringOrFloatMap $overhead): self
+    {
+        $this->overhead = $overhead;
 
         return $this;
     }
@@ -659,6 +742,27 @@ class PodSpec implements JsonSerializable
         return $this;
     }
 
+    public function setReadinessGates(PodReadinessGateList $readinessGates): self
+    {
+        $this->readinessGates = $readinessGates;
+
+        return $this;
+    }
+
+    public function setResourceClaims(PodResourceClaimList $resourceClaims): self
+    {
+        $this->resourceClaims = $resourceClaims;
+
+        return $this;
+    }
+
+    public function setResources(ResourceRequirements $resources): self
+    {
+        $this->resources = $resources;
+
+        return $this;
+    }
+
     public function setRestartPolicy(string $restartPolicy): self
     {
         $this->restartPolicy = $restartPolicy;
@@ -676,6 +780,20 @@ class PodSpec implements JsonSerializable
     public function setSchedulerName(string $schedulerName): self
     {
         $this->schedulerName = $schedulerName;
+
+        return $this;
+    }
+
+    public function setSchedulingGates(PodSchedulingGateList $schedulingGates): self
+    {
+        $this->schedulingGates = $schedulingGates;
+
+        return $this;
+    }
+
+    public function setSecurityContext(PodSecurityContext $securityContext): self
+    {
+        $this->securityContext = $securityContext;
 
         return $this;
     }
@@ -718,6 +836,27 @@ class PodSpec implements JsonSerializable
     public function setTerminationGracePeriodSeconds(int $terminationGracePeriodSeconds): self
     {
         $this->terminationGracePeriodSeconds = $terminationGracePeriodSeconds;
+
+        return $this;
+    }
+
+    public function setTolerations(TolerationList $tolerations): self
+    {
+        $this->tolerations = $tolerations;
+
+        return $this;
+    }
+
+    public function setTopologySpreadConstraints(TopologySpreadConstraintList $topologySpreadConstraints): self
+    {
+        $this->topologySpreadConstraints = $topologySpreadConstraints;
+
+        return $this;
+    }
+
+    public function setVolumes(VolumeList $volumes): self
+    {
+        $this->volumes = $volumes;
 
         return $this;
     }

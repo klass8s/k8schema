@@ -143,6 +143,11 @@ class Event implements APIResourceInterface
         return $this->reason;
     }
 
+    public function getRelated(): ObjectReference|null
+    {
+        return $this->related;
+    }
+
     public function getReportingComponent(): string|null
     {
         return $this->reportingComponent;
@@ -151,6 +156,16 @@ class Event implements APIResourceInterface
     public function getReportingInstance(): string|null
     {
         return $this->reportingInstance;
+    }
+
+    public function getSeries(): EventSeries|null
+    {
+        return $this->series;
+    }
+
+    public function getSource(): EventSource|null
+    {
+        return $this->source;
     }
 
     public function getType(): string|null
@@ -206,6 +221,13 @@ class Event implements APIResourceInterface
         return $this;
     }
 
+    public function setInvolvedObject(ObjectReference $involvedObject): self
+    {
+        $this->involvedObject = $involvedObject;
+
+        return $this;
+    }
+
     public function setLastTimestamp(DateTimeInterface $lastTimestamp): self
     {
         $this->lastTimestamp = $lastTimestamp;
@@ -220,9 +242,23 @@ class Event implements APIResourceInterface
         return $this;
     }
 
+    public function setMetadata(ObjectMeta $metadata): self
+    {
+        $this->metadata = $metadata;
+
+        return $this;
+    }
+
     public function setReason(string $reason): self
     {
         $this->reason = $reason;
+
+        return $this;
+    }
+
+    public function setRelated(ObjectReference $related): self
+    {
+        $this->related = $related;
 
         return $this;
     }
@@ -237,6 +273,20 @@ class Event implements APIResourceInterface
     public function setReportingInstance(string $reportingInstance): self
     {
         $this->reportingInstance = $reportingInstance;
+
+        return $this;
+    }
+
+    public function setSeries(EventSeries $series): self
+    {
+        $this->series = $series;
+
+        return $this;
+    }
+
+    public function setSource(EventSource $source): self
+    {
+        $this->source = $source;
 
         return $this;
     }

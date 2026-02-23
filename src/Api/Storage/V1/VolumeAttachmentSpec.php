@@ -59,6 +59,13 @@ class VolumeAttachmentSpec implements JsonSerializable
         return $this;
     }
 
+    public function setSource(VolumeAttachmentSource $source): self
+    {
+        $this->source = $source;
+
+        return $this;
+    }
+
     public function source(): VolumeAttachmentSource
     {
         return $this->source;

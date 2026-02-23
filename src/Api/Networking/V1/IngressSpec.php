@@ -60,6 +60,11 @@ class IngressSpec implements JsonSerializable
         return $this->defaultBackend ??= new IngressBackend();
     }
 
+    public function getDefaultBackend(): IngressBackend|null
+    {
+        return $this->defaultBackend;
+    }
+
     public function getIngressClassName(): string|null
     {
         return $this->ingressClassName;
@@ -70,9 +75,30 @@ class IngressSpec implements JsonSerializable
         return $this->rules;
     }
 
+    public function setDefaultBackend(IngressBackend $defaultBackend): self
+    {
+        $this->defaultBackend = $defaultBackend;
+
+        return $this;
+    }
+
     public function setIngressClassName(string $ingressClassName): self
     {
         $this->ingressClassName = $ingressClassName;
+
+        return $this;
+    }
+
+    public function setRules(IngressRuleList $rules): self
+    {
+        $this->rules = $rules;
+
+        return $this;
+    }
+
+    public function setTls(IngressTLSList $tls): self
+    {
+        $this->tls = $tls;
 
         return $this;
     }

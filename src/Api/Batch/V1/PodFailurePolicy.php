@@ -31,6 +31,13 @@ class PodFailurePolicy implements JsonSerializable
         return $this->rules;
     }
 
+    public function setRules(PodFailurePolicyRuleList $rules): self
+    {
+        $this->rules = $rules;
+
+        return $this;
+    }
+
     public function jsonSerialize(): ArrayObject
     {
         return new ArrayObject([

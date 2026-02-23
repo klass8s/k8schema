@@ -117,6 +117,16 @@ class MutatingAdmissionPolicySpec implements JsonSerializable
         return $this->failurePolicy;
     }
 
+    public function getMatchConstraints(): MatchResources|null
+    {
+        return $this->matchConstraints;
+    }
+
+    public function getParamKind(): ParamKind|null
+    {
+        return $this->paramKind;
+    }
+
     public function getReinvocationPolicy(): string|null
     {
         return $this->reinvocationPolicy;
@@ -149,9 +159,44 @@ class MutatingAdmissionPolicySpec implements JsonSerializable
         return $this;
     }
 
+    public function setMatchConditions(MatchConditionList $matchConditions): self
+    {
+        $this->matchConditions = $matchConditions;
+
+        return $this;
+    }
+
+    public function setMatchConstraints(MatchResources $matchConstraints): self
+    {
+        $this->matchConstraints = $matchConstraints;
+
+        return $this;
+    }
+
+    public function setMutations(MutationList $mutations): self
+    {
+        $this->mutations = $mutations;
+
+        return $this;
+    }
+
+    public function setParamKind(ParamKind $paramKind): self
+    {
+        $this->paramKind = $paramKind;
+
+        return $this;
+    }
+
     public function setReinvocationPolicy(string $reinvocationPolicy): self
     {
         $this->reinvocationPolicy = $reinvocationPolicy;
+
+        return $this;
+    }
+
+    public function setVariables(VariableList $variables): self
+    {
+        $this->variables = $variables;
 
         return $this;
     }

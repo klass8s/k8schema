@@ -69,9 +69,21 @@ class PodTemplateList implements APIResourceListInterface
         return count($this->items);
     }
 
+    public function getMetadata(): ListMeta|null
+    {
+        return $this->metadata;
+    }
+
     public function metadata(): ListMeta
     {
         return $this->metadata ??= new ListMeta();
+    }
+
+    public function setMetadata(ListMeta $metadata): self
+    {
+        $this->metadata = $metadata;
+
+        return $this;
     }
 
     public function jsonSerialize(): ArrayObject

@@ -38,6 +38,18 @@ class EphemeralVolumeSource implements JsonSerializable
     {
     }
 
+    public function getVolumeClaimTemplate(): PersistentVolumeClaimTemplate|null
+    {
+        return $this->volumeClaimTemplate;
+    }
+
+    public function setVolumeClaimTemplate(PersistentVolumeClaimTemplate $volumeClaimTemplate): self
+    {
+        $this->volumeClaimTemplate = $volumeClaimTemplate;
+
+        return $this;
+    }
+
     public function volumeClaimTemplate(): PersistentVolumeClaimTemplate
     {
         return $this->volumeClaimTemplate ??= new PersistentVolumeClaimTemplate();

@@ -51,6 +51,16 @@ class NetworkPolicyPeer implements JsonSerializable
         return $this->ipBlock;
     }
 
+    public function getNamespaceSelector(): LabelSelector|null
+    {
+        return $this->namespaceSelector;
+    }
+
+    public function getPodSelector(): LabelSelector|null
+    {
+        return $this->podSelector;
+    }
+
     public function namespaceSelector(): LabelSelector
     {
         return $this->namespaceSelector ??= new LabelSelector();
@@ -64,6 +74,20 @@ class NetworkPolicyPeer implements JsonSerializable
     public function setIpBlock(IPBlock $ipBlock): self
     {
         $this->ipBlock = $ipBlock;
+
+        return $this;
+    }
+
+    public function setNamespaceSelector(LabelSelector $namespaceSelector): self
+    {
+        $this->namespaceSelector = $namespaceSelector;
+
+        return $this;
+    }
+
+    public function setPodSelector(LabelSelector $podSelector): self
+    {
+        $this->podSelector = $podSelector;
 
         return $this;
     }

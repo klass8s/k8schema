@@ -52,6 +52,27 @@ class DeviceClaim implements JsonSerializable
         return $this->requests;
     }
 
+    public function setConfig(DeviceClaimConfigurationList $config): self
+    {
+        $this->config = $config;
+
+        return $this;
+    }
+
+    public function setConstraints(DeviceConstraintList $constraints): self
+    {
+        $this->constraints = $constraints;
+
+        return $this;
+    }
+
+    public function setRequests(DeviceRequestList $requests): self
+    {
+        $this->requests = $requests;
+
+        return $this;
+    }
+
     public function jsonSerialize(): ArrayObject
     {
         return new ArrayObject([

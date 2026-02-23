@@ -63,6 +63,21 @@ class RuntimeClass implements APIResourceInterface
         return $this->handler;
     }
 
+    public function getMetadata(): ObjectMeta|null
+    {
+        return $this->metadata;
+    }
+
+    public function getOverhead(): Overhead|null
+    {
+        return $this->overhead;
+    }
+
+    public function getScheduling(): Scheduling|null
+    {
+        return $this->scheduling;
+    }
+
     public function metadata(): ObjectMeta
     {
         return $this->metadata ??= new ObjectMeta();
@@ -81,6 +96,27 @@ class RuntimeClass implements APIResourceInterface
     public function setHandler(string $handler): self
     {
         $this->handler = $handler;
+
+        return $this;
+    }
+
+    public function setMetadata(ObjectMeta $metadata): self
+    {
+        $this->metadata = $metadata;
+
+        return $this;
+    }
+
+    public function setOverhead(Overhead $overhead): self
+    {
+        $this->overhead = $overhead;
+
+        return $this;
+    }
+
+    public function setScheduling(Scheduling $scheduling): self
+    {
+        $this->scheduling = $scheduling;
 
         return $this;
     }

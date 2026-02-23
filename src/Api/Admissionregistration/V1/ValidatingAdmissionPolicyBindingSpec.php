@@ -96,6 +96,16 @@ class ValidatingAdmissionPolicyBindingSpec implements JsonSerializable
         $this->validationActions = new StringList();
     }
 
+    public function getMatchResources(): MatchResources|null
+    {
+        return $this->matchResources;
+    }
+
+    public function getParamRef(): ParamRef|null
+    {
+        return $this->paramRef;
+    }
+
     public function getPolicyName(): string|null
     {
         return $this->policyName;
@@ -111,9 +121,30 @@ class ValidatingAdmissionPolicyBindingSpec implements JsonSerializable
         return $this->paramRef ??= new ParamRef();
     }
 
+    public function setMatchResources(MatchResources $matchResources): self
+    {
+        $this->matchResources = $matchResources;
+
+        return $this;
+    }
+
+    public function setParamRef(ParamRef $paramRef): self
+    {
+        $this->paramRef = $paramRef;
+
+        return $this;
+    }
+
     public function setPolicyName(string $policyName): self
     {
         $this->policyName = $policyName;
+
+        return $this;
+    }
+
+    public function setValidationActions(StringList $validationActions): self
+    {
+        $this->validationActions = $validationActions;
 
         return $this;
     }

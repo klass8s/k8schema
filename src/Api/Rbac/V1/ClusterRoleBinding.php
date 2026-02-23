@@ -41,6 +41,11 @@ class ClusterRoleBinding implements APIResourceInterface
         $this->subjects = new SubjectList();
     }
 
+    public function getMetadata(): ObjectMeta|null
+    {
+        return $this->metadata;
+    }
+
     public function getRoleRef(): RoleRef
     {
         return $this->roleRef;
@@ -51,9 +56,23 @@ class ClusterRoleBinding implements APIResourceInterface
         return $this->metadata ??= new ObjectMeta();
     }
 
+    public function setMetadata(ObjectMeta $metadata): self
+    {
+        $this->metadata = $metadata;
+
+        return $this;
+    }
+
     public function setRoleRef(RoleRef $roleRef): self
     {
         $this->roleRef = $roleRef;
+
+        return $this;
+    }
+
+    public function setSubjects(SubjectList $subjects): self
+    {
+        $this->subjects = $subjects;
 
         return $this;
     }

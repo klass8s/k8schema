@@ -29,6 +29,16 @@ class SelfSubjectAccessReviewSpec implements JsonSerializable
     {
     }
 
+    public function getNonResourceAttributes(): NonResourceAttributes|null
+    {
+        return $this->nonResourceAttributes;
+    }
+
+    public function getResourceAttributes(): ResourceAttributes|null
+    {
+        return $this->resourceAttributes;
+    }
+
     public function nonResourceAttributes(): NonResourceAttributes
     {
         return $this->nonResourceAttributes ??= new NonResourceAttributes();
@@ -37,6 +47,20 @@ class SelfSubjectAccessReviewSpec implements JsonSerializable
     public function resourceAttributes(): ResourceAttributes
     {
         return $this->resourceAttributes ??= new ResourceAttributes();
+    }
+
+    public function setNonResourceAttributes(NonResourceAttributes $nonResourceAttributes): self
+    {
+        $this->nonResourceAttributes = $nonResourceAttributes;
+
+        return $this;
+    }
+
+    public function setResourceAttributes(ResourceAttributes $resourceAttributes): self
+    {
+        $this->resourceAttributes = $resourceAttributes;
+
+        return $this;
     }
 
     public function jsonSerialize(): ArrayObject

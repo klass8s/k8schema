@@ -80,6 +80,13 @@ class SecretVolumeSource implements JsonSerializable
         return $this;
     }
 
+    public function setItems(KeyToPathList $items): self
+    {
+        $this->items = $items;
+
+        return $this;
+    }
+
     public function setOptional(bool $optional): self
     {
         $this->optional = $optional;

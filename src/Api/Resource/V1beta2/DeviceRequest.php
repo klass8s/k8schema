@@ -79,6 +79,13 @@ class DeviceRequest implements JsonSerializable
         return $this;
     }
 
+    public function setFirstAvailable(DeviceSubRequestList $firstAvailable): self
+    {
+        $this->firstAvailable = $firstAvailable;
+
+        return $this;
+    }
+
     public function setName(string $name): self
     {
         $this->name = $name;
