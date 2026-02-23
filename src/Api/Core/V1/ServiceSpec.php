@@ -335,6 +335,11 @@ class ServiceSpec implements JsonSerializable
         return $this->sessionAffinity;
     }
 
+    public function getSessionAffinityConfig(): SessionAffinityConfig|null
+    {
+        return $this->sessionAffinityConfig;
+    }
+
     public function getTrafficDistribution(): string|null
     {
         return $this->trafficDistribution;
@@ -384,6 +389,20 @@ class ServiceSpec implements JsonSerializable
         return $this;
     }
 
+    public function setClusterIPs(StringList $clusterIPs): self
+    {
+        $this->clusterIPs = $clusterIPs;
+
+        return $this;
+    }
+
+    public function setExternalIPs(StringList $externalIPs): self
+    {
+        $this->externalIPs = $externalIPs;
+
+        return $this;
+    }
+
     public function setExternalName(string $externalName): self
     {
         $this->externalName = $externalName;
@@ -412,6 +431,13 @@ class ServiceSpec implements JsonSerializable
         return $this;
     }
 
+    public function setIpFamilies(StringList $ipFamilies): self
+    {
+        $this->ipFamilies = $ipFamilies;
+
+        return $this;
+    }
+
     public function setIpFamilyPolicy(string $ipFamilyPolicy): self
     {
         $this->ipFamilyPolicy = $ipFamilyPolicy;
@@ -433,6 +459,20 @@ class ServiceSpec implements JsonSerializable
         return $this;
     }
 
+    public function setLoadBalancerSourceRanges(StringList $loadBalancerSourceRanges): self
+    {
+        $this->loadBalancerSourceRanges = $loadBalancerSourceRanges;
+
+        return $this;
+    }
+
+    public function setPorts(ServicePortList $ports): self
+    {
+        $this->ports = $ports;
+
+        return $this;
+    }
+
     public function setPublishNotReadyAddresses(bool $publishNotReadyAddresses): self
     {
         $this->publishNotReadyAddresses = $publishNotReadyAddresses;
@@ -440,9 +480,23 @@ class ServiceSpec implements JsonSerializable
         return $this;
     }
 
+    public function setSelector(StringMap $selector): self
+    {
+        $this->selector = $selector;
+
+        return $this;
+    }
+
     public function setSessionAffinity(string $sessionAffinity): self
     {
         $this->sessionAffinity = $sessionAffinity;
+
+        return $this;
+    }
+
+    public function setSessionAffinityConfig(SessionAffinityConfig $sessionAffinityConfig): self
+    {
+        $this->sessionAffinityConfig = $sessionAffinityConfig;
 
         return $this;
     }

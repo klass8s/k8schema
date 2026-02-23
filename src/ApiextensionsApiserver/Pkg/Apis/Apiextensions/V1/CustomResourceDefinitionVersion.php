@@ -102,6 +102,11 @@ class CustomResourceDefinitionVersion implements JsonSerializable
         return $this->name;
     }
 
+    public function getSchema(): CustomResourceValidation|null
+    {
+        return $this->schema;
+    }
+
     public function getServed(): bool
     {
         return $this->served;
@@ -112,6 +117,11 @@ class CustomResourceDefinitionVersion implements JsonSerializable
         return $this->storage;
     }
 
+    public function getSubresources(): CustomResourceSubresources|null
+    {
+        return $this->subresources;
+    }
+
     public function schema(): CustomResourceValidation
     {
         return $this->schema ??= new CustomResourceValidation();
@@ -120,6 +130,13 @@ class CustomResourceDefinitionVersion implements JsonSerializable
     public function selectableFields(): SelectableFieldList
     {
         return $this->selectableFields;
+    }
+
+    public function setAdditionalPrinterColumns(CustomResourceColumnDefinitionList $additionalPrinterColumns): self
+    {
+        $this->additionalPrinterColumns = $additionalPrinterColumns;
+
+        return $this;
     }
 
     public function setDeprecated(bool $deprecated): self
@@ -143,6 +160,20 @@ class CustomResourceDefinitionVersion implements JsonSerializable
         return $this;
     }
 
+    public function setSchema(CustomResourceValidation $schema): self
+    {
+        $this->schema = $schema;
+
+        return $this;
+    }
+
+    public function setSelectableFields(SelectableFieldList $selectableFields): self
+    {
+        $this->selectableFields = $selectableFields;
+
+        return $this;
+    }
+
     public function setServed(bool $served): self
     {
         $this->served = $served;
@@ -153,6 +184,13 @@ class CustomResourceDefinitionVersion implements JsonSerializable
     public function setStorage(bool $storage): self
     {
         $this->storage = $storage;
+
+        return $this;
+    }
+
+    public function setSubresources(CustomResourceSubresources $subresources): self
+    {
+        $this->subresources = $subresources;
 
         return $this;
     }

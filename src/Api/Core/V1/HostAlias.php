@@ -40,6 +40,13 @@ class HostAlias implements JsonSerializable
         return $this->hostnames;
     }
 
+    public function setHostnames(StringList $hostnames): self
+    {
+        $this->hostnames = $hostnames;
+
+        return $this;
+    }
+
     public function setIp(string $ip): self
     {
         $this->ip = $ip;

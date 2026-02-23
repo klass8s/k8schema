@@ -66,6 +66,11 @@ class FlexPersistentVolumeSource implements JsonSerializable
         return $this->readOnly;
     }
 
+    public function getSecretRef(): SecretReference|null
+    {
+        return $this->secretRef;
+    }
+
     public function options(): StringMap
     {
         return $this->options;
@@ -90,9 +95,23 @@ class FlexPersistentVolumeSource implements JsonSerializable
         return $this;
     }
 
+    public function setOptions(StringMap $options): self
+    {
+        $this->options = $options;
+
+        return $this;
+    }
+
     public function setReadOnly(bool $readOnly): self
     {
         $this->readOnly = $readOnly;
+
+        return $this;
+    }
+
+    public function setSecretRef(SecretReference $secretRef): self
+    {
+        $this->secretRef = $secretRef;
 
         return $this;
     }

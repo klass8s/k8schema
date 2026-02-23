@@ -39,6 +39,20 @@ class Capabilities implements JsonSerializable
         return $this->drop;
     }
 
+    public function setAdd(StringList $add): self
+    {
+        $this->add = $add;
+
+        return $this;
+    }
+
+    public function setDrop(StringList $drop): self
+    {
+        $this->drop = $drop;
+
+        return $this;
+    }
+
     public function jsonSerialize(): ArrayObject
     {
         return new ArrayObject([

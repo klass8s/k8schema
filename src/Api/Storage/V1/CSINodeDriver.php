@@ -62,6 +62,11 @@ class CSINodeDriver implements JsonSerializable
         return $this->allocatable ??= new VolumeNodeResources();
     }
 
+    public function getAllocatable(): VolumeNodeResources|null
+    {
+        return $this->allocatable;
+    }
+
     public function getName(): string
     {
         return $this->name;
@@ -70,6 +75,13 @@ class CSINodeDriver implements JsonSerializable
     public function getNodeID(): string
     {
         return $this->nodeID;
+    }
+
+    public function setAllocatable(VolumeNodeResources $allocatable): self
+    {
+        $this->allocatable = $allocatable;
+
+        return $this;
     }
 
     public function setName(string $name): self
@@ -82,6 +94,13 @@ class CSINodeDriver implements JsonSerializable
     public function setNodeID(string $nodeID): self
     {
         $this->nodeID = $nodeID;
+
+        return $this;
+    }
+
+    public function setTopologyKeys(StringList $topologyKeys): self
+    {
+        $this->topologyKeys = $topologyKeys;
 
         return $this;
     }

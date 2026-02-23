@@ -89,6 +89,41 @@ class LimitRangeItem implements JsonSerializable
         return $this->min;
     }
 
+    public function setDefault(StringOrFloatMap $default): self
+    {
+        $this->default = $default;
+
+        return $this;
+    }
+
+    public function setDefaultRequest(StringOrFloatMap $defaultRequest): self
+    {
+        $this->defaultRequest = $defaultRequest;
+
+        return $this;
+    }
+
+    public function setMax(StringOrFloatMap $max): self
+    {
+        $this->max = $max;
+
+        return $this;
+    }
+
+    public function setMaxLimitRequestRatio(StringOrFloatMap $maxLimitRequestRatio): self
+    {
+        $this->maxLimitRequestRatio = $maxLimitRequestRatio;
+
+        return $this;
+    }
+
+    public function setMin(StringOrFloatMap $min): self
+    {
+        $this->min = $min;
+
+        return $this;
+    }
+
     public function setType(string $type): self
     {
         $this->type = $type;

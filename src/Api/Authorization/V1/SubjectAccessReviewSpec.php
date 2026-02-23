@@ -60,6 +60,16 @@ class SubjectAccessReviewSpec implements JsonSerializable
         return $this->extra;
     }
 
+    public function getNonResourceAttributes(): NonResourceAttributes|null
+    {
+        return $this->nonResourceAttributes;
+    }
+
+    public function getResourceAttributes(): ResourceAttributes|null
+    {
+        return $this->resourceAttributes;
+    }
+
     public function getUid(): string|null
     {
         return $this->uid;
@@ -83,6 +93,34 @@ class SubjectAccessReviewSpec implements JsonSerializable
     public function resourceAttributes(): ResourceAttributes
     {
         return $this->resourceAttributes ??= new ResourceAttributes();
+    }
+
+    public function setExtra(StringListMap $extra): self
+    {
+        $this->extra = $extra;
+
+        return $this;
+    }
+
+    public function setGroups(StringList $groups): self
+    {
+        $this->groups = $groups;
+
+        return $this;
+    }
+
+    public function setNonResourceAttributes(NonResourceAttributes $nonResourceAttributes): self
+    {
+        $this->nonResourceAttributes = $nonResourceAttributes;
+
+        return $this;
+    }
+
+    public function setResourceAttributes(ResourceAttributes $resourceAttributes): self
+    {
+        $this->resourceAttributes = $resourceAttributes;
+
+        return $this;
     }
 
     public function setUid(string $uid): self

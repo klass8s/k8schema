@@ -44,6 +44,20 @@ class CSINode implements APIResourceInterface
         return $this->metadata;
     }
 
+    public function setMetadata(ObjectMeta $metadata): self
+    {
+        $this->metadata = $metadata;
+
+        return $this;
+    }
+
+    public function setSpec(CSINodeSpec $spec): self
+    {
+        $this->spec = $spec;
+
+        return $this;
+    }
+
     public function spec(): CSINodeSpec
     {
         return $this->spec;

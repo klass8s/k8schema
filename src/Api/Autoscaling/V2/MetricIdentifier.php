@@ -36,6 +36,11 @@ class MetricIdentifier implements JsonSerializable
         return $this->name;
     }
 
+    public function getSelector(): LabelSelector|null
+    {
+        return $this->selector;
+    }
+
     public function selector(): LabelSelector
     {
         return $this->selector ??= new LabelSelector();
@@ -44,6 +49,13 @@ class MetricIdentifier implements JsonSerializable
     public function setName(string $name): self
     {
         $this->name = $name;
+
+        return $this;
+    }
+
+    public function setSelector(LabelSelector $selector): self
+    {
+        $this->selector = $selector;
 
         return $this;
     }

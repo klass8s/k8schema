@@ -50,6 +50,11 @@ class EnvVar implements JsonSerializable
         return $this->value;
     }
 
+    public function getValueFrom(): EnvVarSource|null
+    {
+        return $this->valueFrom;
+    }
+
     public function setName(string $name): self
     {
         $this->name = $name;
@@ -60,6 +65,13 @@ class EnvVar implements JsonSerializable
     public function setValue(string $value): self
     {
         $this->value = $value;
+
+        return $this;
+    }
+
+    public function setValueFrom(EnvVarSource $valueFrom): self
+    {
+        $this->valueFrom = $valueFrom;
 
         return $this;
     }

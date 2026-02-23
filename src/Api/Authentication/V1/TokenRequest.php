@@ -38,6 +38,20 @@ class TokenRequest implements APIResourceInterface
         return $this->metadata;
     }
 
+    public function setMetadata(ObjectMeta $metadata): self
+    {
+        $this->metadata = $metadata;
+
+        return $this;
+    }
+
+    public function setSpec(TokenRequestSpec $spec): self
+    {
+        $this->spec = $spec;
+
+        return $this;
+    }
+
     public function spec(): TokenRequestSpec
     {
         return $this->spec;

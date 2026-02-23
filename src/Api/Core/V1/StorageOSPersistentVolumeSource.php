@@ -61,6 +61,11 @@ class StorageOSPersistentVolumeSource implements JsonSerializable
         return $this->readOnly;
     }
 
+    public function getSecretRef(): ObjectReference|null
+    {
+        return $this->secretRef;
+    }
+
     public function getVolumeName(): string|null
     {
         return $this->volumeName;
@@ -86,6 +91,13 @@ class StorageOSPersistentVolumeSource implements JsonSerializable
     public function setReadOnly(bool $readOnly): self
     {
         $this->readOnly = $readOnly;
+
+        return $this;
+    }
+
+    public function setSecretRef(ObjectReference $secretRef): self
+    {
+        $this->secretRef = $secretRef;
 
         return $this;
     }

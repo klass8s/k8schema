@@ -33,6 +33,16 @@ class HorizontalPodAutoscalerBehavior implements JsonSerializable
     {
     }
 
+    public function getScaleDown(): HPAScalingRules|null
+    {
+        return $this->scaleDown;
+    }
+
+    public function getScaleUp(): HPAScalingRules|null
+    {
+        return $this->scaleUp;
+    }
+
     public function scaleDown(): HPAScalingRules
     {
         return $this->scaleDown ??= new HPAScalingRules();
@@ -41,6 +51,20 @@ class HorizontalPodAutoscalerBehavior implements JsonSerializable
     public function scaleUp(): HPAScalingRules
     {
         return $this->scaleUp ??= new HPAScalingRules();
+    }
+
+    public function setScaleDown(HPAScalingRules $scaleDown): self
+    {
+        $this->scaleDown = $scaleDown;
+
+        return $this;
+    }
+
+    public function setScaleUp(HPAScalingRules $scaleUp): self
+    {
+        $this->scaleUp = $scaleUp;
+
+        return $this;
     }
 
     public function jsonSerialize(): ArrayObject

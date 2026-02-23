@@ -48,6 +48,20 @@ class DeviceClass implements APIResourceInterface
         return $this->metadata;
     }
 
+    public function setMetadata(ObjectMeta $metadata): self
+    {
+        $this->metadata = $metadata;
+
+        return $this;
+    }
+
+    public function setSpec(DeviceClassSpec $spec): self
+    {
+        $this->spec = $spec;
+
+        return $this;
+    }
+
     public function spec(): DeviceClassSpec
     {
         return $this->spec;

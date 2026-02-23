@@ -51,6 +51,16 @@ class ControllerRevision implements APIResourceInterface
         return $this->data ??= new RawExtension();
     }
 
+    public function getData(): RawExtension|null
+    {
+        return $this->data;
+    }
+
+    public function getMetadata(): ObjectMeta|null
+    {
+        return $this->metadata;
+    }
+
     public function getRevision(): int
     {
         return $this->revision;
@@ -59,6 +69,20 @@ class ControllerRevision implements APIResourceInterface
     public function metadata(): ObjectMeta
     {
         return $this->metadata ??= new ObjectMeta();
+    }
+
+    public function setData(RawExtension $data): self
+    {
+        $this->data = $data;
+
+        return $this;
+    }
+
+    public function setMetadata(ObjectMeta $metadata): self
+    {
+        $this->metadata = $metadata;
+
+        return $this;
     }
 
     public function setRevision(int $revision): self

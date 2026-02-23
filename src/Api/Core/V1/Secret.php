@@ -69,6 +69,11 @@ class Secret implements APIResourceInterface
         return $this->immutable;
     }
 
+    public function getMetadata(): ObjectMeta|null
+    {
+        return $this->metadata;
+    }
+
     public function getType(): string|null
     {
         return $this->type;
@@ -79,9 +84,30 @@ class Secret implements APIResourceInterface
         return $this->metadata ??= new ObjectMeta();
     }
 
+    public function setData(StringMap $data): self
+    {
+        $this->data = $data;
+
+        return $this;
+    }
+
     public function setImmutable(bool $immutable): self
     {
         $this->immutable = $immutable;
+
+        return $this;
+    }
+
+    public function setMetadata(ObjectMeta $metadata): self
+    {
+        $this->metadata = $metadata;
+
+        return $this;
+    }
+
+    public function setStringData(StringMap $stringData): self
+    {
+        $this->stringData = $stringData;
 
         return $this;
     }

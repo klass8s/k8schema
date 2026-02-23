@@ -121,6 +121,16 @@ class StatefulSetSpec implements JsonSerializable
         return $this->minReadySeconds;
     }
 
+    public function getOrdinals(): StatefulSetOrdinals|null
+    {
+        return $this->ordinals;
+    }
+
+    public function getPersistentVolumeClaimRetentionPolicy(): StatefulSetPersistentVolumeClaimRetentionPolicy|null
+    {
+        return $this->persistentVolumeClaimRetentionPolicy;
+    }
+
     public function getPodManagementPolicy(): string|null
     {
         return $this->podManagementPolicy;
@@ -141,6 +151,11 @@ class StatefulSetSpec implements JsonSerializable
         return $this->serviceName;
     }
 
+    public function getUpdateStrategy(): StatefulSetUpdateStrategy|null
+    {
+        return $this->updateStrategy;
+    }
+
     public function ordinals(): StatefulSetOrdinals
     {
         return $this->ordinals ??= new StatefulSetOrdinals();
@@ -159,6 +174,21 @@ class StatefulSetSpec implements JsonSerializable
     public function setMinReadySeconds(int $minReadySeconds): self
     {
         $this->minReadySeconds = $minReadySeconds;
+
+        return $this;
+    }
+
+    public function setOrdinals(StatefulSetOrdinals $ordinals): self
+    {
+        $this->ordinals = $ordinals;
+
+        return $this;
+    }
+
+    public function setPersistentVolumeClaimRetentionPolicy(
+        StatefulSetPersistentVolumeClaimRetentionPolicy $persistentVolumeClaimRetentionPolicy,
+    ): self {
+        $this->persistentVolumeClaimRetentionPolicy = $persistentVolumeClaimRetentionPolicy;
 
         return $this;
     }
@@ -184,9 +214,37 @@ class StatefulSetSpec implements JsonSerializable
         return $this;
     }
 
+    public function setSelector(LabelSelector $selector): self
+    {
+        $this->selector = $selector;
+
+        return $this;
+    }
+
     public function setServiceName(string $serviceName): self
     {
         $this->serviceName = $serviceName;
+
+        return $this;
+    }
+
+    public function setTemplate(PodTemplateSpec $template): self
+    {
+        $this->template = $template;
+
+        return $this;
+    }
+
+    public function setUpdateStrategy(StatefulSetUpdateStrategy $updateStrategy): self
+    {
+        $this->updateStrategy = $updateStrategy;
+
+        return $this;
+    }
+
+    public function setVolumeClaimTemplates(PersistentVolumeClaimList $volumeClaimTemplates): self
+    {
+        $this->volumeClaimTemplates = $volumeClaimTemplates;
 
         return $this;
     }

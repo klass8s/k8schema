@@ -27,6 +27,13 @@ class LimitRangeSpec implements JsonSerializable
         return $this->limits;
     }
 
+    public function setLimits(LimitRangeItemList $limits): self
+    {
+        $this->limits = $limits;
+
+        return $this;
+    }
+
     public function jsonSerialize(): ArrayObject
     {
         return new ArrayObject([

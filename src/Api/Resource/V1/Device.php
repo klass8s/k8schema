@@ -194,6 +194,11 @@ class Device implements JsonSerializable
         return $this->nodeName;
     }
 
+    public function getNodeSelector(): NodeSelector|null
+    {
+        return $this->nodeSelector;
+    }
+
     public function nodeSelector(): NodeSelector
     {
         return $this->nodeSelector ??= new NodeSelector();
@@ -213,9 +218,44 @@ class Device implements JsonSerializable
         return $this;
     }
 
+    public function setAttributes(DeviceAttributeMap $attributes): self
+    {
+        $this->attributes = $attributes;
+
+        return $this;
+    }
+
+    public function setBindingConditions(StringList $bindingConditions): self
+    {
+        $this->bindingConditions = $bindingConditions;
+
+        return $this;
+    }
+
+    public function setBindingFailureConditions(StringList $bindingFailureConditions): self
+    {
+        $this->bindingFailureConditions = $bindingFailureConditions;
+
+        return $this;
+    }
+
     public function setBindsToNode(bool $bindsToNode): self
     {
         $this->bindsToNode = $bindsToNode;
+
+        return $this;
+    }
+
+    public function setCapacity(DeviceCapacityMap $capacity): self
+    {
+        $this->capacity = $capacity;
+
+        return $this;
+    }
+
+    public function setConsumesCounters(DeviceCounterConsumptionList $consumesCounters): self
+    {
+        $this->consumesCounters = $consumesCounters;
 
         return $this;
     }
@@ -230,6 +270,20 @@ class Device implements JsonSerializable
     public function setNodeName(string $nodeName): self
     {
         $this->nodeName = $nodeName;
+
+        return $this;
+    }
+
+    public function setNodeSelector(NodeSelector $nodeSelector): self
+    {
+        $this->nodeSelector = $nodeSelector;
+
+        return $this;
+    }
+
+    public function setTaints(DeviceTaintList $taints): self
+    {
+        $this->taints = $taints;
 
         return $this;
     }

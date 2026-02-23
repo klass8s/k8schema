@@ -40,6 +40,11 @@ class ResourceQuotaSpec implements JsonSerializable
         $this->scopes = new StringList();
     }
 
+    public function getScopeSelector(): ScopeSelector|null
+    {
+        return $this->scopeSelector;
+    }
+
     public function hard(): StringOrFloatMap
     {
         return $this->hard;
@@ -53,6 +58,27 @@ class ResourceQuotaSpec implements JsonSerializable
     public function scopes(): StringList
     {
         return $this->scopes;
+    }
+
+    public function setHard(StringOrFloatMap $hard): self
+    {
+        $this->hard = $hard;
+
+        return $this;
+    }
+
+    public function setScopeSelector(ScopeSelector $scopeSelector): self
+    {
+        $this->scopeSelector = $scopeSelector;
+
+        return $this;
+    }
+
+    public function setScopes(StringList $scopes): self
+    {
+        $this->scopes = $scopes;
+
+        return $this;
     }
 
     public function jsonSerialize(): ArrayObject

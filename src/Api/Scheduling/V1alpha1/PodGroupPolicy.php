@@ -33,9 +33,21 @@ class PodGroupPolicy implements JsonSerializable
         return $this->basic ??= new BasicSchedulingPolicy();
     }
 
+    public function getBasic(): BasicSchedulingPolicy|null
+    {
+        return $this->basic;
+    }
+
     public function getGang(): GangSchedulingPolicy|null
     {
         return $this->gang;
+    }
+
+    public function setBasic(BasicSchedulingPolicy $basic): self
+    {
+        $this->basic = $basic;
+
+        return $this;
     }
 
     public function setGang(GangSchedulingPolicy $gang): self

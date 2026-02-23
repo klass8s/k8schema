@@ -39,6 +39,11 @@ class DeviceCapacity implements JsonSerializable
         $this->value = $value;
     }
 
+    public function getRequestPolicy(): CapacityRequestPolicy|null
+    {
+        return $this->requestPolicy;
+    }
+
     public function getValue(): string|float
     {
         return $this->value;
@@ -47,6 +52,13 @@ class DeviceCapacity implements JsonSerializable
     public function requestPolicy(): CapacityRequestPolicy
     {
         return $this->requestPolicy ??= new CapacityRequestPolicy();
+    }
+
+    public function setRequestPolicy(CapacityRequestPolicy $requestPolicy): self
+    {
+        $this->requestPolicy = $requestPolicy;
+
+        return $this;
     }
 
     public function setValue(string|float $value): self

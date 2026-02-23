@@ -65,6 +65,13 @@ class HTTPIngressPath implements JsonSerializable
         return $this->pathType;
     }
 
+    public function setBackend(IngressBackend $backend): self
+    {
+        $this->backend = $backend;
+
+        return $this;
+    }
+
     public function setPath(string $path): self
     {
         $this->path = $path;

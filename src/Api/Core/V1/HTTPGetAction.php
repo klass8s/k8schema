@@ -77,6 +77,13 @@ class HTTPGetAction implements JsonSerializable
         return $this;
     }
 
+    public function setHttpHeaders(HTTPHeaderList $httpHeaders): self
+    {
+        $this->httpHeaders = $httpHeaders;
+
+        return $this;
+    }
+
     public function setPath(string $path): self
     {
         $this->path = $path;

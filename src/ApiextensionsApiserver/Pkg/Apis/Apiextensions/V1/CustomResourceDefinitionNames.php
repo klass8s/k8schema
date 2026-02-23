@@ -88,6 +88,13 @@ class CustomResourceDefinitionNames implements JsonSerializable
         return $this->singular;
     }
 
+    public function setCategories(StringList $categories): self
+    {
+        $this->categories = $categories;
+
+        return $this;
+    }
+
     public function setKind(string $kind): self
     {
         $this->kind = $kind;
@@ -105,6 +112,13 @@ class CustomResourceDefinitionNames implements JsonSerializable
     public function setPlural(string $plural): self
     {
         $this->plural = $plural;
+
+        return $this;
+    }
+
+    public function setShortNames(StringList $shortNames): self
+    {
+        $this->shortNames = $shortNames;
 
         return $this;
     }

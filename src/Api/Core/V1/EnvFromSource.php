@@ -37,9 +37,19 @@ class EnvFromSource implements JsonSerializable
         return $this->configMapRef ??= new ConfigMapEnvSource();
     }
 
+    public function getConfigMapRef(): ConfigMapEnvSource|null
+    {
+        return $this->configMapRef;
+    }
+
     public function getPrefix(): string|null
     {
         return $this->prefix;
+    }
+
+    public function getSecretRef(): SecretEnvSource|null
+    {
+        return $this->secretRef;
     }
 
     public function secretRef(): SecretEnvSource
@@ -47,9 +57,23 @@ class EnvFromSource implements JsonSerializable
         return $this->secretRef ??= new SecretEnvSource();
     }
 
+    public function setConfigMapRef(ConfigMapEnvSource $configMapRef): self
+    {
+        $this->configMapRef = $configMapRef;
+
+        return $this;
+    }
+
     public function setPrefix(string $prefix): self
     {
         $this->prefix = $prefix;
+
+        return $this;
+    }
+
+    public function setSecretRef(SecretEnvSource $secretRef): self
+    {
+        $this->secretRef = $secretRef;
 
         return $this;
     }

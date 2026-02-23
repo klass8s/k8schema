@@ -92,6 +92,11 @@ class StorageClass implements APIResourceInterface
         return $this->allowVolumeExpansion;
     }
 
+    public function getMetadata(): ObjectMeta|null
+    {
+        return $this->metadata;
+    }
+
     public function getProvisioner(): string
     {
         return $this->provisioner;
@@ -125,6 +130,34 @@ class StorageClass implements APIResourceInterface
     public function setAllowVolumeExpansion(bool $allowVolumeExpansion): self
     {
         $this->allowVolumeExpansion = $allowVolumeExpansion;
+
+        return $this;
+    }
+
+    public function setAllowedTopologies(TopologySelectorTermList $allowedTopologies): self
+    {
+        $this->allowedTopologies = $allowedTopologies;
+
+        return $this;
+    }
+
+    public function setMetadata(ObjectMeta $metadata): self
+    {
+        $this->metadata = $metadata;
+
+        return $this;
+    }
+
+    public function setMountOptions(StringList $mountOptions): self
+    {
+        $this->mountOptions = $mountOptions;
+
+        return $this;
+    }
+
+    public function setParameters(StringMap $parameters): self
+    {
+        $this->parameters = $parameters;
 
         return $this;
     }

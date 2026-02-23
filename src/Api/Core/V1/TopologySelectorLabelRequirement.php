@@ -43,6 +43,13 @@ class TopologySelectorLabelRequirement implements JsonSerializable
         return $this;
     }
 
+    public function setValues(StringList $values): self
+    {
+        $this->values = $values;
+
+        return $this;
+    }
+
     public function values(): StringList
     {
         return $this->values;

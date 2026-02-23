@@ -59,6 +59,13 @@ class OpaqueDeviceConfiguration implements JsonSerializable
         return $this;
     }
 
+    public function setParameters(RawExtension $parameters): self
+    {
+        $this->parameters = $parameters;
+
+        return $this;
+    }
+
     public function jsonSerialize(): ArrayObject
     {
         return new ArrayObject([

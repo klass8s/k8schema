@@ -60,6 +60,27 @@ class ResourceRequirements implements JsonSerializable
         return $this->requests;
     }
 
+    public function setClaims(ResourceClaimList $claims): self
+    {
+        $this->claims = $claims;
+
+        return $this;
+    }
+
+    public function setLimits(StringOrFloatMap $limits): self
+    {
+        $this->limits = $limits;
+
+        return $this;
+    }
+
+    public function setRequests(StringOrFloatMap $requests): self
+    {
+        $this->requests = $requests;
+
+        return $this;
+    }
+
     public function jsonSerialize(): ArrayObject
     {
         return new ArrayObject([

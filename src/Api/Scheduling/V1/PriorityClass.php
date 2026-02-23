@@ -67,6 +67,11 @@ class PriorityClass implements APIResourceInterface
         return $this->globalDefault;
     }
 
+    public function getMetadata(): ObjectMeta|null
+    {
+        return $this->metadata;
+    }
+
     public function getPreemptionPolicy(): string|null
     {
         return $this->preemptionPolicy;
@@ -92,6 +97,13 @@ class PriorityClass implements APIResourceInterface
     public function setGlobalDefault(bool $globalDefault): self
     {
         $this->globalDefault = $globalDefault;
+
+        return $this;
+    }
+
+    public function setMetadata(ObjectMeta $metadata): self
+    {
+        $this->metadata = $metadata;
 
         return $this;
     }

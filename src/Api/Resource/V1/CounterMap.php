@@ -72,8 +72,8 @@ class CounterMap implements JsonSerializable
         return $this;
     }
 
-    public function jsonSerialize(): ArrayObject
+    public function jsonSerialize(): ArrayObject|null
     {
-        return $this->items;
+        return $this->items->count() > 0 ? $this->items : null;
     }
 }

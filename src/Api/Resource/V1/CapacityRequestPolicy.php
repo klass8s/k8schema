@@ -81,6 +81,13 @@ class CapacityRequestPolicy implements JsonSerializable
         return $this;
     }
 
+    public function setValidValues(StringOrFloatList $validValues): self
+    {
+        $this->validValues = $validValues;
+
+        return $this;
+    }
+
     public function validValues(): StringOrFloatList
     {
         return $this->validValues;

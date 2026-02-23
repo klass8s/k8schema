@@ -57,9 +57,28 @@ class Endpoints implements APIResourceInterface
         $this->subsets = new EndpointSubsetList();
     }
 
+    public function getMetadata(): ObjectMeta|null
+    {
+        return $this->metadata;
+    }
+
     public function metadata(): ObjectMeta
     {
         return $this->metadata ??= new ObjectMeta();
+    }
+
+    public function setMetadata(ObjectMeta $metadata): self
+    {
+        $this->metadata = $metadata;
+
+        return $this;
+    }
+
+    public function setSubsets(EndpointSubsetList $subsets): self
+    {
+        $this->subsets = $subsets;
+
+        return $this;
     }
 
     public function subsets(): EndpointSubsetList

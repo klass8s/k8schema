@@ -56,6 +56,11 @@ class CinderPersistentVolumeSource implements JsonSerializable
         return $this->readOnly;
     }
 
+    public function getSecretRef(): SecretReference|null
+    {
+        return $this->secretRef;
+    }
+
     public function getVolumeID(): string
     {
         return $this->volumeID;
@@ -76,6 +81,13 @@ class CinderPersistentVolumeSource implements JsonSerializable
     public function setReadOnly(bool $readOnly): self
     {
         $this->readOnly = $readOnly;
+
+        return $this;
+    }
+
+    public function setSecretRef(SecretReference $secretRef): self
+    {
+        $this->secretRef = $secretRef;
 
         return $this;
     }

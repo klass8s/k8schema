@@ -38,9 +38,28 @@ class ComponentStatus implements APIResourceInterface
         return $this->conditions;
     }
 
+    public function getMetadata(): ObjectMeta|null
+    {
+        return $this->metadata;
+    }
+
     public function metadata(): ObjectMeta
     {
         return $this->metadata ??= new ObjectMeta();
+    }
+
+    public function setConditions(ComponentConditionList $conditions): self
+    {
+        $this->conditions = $conditions;
+
+        return $this;
+    }
+
+    public function setMetadata(ObjectMeta $metadata): self
+    {
+        $this->metadata = $metadata;
+
+        return $this;
     }
 
     public function jsonSerialize(): ArrayObject

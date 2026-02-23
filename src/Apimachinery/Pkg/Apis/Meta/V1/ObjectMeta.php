@@ -162,6 +162,13 @@ class ObjectMeta implements JsonSerializable
         return $this->ownerReferences;
     }
 
+    public function setAnnotations(StringMap $annotations): self
+    {
+        $this->annotations = $annotations;
+
+        return $this;
+    }
+
     public function setDeletionGracePeriodSeconds(int $deletionGracePeriodSeconds): self
     {
         $this->deletionGracePeriodSeconds = $deletionGracePeriodSeconds;
@@ -169,9 +176,30 @@ class ObjectMeta implements JsonSerializable
         return $this;
     }
 
+    public function setFinalizers(StringList $finalizers): self
+    {
+        $this->finalizers = $finalizers;
+
+        return $this;
+    }
+
     public function setGenerateName(string $generateName): self
     {
         $this->generateName = $generateName;
+
+        return $this;
+    }
+
+    public function setLabels(StringMap $labels): self
+    {
+        $this->labels = $labels;
+
+        return $this;
+    }
+
+    public function setManagedFields(ManagedFieldsEntryList $managedFields): self
+    {
+        $this->managedFields = $managedFields;
 
         return $this;
     }
@@ -186,6 +214,13 @@ class ObjectMeta implements JsonSerializable
     public function setNamespace(string $namespace): self
     {
         $this->namespace = $namespace;
+
+        return $this;
+    }
+
+    public function setOwnerReferences(OwnerReferenceList $ownerReferences): self
+    {
+        $this->ownerReferences = $ownerReferences;
 
         return $this;
     }

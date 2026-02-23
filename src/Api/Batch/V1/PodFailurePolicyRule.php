@@ -78,6 +78,13 @@ class PodFailurePolicyRule implements JsonSerializable
         return $this;
     }
 
+    public function setOnPodConditions(PodFailurePolicyOnPodConditionsPatternList $onPodConditions): self
+    {
+        $this->onPodConditions = $onPodConditions;
+
+        return $this;
+    }
+
     public function jsonSerialize(): ArrayObject
     {
         return new ArrayObject([

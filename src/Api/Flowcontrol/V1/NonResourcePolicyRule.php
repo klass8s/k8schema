@@ -46,6 +46,20 @@ class NonResourcePolicyRule implements JsonSerializable
         return $this->nonResourceURLs;
     }
 
+    public function setNonResourceURLs(StringList $nonResourceURLs): self
+    {
+        $this->nonResourceURLs = $nonResourceURLs;
+
+        return $this;
+    }
+
+    public function setVerbs(StringList $verbs): self
+    {
+        $this->verbs = $verbs;
+
+        return $this;
+    }
+
     public function verbs(): StringList
     {
         return $this->verbs;

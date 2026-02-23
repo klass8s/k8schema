@@ -42,6 +42,20 @@ class Scheduling implements JsonSerializable
         return $this->nodeSelector;
     }
 
+    public function setNodeSelector(StringMap $nodeSelector): self
+    {
+        $this->nodeSelector = $nodeSelector;
+
+        return $this;
+    }
+
+    public function setTolerations(TolerationList $tolerations): self
+    {
+        $this->tolerations = $tolerations;
+
+        return $this;
+    }
+
     public function tolerations(): TolerationList
     {
         return $this->tolerations;

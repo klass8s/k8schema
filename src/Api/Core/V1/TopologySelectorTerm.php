@@ -30,6 +30,13 @@ class TopologySelectorTerm implements JsonSerializable
         return $this->matchLabelExpressions;
     }
 
+    public function setMatchLabelExpressions(TopologySelectorLabelRequirementList $matchLabelExpressions): self
+    {
+        $this->matchLabelExpressions = $matchLabelExpressions;
+
+        return $this;
+    }
+
     public function jsonSerialize(): ArrayObject
     {
         return new ArrayObject([

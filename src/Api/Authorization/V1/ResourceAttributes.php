@@ -75,9 +75,19 @@ class ResourceAttributes implements JsonSerializable
         return $this->fieldSelector ??= new FieldSelectorAttributes();
     }
 
+    public function getFieldSelector(): FieldSelectorAttributes|null
+    {
+        return $this->fieldSelector;
+    }
+
     public function getGroup(): string|null
     {
         return $this->group;
+    }
+
+    public function getLabelSelector(): LabelSelectorAttributes|null
+    {
+        return $this->labelSelector;
     }
 
     public function getName(): string|null
@@ -115,9 +125,23 @@ class ResourceAttributes implements JsonSerializable
         return $this->labelSelector ??= new LabelSelectorAttributes();
     }
 
+    public function setFieldSelector(FieldSelectorAttributes $fieldSelector): self
+    {
+        $this->fieldSelector = $fieldSelector;
+
+        return $this;
+    }
+
     public function setGroup(string $group): self
     {
         $this->group = $group;
+
+        return $this;
+    }
+
+    public function setLabelSelector(LabelSelectorAttributes $labelSelector): self
+    {
+        $this->labelSelector = $labelSelector;
 
         return $this;
     }

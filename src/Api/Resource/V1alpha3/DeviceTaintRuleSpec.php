@@ -34,9 +34,21 @@ class DeviceTaintRuleSpec implements JsonSerializable
         return $this->deviceSelector ??= new DeviceTaintSelector();
     }
 
+    public function getDeviceSelector(): DeviceTaintSelector|null
+    {
+        return $this->deviceSelector;
+    }
+
     public function getTaint(): DeviceTaint
     {
         return $this->taint;
+    }
+
+    public function setDeviceSelector(DeviceTaintSelector $deviceSelector): self
+    {
+        $this->deviceSelector = $deviceSelector;
+
+        return $this;
     }
 
     public function setTaint(DeviceTaint $taint): self

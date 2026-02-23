@@ -269,14 +269,44 @@ class Container implements JsonSerializable
         return $this->imagePullPolicy;
     }
 
+    public function getLifecycle(): Lifecycle|null
+    {
+        return $this->lifecycle;
+    }
+
+    public function getLivenessProbe(): Probe|null
+    {
+        return $this->livenessProbe;
+    }
+
     public function getName(): string
     {
         return $this->name;
     }
 
+    public function getReadinessProbe(): Probe|null
+    {
+        return $this->readinessProbe;
+    }
+
+    public function getResources(): ResourceRequirements|null
+    {
+        return $this->resources;
+    }
+
     public function getRestartPolicy(): string|null
     {
         return $this->restartPolicy;
+    }
+
+    public function getSecurityContext(): SecurityContext|null
+    {
+        return $this->securityContext;
+    }
+
+    public function getStartupProbe(): Probe|null
+    {
+        return $this->startupProbe;
     }
 
     public function getStdin(): bool|null
@@ -349,6 +379,34 @@ class Container implements JsonSerializable
         return $this->securityContext ??= new SecurityContext();
     }
 
+    public function setArgs(StringList $args): self
+    {
+        $this->args = $args;
+
+        return $this;
+    }
+
+    public function setCommand(StringList $command): self
+    {
+        $this->command = $command;
+
+        return $this;
+    }
+
+    public function setEnv(EnvVarList $env): self
+    {
+        $this->env = $env;
+
+        return $this;
+    }
+
+    public function setEnvFrom(EnvFromSourceList $envFrom): self
+    {
+        $this->envFrom = $envFrom;
+
+        return $this;
+    }
+
     public function setImage(string $image): self
     {
         $this->image = $image;
@@ -363,6 +421,20 @@ class Container implements JsonSerializable
         return $this;
     }
 
+    public function setLifecycle(Lifecycle $lifecycle): self
+    {
+        $this->lifecycle = $lifecycle;
+
+        return $this;
+    }
+
+    public function setLivenessProbe(Probe $livenessProbe): self
+    {
+        $this->livenessProbe = $livenessProbe;
+
+        return $this;
+    }
+
     public function setName(string $name): self
     {
         $this->name = $name;
@@ -370,9 +442,58 @@ class Container implements JsonSerializable
         return $this;
     }
 
+    public function setPorts(ContainerPortList $ports): self
+    {
+        $this->ports = $ports;
+
+        return $this;
+    }
+
+    public function setReadinessProbe(Probe $readinessProbe): self
+    {
+        $this->readinessProbe = $readinessProbe;
+
+        return $this;
+    }
+
+    public function setResizePolicy(ContainerResizePolicyList $resizePolicy): self
+    {
+        $this->resizePolicy = $resizePolicy;
+
+        return $this;
+    }
+
+    public function setResources(ResourceRequirements $resources): self
+    {
+        $this->resources = $resources;
+
+        return $this;
+    }
+
     public function setRestartPolicy(string $restartPolicy): self
     {
         $this->restartPolicy = $restartPolicy;
+
+        return $this;
+    }
+
+    public function setRestartPolicyRules(ContainerRestartRuleList $restartPolicyRules): self
+    {
+        $this->restartPolicyRules = $restartPolicyRules;
+
+        return $this;
+    }
+
+    public function setSecurityContext(SecurityContext $securityContext): self
+    {
+        $this->securityContext = $securityContext;
+
+        return $this;
+    }
+
+    public function setStartupProbe(Probe $startupProbe): self
+    {
+        $this->startupProbe = $startupProbe;
 
         return $this;
     }
@@ -408,6 +529,20 @@ class Container implements JsonSerializable
     public function setTty(bool $tty): self
     {
         $this->tty = $tty;
+
+        return $this;
+    }
+
+    public function setVolumeDevices(VolumeDeviceList $volumeDevices): self
+    {
+        $this->volumeDevices = $volumeDevices;
+
+        return $this;
+    }
+
+    public function setVolumeMounts(VolumeMountList $volumeMounts): self
+    {
+        $this->volumeMounts = $volumeMounts;
 
         return $this;
     }

@@ -154,6 +154,13 @@ class ScaleIOPersistentVolumeSource implements JsonSerializable
         return $this;
     }
 
+    public function setSecretRef(SecretReference $secretRef): self
+    {
+        $this->secretRef = $secretRef;
+
+        return $this;
+    }
+
     public function setSslEnabled(bool $sslEnabled): self
     {
         $this->sslEnabled = $sslEnabled;

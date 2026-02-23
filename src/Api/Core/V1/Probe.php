@@ -90,6 +90,11 @@ class Probe implements JsonSerializable
         return $this->exec ??= new ExecAction();
     }
 
+    public function getExec(): ExecAction|null
+    {
+        return $this->exec;
+    }
+
     public function getFailureThreshold(): int|null
     {
         return $this->failureThreshold;
@@ -133,6 +138,13 @@ class Probe implements JsonSerializable
     public function getTimeoutSeconds(): int|null
     {
         return $this->timeoutSeconds;
+    }
+
+    public function setExec(ExecAction $exec): self
+    {
+        $this->exec = $exec;
+
+        return $this;
     }
 
     public function setFailureThreshold(int $failureThreshold): self

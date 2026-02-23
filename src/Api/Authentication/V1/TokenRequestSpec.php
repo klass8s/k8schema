@@ -52,9 +52,28 @@ class TokenRequestSpec implements JsonSerializable
         return $this->boundObjectRef ??= new BoundObjectReference();
     }
 
+    public function getBoundObjectRef(): BoundObjectReference|null
+    {
+        return $this->boundObjectRef;
+    }
+
     public function getExpirationSeconds(): int|null
     {
         return $this->expirationSeconds;
+    }
+
+    public function setAudiences(StringList $audiences): self
+    {
+        $this->audiences = $audiences;
+
+        return $this;
+    }
+
+    public function setBoundObjectRef(BoundObjectReference $boundObjectRef): self
+    {
+        $this->boundObjectRef = $boundObjectRef;
+
+        return $this;
     }
 
     public function setExpirationSeconds(int $expirationSeconds): self

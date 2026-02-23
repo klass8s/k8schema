@@ -72,6 +72,11 @@ class NetworkPolicySpec implements JsonSerializable
         return $this->egress;
     }
 
+    public function getPodSelector(): LabelSelector|null
+    {
+        return $this->podSelector;
+    }
+
     public function ingress(): NetworkPolicyIngressRuleList
     {
         return $this->ingress;
@@ -85,6 +90,34 @@ class NetworkPolicySpec implements JsonSerializable
     public function policyTypes(): StringList
     {
         return $this->policyTypes;
+    }
+
+    public function setEgress(NetworkPolicyEgressRuleList $egress): self
+    {
+        $this->egress = $egress;
+
+        return $this;
+    }
+
+    public function setIngress(NetworkPolicyIngressRuleList $ingress): self
+    {
+        $this->ingress = $ingress;
+
+        return $this;
+    }
+
+    public function setPodSelector(LabelSelector $podSelector): self
+    {
+        $this->podSelector = $podSelector;
+
+        return $this;
+    }
+
+    public function setPolicyTypes(StringList $policyTypes): self
+    {
+        $this->policyTypes = $policyTypes;
+
+        return $this;
     }
 
     public function jsonSerialize(): ArrayObject

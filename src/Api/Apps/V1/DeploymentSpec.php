@@ -96,6 +96,11 @@ class DeploymentSpec implements JsonSerializable
         return $this->revisionHistoryLimit;
     }
 
+    public function getStrategy(): DeploymentStrategy|null
+    {
+        return $this->strategy;
+    }
+
     public function selector(): LabelSelector
     {
         return $this->selector;
@@ -132,6 +137,27 @@ class DeploymentSpec implements JsonSerializable
     public function setRevisionHistoryLimit(int $revisionHistoryLimit): self
     {
         $this->revisionHistoryLimit = $revisionHistoryLimit;
+
+        return $this;
+    }
+
+    public function setSelector(LabelSelector $selector): self
+    {
+        $this->selector = $selector;
+
+        return $this;
+    }
+
+    public function setStrategy(DeploymentStrategy $strategy): self
+    {
+        $this->strategy = $strategy;
+
+        return $this;
+    }
+
+    public function setTemplate(PodTemplateSpec $template): self
+    {
+        $this->template = $template;
 
         return $this;
     }

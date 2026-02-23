@@ -33,6 +33,13 @@ class SuccessPolicy implements JsonSerializable
         return $this->rules;
     }
 
+    public function setRules(SuccessPolicyRuleList $rules): self
+    {
+        $this->rules = $rules;
+
+        return $this;
+    }
+
     public function jsonSerialize(): ArrayObject
     {
         return new ArrayObject([

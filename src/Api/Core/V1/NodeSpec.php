@@ -66,6 +66,11 @@ class NodeSpec implements JsonSerializable
         return $this->configSource ??= new NodeConfigSource();
     }
 
+    public function getConfigSource(): NodeConfigSource|null
+    {
+        return $this->configSource;
+    }
+
     public function getExternalID(): string|null
     {
         return $this->externalID;
@@ -91,6 +96,13 @@ class NodeSpec implements JsonSerializable
         return $this->podCIDRs;
     }
 
+    public function setConfigSource(NodeConfigSource $configSource): self
+    {
+        $this->configSource = $configSource;
+
+        return $this;
+    }
+
     public function setExternalID(string $externalID): self
     {
         $this->externalID = $externalID;
@@ -105,9 +117,23 @@ class NodeSpec implements JsonSerializable
         return $this;
     }
 
+    public function setPodCIDRs(StringList $podCIDRs): self
+    {
+        $this->podCIDRs = $podCIDRs;
+
+        return $this;
+    }
+
     public function setProviderID(string $providerID): self
     {
         $this->providerID = $providerID;
+
+        return $this;
+    }
+
+    public function setTaints(TaintList $taints): self
+    {
+        $this->taints = $taints;
 
         return $this;
     }

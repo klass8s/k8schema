@@ -44,6 +44,20 @@ class NetworkPolicyEgressRule implements JsonSerializable
         return $this->ports;
     }
 
+    public function setPorts(NetworkPolicyPortList $ports): self
+    {
+        $this->ports = $ports;
+
+        return $this;
+    }
+
+    public function setTo(NetworkPolicyPeerList $to): self
+    {
+        $this->to = $to;
+
+        return $this;
+    }
+
     public function to(): NetworkPolicyPeerList
     {
         return $this->to;

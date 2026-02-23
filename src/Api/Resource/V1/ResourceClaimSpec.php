@@ -27,6 +27,18 @@ class ResourceClaimSpec implements JsonSerializable
         return $this->devices ??= new DeviceClaim();
     }
 
+    public function getDevices(): DeviceClaim|null
+    {
+        return $this->devices;
+    }
+
+    public function setDevices(DeviceClaim $devices): self
+    {
+        $this->devices = $devices;
+
+        return $this;
+    }
+
     public function jsonSerialize(): ArrayObject
     {
         return new ArrayObject([

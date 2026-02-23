@@ -42,6 +42,13 @@ class TokenReviewSpec implements JsonSerializable
         return $this->token;
     }
 
+    public function setAudiences(StringList $audiences): self
+    {
+        $this->audiences = $audiences;
+
+        return $this;
+    }
+
     public function setToken(string $token): self
     {
         $this->token = $token;

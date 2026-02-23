@@ -46,6 +46,13 @@ class PodGroup implements JsonSerializable
         return $this;
     }
 
+    public function setPolicy(PodGroupPolicy $policy): self
+    {
+        $this->policy = $policy;
+
+        return $this;
+    }
+
     public function jsonSerialize(): ArrayObject
     {
         return new ArrayObject([

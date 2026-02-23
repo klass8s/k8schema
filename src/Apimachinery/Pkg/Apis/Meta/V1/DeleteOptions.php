@@ -119,6 +119,11 @@ class DeleteOptions implements JsonSerializable
         return $this->orphanDependents;
     }
 
+    public function getPreconditions(): Preconditions|null
+    {
+        return $this->preconditions;
+    }
+
     public function getPropagationPolicy(): string|null
     {
         return $this->propagationPolicy;
@@ -132,6 +137,13 @@ class DeleteOptions implements JsonSerializable
     public function setApiVersion(string $apiVersion): self
     {
         $this->apiVersion = $apiVersion;
+
+        return $this;
+    }
+
+    public function setDryRun(StringList $dryRun): self
+    {
+        $this->dryRun = $dryRun;
 
         return $this;
     }
@@ -161,6 +173,13 @@ class DeleteOptions implements JsonSerializable
     public function setOrphanDependents(bool $orphanDependents): self
     {
         $this->orphanDependents = $orphanDependents;
+
+        return $this;
+    }
+
+    public function setPreconditions(Preconditions $preconditions): self
+    {
+        $this->preconditions = $preconditions;
 
         return $this;
     }

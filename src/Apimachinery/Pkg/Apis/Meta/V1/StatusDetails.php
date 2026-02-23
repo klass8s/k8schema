@@ -89,6 +89,13 @@ class StatusDetails implements JsonSerializable
         return $this->uid;
     }
 
+    public function setCauses(StatusCauseList $causes): self
+    {
+        $this->causes = $causes;
+
+        return $this;
+    }
+
     public function setGroup(string $group): self
     {
         $this->group = $group;

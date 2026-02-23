@@ -64,6 +64,11 @@ class DaemonSetSpec implements JsonSerializable
         return $this->revisionHistoryLimit;
     }
 
+    public function getUpdateStrategy(): DaemonSetUpdateStrategy|null
+    {
+        return $this->updateStrategy;
+    }
+
     public function selector(): LabelSelector
     {
         return $this->selector;
@@ -79,6 +84,27 @@ class DaemonSetSpec implements JsonSerializable
     public function setRevisionHistoryLimit(int $revisionHistoryLimit): self
     {
         $this->revisionHistoryLimit = $revisionHistoryLimit;
+
+        return $this;
+    }
+
+    public function setSelector(LabelSelector $selector): self
+    {
+        $this->selector = $selector;
+
+        return $this;
+    }
+
+    public function setTemplate(PodTemplateSpec $template): self
+    {
+        $this->template = $template;
+
+        return $this;
+    }
+
+    public function setUpdateStrategy(DaemonSetUpdateStrategy $updateStrategy): self
+    {
+        $this->updateStrategy = $updateStrategy;
 
         return $this;
     }

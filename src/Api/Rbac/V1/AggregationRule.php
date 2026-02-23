@@ -31,6 +31,13 @@ class AggregationRule implements JsonSerializable
         return $this->clusterRoleSelectors;
     }
 
+    public function setClusterRoleSelectors(LabelSelectorList $clusterRoleSelectors): self
+    {
+        $this->clusterRoleSelectors = $clusterRoleSelectors;
+
+        return $this;
+    }
+
     public function jsonSerialize(): ArrayObject
     {
         return new ArrayObject([

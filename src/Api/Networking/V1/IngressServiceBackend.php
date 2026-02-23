@@ -34,6 +34,11 @@ class IngressServiceBackend implements JsonSerializable
         return $this->name;
     }
 
+    public function getPort(): ServiceBackendPort|null
+    {
+        return $this->port;
+    }
+
     public function port(): ServiceBackendPort
     {
         return $this->port ??= new ServiceBackendPort();
@@ -42,6 +47,13 @@ class IngressServiceBackend implements JsonSerializable
     public function setName(string $name): self
     {
         $this->name = $name;
+
+        return $this;
+    }
+
+    public function setPort(ServiceBackendPort $port): self
+    {
+        $this->port = $port;
 
         return $this;
     }

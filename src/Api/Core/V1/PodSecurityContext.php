@@ -197,6 +197,11 @@ class PodSecurityContext implements JsonSerializable
         return $this->seLinuxChangePolicy;
     }
 
+    public function getSeLinuxOptions(): SELinuxOptions|null
+    {
+        return $this->seLinuxOptions;
+    }
+
     public function getSeccompProfile(): SeccompProfile|null
     {
         return $this->seccompProfile;
@@ -205,6 +210,11 @@ class PodSecurityContext implements JsonSerializable
     public function getSupplementalGroupsPolicy(): string|null
     {
         return $this->supplementalGroupsPolicy;
+    }
+
+    public function getWindowsOptions(): WindowsSecurityContextOptions|null
+    {
+        return $this->windowsOptions;
     }
 
     public function seLinuxOptions(): SELinuxOptions
@@ -261,6 +271,13 @@ class PodSecurityContext implements JsonSerializable
         return $this;
     }
 
+    public function setSeLinuxOptions(SELinuxOptions $seLinuxOptions): self
+    {
+        $this->seLinuxOptions = $seLinuxOptions;
+
+        return $this;
+    }
+
     public function setSeccompProfile(SeccompProfile $seccompProfile): self
     {
         $this->seccompProfile = $seccompProfile;
@@ -268,9 +285,30 @@ class PodSecurityContext implements JsonSerializable
         return $this;
     }
 
+    public function setSupplementalGroups(IntList $supplementalGroups): self
+    {
+        $this->supplementalGroups = $supplementalGroups;
+
+        return $this;
+    }
+
     public function setSupplementalGroupsPolicy(string $supplementalGroupsPolicy): self
     {
         $this->supplementalGroupsPolicy = $supplementalGroupsPolicy;
+
+        return $this;
+    }
+
+    public function setSysctls(SysctlList $sysctls): self
+    {
+        $this->sysctls = $sysctls;
+
+        return $this;
+    }
+
+    public function setWindowsOptions(WindowsSecurityContextOptions $windowsOptions): self
+    {
+        $this->windowsOptions = $windowsOptions;
 
         return $this;
     }

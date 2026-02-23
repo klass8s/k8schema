@@ -86,9 +86,37 @@ class ResourcePolicyRule implements JsonSerializable
         return $this->resources;
     }
 
+    public function setApiGroups(StringList $apiGroups): self
+    {
+        $this->apiGroups = $apiGroups;
+
+        return $this;
+    }
+
     public function setClusterScope(bool $clusterScope): self
     {
         $this->clusterScope = $clusterScope;
+
+        return $this;
+    }
+
+    public function setNamespaces(StringList $namespaces): self
+    {
+        $this->namespaces = $namespaces;
+
+        return $this;
+    }
+
+    public function setResources(StringList $resources): self
+    {
+        $this->resources = $resources;
+
+        return $this;
+    }
+
+    public function setVerbs(StringList $verbs): self
+    {
+        $this->verbs = $verbs;
 
         return $this;
     }

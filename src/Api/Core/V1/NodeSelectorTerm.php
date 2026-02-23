@@ -40,6 +40,20 @@ class NodeSelectorTerm implements JsonSerializable
         return $this->matchFields;
     }
 
+    public function setMatchExpressions(NodeSelectorRequirementList $matchExpressions): self
+    {
+        $this->matchExpressions = $matchExpressions;
+
+        return $this;
+    }
+
+    public function setMatchFields(NodeSelectorRequirementList $matchFields): self
+    {
+        $this->matchFields = $matchFields;
+
+        return $this;
+    }
+
     public function jsonSerialize(): ArrayObject
     {
         return new ArrayObject([

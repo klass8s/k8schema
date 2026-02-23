@@ -66,6 +66,27 @@ class EndpointSubset implements JsonSerializable
         return $this->ports;
     }
 
+    public function setAddresses(EndpointAddressList $addresses): self
+    {
+        $this->addresses = $addresses;
+
+        return $this;
+    }
+
+    public function setNotReadyAddresses(EndpointAddressList $notReadyAddresses): self
+    {
+        $this->notReadyAddresses = $notReadyAddresses;
+
+        return $this;
+    }
+
+    public function setPorts(EndpointPortList $ports): self
+    {
+        $this->ports = $ports;
+
+        return $this;
+    }
+
     public function jsonSerialize(): ArrayObject
     {
         return new ArrayObject([

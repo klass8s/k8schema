@@ -26,6 +26,18 @@ class SessionAffinityConfig implements JsonSerializable
         return $this->clientIP ??= new ClientIPConfig();
     }
 
+    public function getClientIP(): ClientIPConfig|null
+    {
+        return $this->clientIP;
+    }
+
+    public function setClientIP(ClientIPConfig $clientIP): self
+    {
+        $this->clientIP = $clientIP;
+
+        return $this;
+    }
+
     public function jsonSerialize(): ArrayObject
     {
         return new ArrayObject([

@@ -49,6 +49,16 @@ class MutatingAdmissionPolicyBindingSpec implements JsonSerializable
     {
     }
 
+    public function getMatchResources(): MatchResources|null
+    {
+        return $this->matchResources;
+    }
+
+    public function getParamRef(): ParamRef|null
+    {
+        return $this->paramRef;
+    }
+
     public function getPolicyName(): string|null
     {
         return $this->policyName;
@@ -62,6 +72,20 @@ class MutatingAdmissionPolicyBindingSpec implements JsonSerializable
     public function paramRef(): ParamRef
     {
         return $this->paramRef ??= new ParamRef();
+    }
+
+    public function setMatchResources(MatchResources $matchResources): self
+    {
+        $this->matchResources = $matchResources;
+
+        return $this;
+    }
+
+    public function setParamRef(ParamRef $paramRef): self
+    {
+        $this->paramRef = $paramRef;
+
+        return $this;
     }
 
     public function setPolicyName(string $policyName): self

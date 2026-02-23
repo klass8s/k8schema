@@ -47,6 +47,13 @@ class WorkloadSpec implements JsonSerializable
         return $this;
     }
 
+    public function setPodGroups(PodGroupList $podGroups): self
+    {
+        $this->podGroups = $podGroups;
+
+        return $this;
+    }
+
     public function jsonSerialize(): ArrayObject
     {
         return new ArrayObject([

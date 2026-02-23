@@ -29,6 +29,13 @@ class CSINodeSpec implements JsonSerializable
         return $this->drivers;
     }
 
+    public function setDrivers(CSINodeDriverList $drivers): self
+    {
+        $this->drivers = $drivers;
+
+        return $this;
+    }
+
     public function jsonSerialize(): ArrayObject
     {
         return new ArrayObject([

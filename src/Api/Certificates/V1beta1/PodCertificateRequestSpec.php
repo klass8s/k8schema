@@ -266,6 +266,13 @@ class PodCertificateRequestSpec implements JsonSerializable
         return $this;
     }
 
+    public function setUnverifiedUserAnnotations(StringMap $unverifiedUserAnnotations): self
+    {
+        $this->unverifiedUserAnnotations = $unverifiedUserAnnotations;
+
+        return $this;
+    }
+
     public function unverifiedUserAnnotations(): StringMap
     {
         return $this->unverifiedUserAnnotations;

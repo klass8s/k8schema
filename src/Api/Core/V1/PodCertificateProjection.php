@@ -176,6 +176,13 @@ class PodCertificateProjection implements JsonSerializable
         return $this;
     }
 
+    public function setUserAnnotations(StringMap $userAnnotations): self
+    {
+        $this->userAnnotations = $userAnnotations;
+
+        return $this;
+    }
+
     public function userAnnotations(): StringMap
     {
         return $this->userAnnotations;

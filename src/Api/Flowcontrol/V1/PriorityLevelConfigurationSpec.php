@@ -47,6 +47,16 @@ class PriorityLevelConfigurationSpec implements JsonSerializable
         return $this->exempt ??= new ExemptPriorityLevelConfiguration();
     }
 
+    public function getExempt(): ExemptPriorityLevelConfiguration|null
+    {
+        return $this->exempt;
+    }
+
+    public function getLimited(): LimitedPriorityLevelConfiguration|null
+    {
+        return $this->limited;
+    }
+
     public function getType(): string
     {
         return $this->type;
@@ -55,6 +65,20 @@ class PriorityLevelConfigurationSpec implements JsonSerializable
     public function limited(): LimitedPriorityLevelConfiguration
     {
         return $this->limited ??= new LimitedPriorityLevelConfiguration();
+    }
+
+    public function setExempt(ExemptPriorityLevelConfiguration $exempt): self
+    {
+        $this->exempt = $exempt;
+
+        return $this;
+    }
+
+    public function setLimited(LimitedPriorityLevelConfiguration $limited): self
+    {
+        $this->limited = $limited;
+
+        return $this;
     }
 
     public function setType(string $type): self
