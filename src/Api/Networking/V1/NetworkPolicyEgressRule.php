@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Networking\V1;
 
+use ArrayObject;
 use JsonSerializable;
 
 /**
@@ -43,16 +44,30 @@ class NetworkPolicyEgressRule implements JsonSerializable
         return $this->ports;
     }
 
+    public function setPorts(NetworkPolicyPortList $ports): self
+    {
+        $this->ports = $ports;
+
+        return $this;
+    }
+
+    public function setTo(NetworkPolicyPeerList $to): self
+    {
+        $this->to = $to;
+
+        return $this;
+    }
+
     public function to(): NetworkPolicyPeerList
     {
         return $this->to;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'ports' => $this->ports,
             'to' => $this->to,
-        ];
+        ]);
     }
 }

@@ -11,7 +11,7 @@ class ValidatingWebhookList implements JsonSerializable
     /**
      * @var ValidatingWebhook[]
      */
-    private array $items = [];
+    private array $items;
 
     public function __construct()
     {
@@ -25,11 +25,6 @@ class ValidatingWebhookList implements JsonSerializable
         return $this;
     }
 
-    /**
-     * @var ValidatingWebhook[] $items
-     *
-     * @return self
-     */
     public function addAll(array $items): self
     {
         foreach ($items as $value) {
@@ -59,8 +54,8 @@ class ValidatingWebhookList implements JsonSerializable
         return count($this->items);
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): array|null
     {
-        return $this->items;
+        return count($this->items) > 0 ? $this->items : null;
     }
 }

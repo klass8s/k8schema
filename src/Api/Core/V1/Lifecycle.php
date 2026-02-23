@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Core\V1;
 
+use ArrayObject;
 use JsonSerializable;
 
 /**
@@ -21,7 +22,7 @@ class Lifecycle implements JsonSerializable
      * info:
      * https://kubernetes.io/docs/concepts/containers/container-lifecycle-hooks/#container-hooks
      */
-    private LifecycleHandler $postStart;
+    private LifecycleHandler|null $postStart = null;
 
     /**
      * PreStop is called immediately before a container is terminated due to an API
@@ -34,29 +35,51 @@ class Lifecycle implements JsonSerializable
      * completes or until the termination grace period is reached. More info:
      * https://kubernetes.io/docs/concepts/containers/container-lifecycle-hooks/#container-hooks
      */
-    private LifecycleHandler $preStop;
+    private LifecycleHandler|null $preStop = null;
 
     public function __construct()
     {
-        $this->postStart = new LifecycleHandler();
-        $this->preStop = new LifecycleHandler();
     }
 
-    public function postStart(): LifecycleHandler
+    public function getPostStart(): LifecycleHandler|null
     {
         return $this->postStart;
     }
 
-    public function preStop(): LifecycleHandler
+    public function getPreStop(): LifecycleHandler|null
     {
         return $this->preStop;
     }
 
-    public function jsonSerialize(): array
+    public function postStart(): LifecycleHandler
     {
-        return [
+        return $this->postStart ??= new LifecycleHandler();
+    }
+
+    public function preStop(): LifecycleHandler
+    {
+        return $this->preStop ??= new LifecycleHandler();
+    }
+
+    public function setPostStart(LifecycleHandler $postStart): self
+    {
+        $this->postStart = $postStart;
+
+        return $this;
+    }
+
+    public function setPreStop(LifecycleHandler $preStop): self
+    {
+        $this->preStop = $preStop;
+
+        return $this;
+    }
+
+    public function jsonSerialize(): ArrayObject
+    {
+        return new ArrayObject([
             'postStart' => $this->postStart,
             'preStop' => $this->preStop,
-        ];
+        ]);
     }
 }

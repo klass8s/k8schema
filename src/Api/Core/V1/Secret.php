@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Core\V1;
 
+use ArrayObject;
 use K8Schema\APIResourceInterface;
 use K8Schema\Apimachinery\Pkg\Apis\Meta\V1\ObjectMeta;
 use K8Schema\Collection\StringMap;
@@ -36,7 +37,7 @@ class Secret implements APIResourceInterface
      * Standard object's metadata. More info:
      * https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
      */
-    private ObjectMeta $metadata;
+    private ObjectMeta|null $metadata = null;
 
     /**
      * stringData allows specifying non-binary secret data in string form. It is
@@ -55,7 +56,6 @@ class Secret implements APIResourceInterface
     public function __construct()
     {
         $this->data = new StringMap();
-        $this->metadata = new ObjectMeta();
         $this->stringData = new StringMap();
     }
 
@@ -69,6 +69,11 @@ class Secret implements APIResourceInterface
         return $this->immutable;
     }
 
+    public function getMetadata(): ObjectMeta|null
+    {
+        return $this->metadata;
+    }
+
     public function getType(): string|null
     {
         return $this->type;
@@ -76,12 +81,33 @@ class Secret implements APIResourceInterface
 
     public function metadata(): ObjectMeta
     {
-        return $this->metadata;
+        return $this->metadata ??= new ObjectMeta();
+    }
+
+    public function setData(StringMap $data): self
+    {
+        $this->data = $data;
+
+        return $this;
     }
 
     public function setImmutable(bool $immutable): self
     {
         $this->immutable = $immutable;
+
+        return $this;
+    }
+
+    public function setMetadata(ObjectMeta $metadata): self
+    {
+        $this->metadata = $metadata;
+
+        return $this;
+    }
+
+    public function setStringData(StringMap $stringData): self
+    {
+        $this->stringData = $stringData;
 
         return $this;
     }
@@ -98,9 +124,9 @@ class Secret implements APIResourceInterface
         return $this->stringData;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'apiVersion' => self::API_VERSION,
             'kind' => self::KIND,
             'data' => $this->data,
@@ -108,6 +134,6 @@ class Secret implements APIResourceInterface
             'metadata' => $this->metadata,
             'stringData' => $this->stringData,
             'type' => $this->type,
-        ];
+        ]);
     }
 }

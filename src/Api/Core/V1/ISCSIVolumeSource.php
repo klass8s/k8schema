@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Core\V1;
 
+use ArrayObject;
 use JsonSerializable;
 use K8Schema\Collection\StringList;
 
@@ -70,7 +71,7 @@ class ISCSIVolumeSource implements JsonSerializable
     /**
      * secretRef is the CHAP Secret for iSCSI target and initiator authentication
      */
-    private LocalObjectReference $secretRef;
+    private LocalObjectReference|null $secretRef = null;
 
     /**
      * targetPortal is iSCSI Target Portal. The Portal is either an IP or ip_addr:port
@@ -83,7 +84,6 @@ class ISCSIVolumeSource implements JsonSerializable
         $this->iqn = $iqn;
         $this->lun = $lun;
         $this->portals = new StringList();
-        $this->secretRef = new LocalObjectReference();
         $this->targetPortal = $targetPortal;
     }
 
@@ -127,6 +127,11 @@ class ISCSIVolumeSource implements JsonSerializable
         return $this->readOnly;
     }
 
+    public function getSecretRef(): LocalObjectReference|null
+    {
+        return $this->secretRef;
+    }
+
     public function getTargetPortal(): string
     {
         return $this->targetPortal;
@@ -139,7 +144,7 @@ class ISCSIVolumeSource implements JsonSerializable
 
     public function secretRef(): LocalObjectReference
     {
-        return $this->secretRef;
+        return $this->secretRef ??= new LocalObjectReference();
     }
 
     public function setChapAuthDiscovery(bool $chapAuthDiscovery): self
@@ -191,9 +196,23 @@ class ISCSIVolumeSource implements JsonSerializable
         return $this;
     }
 
+    public function setPortals(StringList $portals): self
+    {
+        $this->portals = $portals;
+
+        return $this;
+    }
+
     public function setReadOnly(bool $readOnly): self
     {
         $this->readOnly = $readOnly;
+
+        return $this;
+    }
+
+    public function setSecretRef(LocalObjectReference $secretRef): self
+    {
+        $this->secretRef = $secretRef;
 
         return $this;
     }
@@ -205,9 +224,9 @@ class ISCSIVolumeSource implements JsonSerializable
         return $this;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'chapAuthDiscovery' => $this->chapAuthDiscovery,
             'chapAuthSession' => $this->chapAuthSession,
             'fsType' => $this->fsType,
@@ -219,6 +238,6 @@ class ISCSIVolumeSource implements JsonSerializable
             'readOnly' => $this->readOnly,
             'secretRef' => $this->secretRef,
             'targetPortal' => $this->targetPortal,
-        ];
+        ]);
     }
 }

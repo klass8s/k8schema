@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Apps\V1;
 
+use ArrayObject;
 use JsonSerializable;
 
 /**
@@ -15,7 +16,7 @@ class DaemonSetUpdateStrategy implements JsonSerializable
     /**
      * Rolling update config params. Present only if type = "RollingUpdate".
      */
-    private RollingUpdateDaemonSet $rollingUpdate;
+    private RollingUpdateDaemonSet|null $rollingUpdate = null;
 
     /**
      * Type of daemon set update. Can be "RollingUpdate" or "OnDelete". Default is
@@ -25,7 +26,11 @@ class DaemonSetUpdateStrategy implements JsonSerializable
 
     public function __construct()
     {
-        $this->rollingUpdate = new RollingUpdateDaemonSet();
+    }
+
+    public function getRollingUpdate(): RollingUpdateDaemonSet|null
+    {
+        return $this->rollingUpdate;
     }
 
     public function getType(): string|null
@@ -35,7 +40,14 @@ class DaemonSetUpdateStrategy implements JsonSerializable
 
     public function rollingUpdate(): RollingUpdateDaemonSet
     {
-        return $this->rollingUpdate;
+        return $this->rollingUpdate ??= new RollingUpdateDaemonSet();
+    }
+
+    public function setRollingUpdate(RollingUpdateDaemonSet $rollingUpdate): self
+    {
+        $this->rollingUpdate = $rollingUpdate;
+
+        return $this;
     }
 
     public function setType(string $type): self
@@ -45,11 +57,11 @@ class DaemonSetUpdateStrategy implements JsonSerializable
         return $this;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'rollingUpdate' => $this->rollingUpdate,
             'type' => $this->type,
-        ];
+        ]);
     }
 }

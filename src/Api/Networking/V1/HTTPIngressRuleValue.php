@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Networking\V1;
 
+use ArrayObject;
 use JsonSerializable;
 
 /**
@@ -29,10 +30,17 @@ class HTTPIngressRuleValue implements JsonSerializable
         return $this->paths;
     }
 
-    public function jsonSerialize(): array
+    public function setPaths(HTTPIngressPathList $paths): self
     {
-        return [
+        $this->paths = $paths;
+
+        return $this;
+    }
+
+    public function jsonSerialize(): ArrayObject
+    {
+        return new ArrayObject([
             'paths' => $this->paths,
-        ];
+        ]);
     }
 }

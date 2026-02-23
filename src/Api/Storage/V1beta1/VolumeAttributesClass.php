@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Storage\V1beta1;
 
+use ArrayObject;
 use K8Schema\APIResourceInterface;
 use K8Schema\Apimachinery\Pkg\Apis\Meta\V1\ObjectMeta;
 use K8Schema\Collection\StringMap;
@@ -28,7 +29,7 @@ class VolumeAttributesClass implements APIResourceInterface
      * Standard object's metadata. More info:
      * https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
      */
-    private ObjectMeta $metadata;
+    private ObjectMeta|null $metadata = null;
 
     /**
      * parameters hold volume attributes defined by the CSI driver. These values are
@@ -50,7 +51,6 @@ class VolumeAttributesClass implements APIResourceInterface
     public function __construct(string $driverName)
     {
         $this->driverName = $driverName;
-        $this->metadata = new ObjectMeta();
         $this->parameters = new StringMap();
     }
 
@@ -59,9 +59,14 @@ class VolumeAttributesClass implements APIResourceInterface
         return $this->driverName;
     }
 
-    public function metadata(): ObjectMeta
+    public function getMetadata(): ObjectMeta|null
     {
         return $this->metadata;
+    }
+
+    public function metadata(): ObjectMeta
+    {
+        return $this->metadata ??= new ObjectMeta();
     }
 
     public function parameters(): StringMap
@@ -76,14 +81,28 @@ class VolumeAttributesClass implements APIResourceInterface
         return $this;
     }
 
-    public function jsonSerialize(): array
+    public function setMetadata(ObjectMeta $metadata): self
     {
-        return [
+        $this->metadata = $metadata;
+
+        return $this;
+    }
+
+    public function setParameters(StringMap $parameters): self
+    {
+        $this->parameters = $parameters;
+
+        return $this;
+    }
+
+    public function jsonSerialize(): ArrayObject
+    {
+        return new ArrayObject([
             'apiVersion' => self::API_VERSION,
             'kind' => self::KIND,
             'driverName' => $this->driverName,
             'metadata' => $this->metadata,
             'parameters' => $this->parameters,
-        ];
+        ]);
     }
 }

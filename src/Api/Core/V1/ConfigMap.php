@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Core\V1;
 
+use ArrayObject;
 use K8Schema\APIResourceInterface;
 use K8Schema\Apimachinery\Pkg\Apis\Meta\V1\ObjectMeta;
 use K8Schema\Collection\StringMap;
@@ -44,13 +45,12 @@ class ConfigMap implements APIResourceInterface
      * Standard object's metadata. More info:
      * https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
      */
-    private ObjectMeta $metadata;
+    private ObjectMeta|null $metadata = null;
 
     public function __construct()
     {
         $this->binaryData = new StringMap();
         $this->data = new StringMap();
-        $this->metadata = new ObjectMeta();
     }
 
     public function binaryData(): StringMap
@@ -68,9 +68,28 @@ class ConfigMap implements APIResourceInterface
         return $this->immutable;
     }
 
-    public function metadata(): ObjectMeta
+    public function getMetadata(): ObjectMeta|null
     {
         return $this->metadata;
+    }
+
+    public function metadata(): ObjectMeta
+    {
+        return $this->metadata ??= new ObjectMeta();
+    }
+
+    public function setBinaryData(StringMap $binaryData): self
+    {
+        $this->binaryData = $binaryData;
+
+        return $this;
+    }
+
+    public function setData(StringMap $data): self
+    {
+        $this->data = $data;
+
+        return $this;
     }
 
     public function setImmutable(bool $immutable): self
@@ -80,15 +99,22 @@ class ConfigMap implements APIResourceInterface
         return $this;
     }
 
-    public function jsonSerialize(): array
+    public function setMetadata(ObjectMeta $metadata): self
     {
-        return [
+        $this->metadata = $metadata;
+
+        return $this;
+    }
+
+    public function jsonSerialize(): ArrayObject
+    {
+        return new ArrayObject([
             'apiVersion' => self::API_VERSION,
             'kind' => self::KIND,
             'binaryData' => $this->binaryData,
             'data' => $this->data,
             'immutable' => $this->immutable,
             'metadata' => $this->metadata,
-        ];
+        ]);
     }
 }

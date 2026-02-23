@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Core\V1;
 
+use ArrayObject;
 use K8Schema\APIResourceInterface;
 use K8Schema\Apimachinery\Pkg\Apis\Meta\V1\ObjectMeta;
 
@@ -20,7 +21,7 @@ class Binding implements APIResourceInterface
      * Standard object's metadata. More info:
      * https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
      */
-    private ObjectMeta $metadata;
+    private ObjectMeta|null $metadata = null;
 
     /**
      * The target object that you want to bind to the standard object.
@@ -29,13 +30,31 @@ class Binding implements APIResourceInterface
 
     public function __construct()
     {
-        $this->metadata = new ObjectMeta();
         $this->target = new ObjectReference();
+    }
+
+    public function getMetadata(): ObjectMeta|null
+    {
+        return $this->metadata;
     }
 
     public function metadata(): ObjectMeta
     {
-        return $this->metadata;
+        return $this->metadata ??= new ObjectMeta();
+    }
+
+    public function setMetadata(ObjectMeta $metadata): self
+    {
+        $this->metadata = $metadata;
+
+        return $this;
+    }
+
+    public function setTarget(ObjectReference $target): self
+    {
+        $this->target = $target;
+
+        return $this;
     }
 
     public function target(): ObjectReference
@@ -43,13 +62,13 @@ class Binding implements APIResourceInterface
         return $this->target;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'apiVersion' => self::API_VERSION,
             'kind' => self::KIND,
             'metadata' => $this->metadata,
             'target' => $this->target,
-        ];
+        ]);
     }
 }

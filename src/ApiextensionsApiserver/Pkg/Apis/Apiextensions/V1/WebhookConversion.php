@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\ApiextensionsApiserver\Pkg\Apis\Apiextensions\V1;
 
+use ArrayObject;
 use JsonSerializable;
 use K8Schema\Collection\StringList;
 
@@ -16,7 +17,7 @@ class WebhookConversion implements JsonSerializable
      * clientConfig is the instructions for how to call the webhook if strategy is
      * `Webhook`.
      */
-    private WebhookClientConfig $clientConfig;
+    private WebhookClientConfig|null $clientConfig = null;
 
     /**
      * conversionReviewVersions is an ordered list of preferred `ConversionReview`
@@ -30,13 +31,12 @@ class WebhookConversion implements JsonSerializable
 
     public function __construct()
     {
-        $this->clientConfig = new WebhookClientConfig();
         $this->conversionReviewVersions = new StringList();
     }
 
     public function clientConfig(): WebhookClientConfig
     {
-        return $this->clientConfig;
+        return $this->clientConfig ??= new WebhookClientConfig();
     }
 
     public function conversionReviewVersions(): StringList
@@ -44,11 +44,30 @@ class WebhookConversion implements JsonSerializable
         return $this->conversionReviewVersions;
     }
 
-    public function jsonSerialize(): array
+    public function getClientConfig(): WebhookClientConfig|null
     {
-        return [
+        return $this->clientConfig;
+    }
+
+    public function setClientConfig(WebhookClientConfig $clientConfig): self
+    {
+        $this->clientConfig = $clientConfig;
+
+        return $this;
+    }
+
+    public function setConversionReviewVersions(StringList $conversionReviewVersions): self
+    {
+        $this->conversionReviewVersions = $conversionReviewVersions;
+
+        return $this;
+    }
+
+    public function jsonSerialize(): ArrayObject
+    {
+        return new ArrayObject([
             'clientConfig' => $this->clientConfig,
             'conversionReviewVersions' => $this->conversionReviewVersions,
-        ];
+        ]);
     }
 }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Storage\V1;
 
+use ArrayObject;
 use JsonSerializable;
 use K8Schema\Collection\StringList;
 
@@ -234,6 +235,20 @@ class CSIDriverSpec implements JsonSerializable
         return $this;
     }
 
+    public function setTokenRequests(TokenRequestList $tokenRequests): self
+    {
+        $this->tokenRequests = $tokenRequests;
+
+        return $this;
+    }
+
+    public function setVolumeLifecycleModes(StringList $volumeLifecycleModes): self
+    {
+        $this->volumeLifecycleModes = $volumeLifecycleModes;
+
+        return $this;
+    }
+
     public function tokenRequests(): TokenRequestList
     {
         return $this->tokenRequests;
@@ -244,9 +259,9 @@ class CSIDriverSpec implements JsonSerializable
         return $this->volumeLifecycleModes;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'attachRequired' => $this->attachRequired,
             'fsGroupPolicy' => $this->fsGroupPolicy,
             'podInfoOnMount' => $this->podInfoOnMount,
@@ -255,6 +270,6 @@ class CSIDriverSpec implements JsonSerializable
             'storageCapacity' => $this->storageCapacity,
             'tokenRequests' => $this->tokenRequests,
             'volumeLifecycleModes' => $this->volumeLifecycleModes,
-        ];
+        ]);
     }
 }

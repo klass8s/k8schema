@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Storage\V1;
 
+use ArrayObject;
 use JsonSerializable;
 
 /**
@@ -58,17 +59,24 @@ class VolumeAttachmentSpec implements JsonSerializable
         return $this;
     }
 
+    public function setSource(VolumeAttachmentSource $source): self
+    {
+        $this->source = $source;
+
+        return $this;
+    }
+
     public function source(): VolumeAttachmentSource
     {
         return $this->source;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'attacher' => $this->attacher,
             'nodeName' => $this->nodeName,
             'source' => $this->source,
-        ];
+        ]);
     }
 }

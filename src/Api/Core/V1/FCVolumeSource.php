@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Core\V1;
 
+use ArrayObject;
 use JsonSerializable;
 use K8Schema\Collection\StringList;
 
@@ -85,6 +86,20 @@ class FCVolumeSource implements JsonSerializable
         return $this;
     }
 
+    public function setTargetWWNs(StringList $targetWWNs): self
+    {
+        $this->targetWWNs = $targetWWNs;
+
+        return $this;
+    }
+
+    public function setWwids(StringList $wwids): self
+    {
+        $this->wwids = $wwids;
+
+        return $this;
+    }
+
     public function targetWWNs(): StringList
     {
         return $this->targetWWNs;
@@ -95,14 +110,14 @@ class FCVolumeSource implements JsonSerializable
         return $this->wwids;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'fsType' => $this->fsType,
             'lun' => $this->lun,
             'readOnly' => $this->readOnly,
             'targetWWNs' => $this->targetWWNs,
             'wwids' => $this->wwids,
-        ];
+        ]);
     }
 }

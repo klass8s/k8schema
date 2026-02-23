@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Core\V1;
 
+use ArrayObject;
 use JsonSerializable;
 use K8Schema\Apimachinery\Pkg\Apis\Meta\V1\LabelSelector;
 use K8Schema\Collection\StringList;
@@ -21,7 +22,7 @@ class PodAffinityTerm implements JsonSerializable
      * A label query over a set of resources, in this case pods. If it's null, this
      * PodAffinityTerm matches with no Pods.
      */
-    private LabelSelector $labelSelector;
+    private LabelSelector|null $labelSelector = null;
 
     /**
      * MatchLabelKeys is a set of pod label keys to select which pods will be taken
@@ -57,7 +58,7 @@ class PodAffinityTerm implements JsonSerializable
      * listed in the namespaces field. null selector and null or empty namespaces list
      * means "this pod's namespace". An empty selector ({}) matches all namespaces.
      */
-    private LabelSelector $namespaceSelector;
+    private LabelSelector|null $namespaceSelector = null;
 
     /**
      * namespaces specifies a static list of namespace names that the term applies to.
@@ -78,12 +79,20 @@ class PodAffinityTerm implements JsonSerializable
 
     public function __construct(string $topologyKey)
     {
-        $this->labelSelector = new LabelSelector();
         $this->matchLabelKeys = new StringList();
         $this->mismatchLabelKeys = new StringList();
-        $this->namespaceSelector = new LabelSelector();
         $this->namespaces = new StringList();
         $this->topologyKey = $topologyKey;
+    }
+
+    public function getLabelSelector(): LabelSelector|null
+    {
+        return $this->labelSelector;
+    }
+
+    public function getNamespaceSelector(): LabelSelector|null
+    {
+        return $this->namespaceSelector;
     }
 
     public function getTopologyKey(): string
@@ -93,7 +102,7 @@ class PodAffinityTerm implements JsonSerializable
 
     public function labelSelector(): LabelSelector
     {
-        return $this->labelSelector;
+        return $this->labelSelector ??= new LabelSelector();
     }
 
     public function matchLabelKeys(): StringList
@@ -108,12 +117,47 @@ class PodAffinityTerm implements JsonSerializable
 
     public function namespaceSelector(): LabelSelector
     {
-        return $this->namespaceSelector;
+        return $this->namespaceSelector ??= new LabelSelector();
     }
 
     public function namespaces(): StringList
     {
         return $this->namespaces;
+    }
+
+    public function setLabelSelector(LabelSelector $labelSelector): self
+    {
+        $this->labelSelector = $labelSelector;
+
+        return $this;
+    }
+
+    public function setMatchLabelKeys(StringList $matchLabelKeys): self
+    {
+        $this->matchLabelKeys = $matchLabelKeys;
+
+        return $this;
+    }
+
+    public function setMismatchLabelKeys(StringList $mismatchLabelKeys): self
+    {
+        $this->mismatchLabelKeys = $mismatchLabelKeys;
+
+        return $this;
+    }
+
+    public function setNamespaceSelector(LabelSelector $namespaceSelector): self
+    {
+        $this->namespaceSelector = $namespaceSelector;
+
+        return $this;
+    }
+
+    public function setNamespaces(StringList $namespaces): self
+    {
+        $this->namespaces = $namespaces;
+
+        return $this;
     }
 
     public function setTopologyKey(string $topologyKey): self
@@ -123,15 +167,15 @@ class PodAffinityTerm implements JsonSerializable
         return $this;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'labelSelector' => $this->labelSelector,
             'matchLabelKeys' => $this->matchLabelKeys,
             'mismatchLabelKeys' => $this->mismatchLabelKeys,
             'namespaceSelector' => $this->namespaceSelector,
             'namespaces' => $this->namespaces,
             'topologyKey' => $this->topologyKey,
-        ];
+        ]);
     }
 }

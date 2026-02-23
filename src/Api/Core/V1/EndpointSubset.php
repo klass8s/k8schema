@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Core\V1;
 
+use ArrayObject;
 use JsonSerializable;
 
 /**
@@ -63,12 +64,33 @@ class EndpointSubset implements JsonSerializable
         return $this->ports;
     }
 
-    public function jsonSerialize(): array
+    public function setAddresses(EndpointAddressList $addresses): self
     {
-        return [
+        $this->addresses = $addresses;
+
+        return $this;
+    }
+
+    public function setNotReadyAddresses(EndpointAddressList $notReadyAddresses): self
+    {
+        $this->notReadyAddresses = $notReadyAddresses;
+
+        return $this;
+    }
+
+    public function setPorts(EndpointPortList $ports): self
+    {
+        $this->ports = $ports;
+
+        return $this;
+    }
+
+    public function jsonSerialize(): ArrayObject
+    {
+        return new ArrayObject([
             'addresses' => $this->addresses,
             'notReadyAddresses' => $this->notReadyAddresses,
             'ports' => $this->ports,
-        ];
+        ]);
     }
 }

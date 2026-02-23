@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Resource\V1beta1;
 
+use ArrayObject;
 use JsonSerializable;
 use K8Schema\Api\Core\V1\NodeSelector;
 
@@ -59,7 +60,7 @@ class ResourceSliceSpec implements JsonSerializable
      *
      * Exactly one of NodeName, NodeSelector and AllNodes must be set.
      */
-    private NodeSelector $nodeSelector;
+    private NodeSelector|null $nodeSelector = null;
 
     /**
      * Pool describes the pool that this ResourceSlice belongs to.
@@ -70,7 +71,6 @@ class ResourceSliceSpec implements JsonSerializable
     {
         $this->devices = new DeviceList();
         $this->driver = $driver;
-        $this->nodeSelector = new NodeSelector();
         $this->pool = $pool;
     }
 
@@ -94,6 +94,11 @@ class ResourceSliceSpec implements JsonSerializable
         return $this->nodeName;
     }
 
+    public function getNodeSelector(): NodeSelector|null
+    {
+        return $this->nodeSelector;
+    }
+
     public function getPool(): ResourcePool
     {
         return $this->pool;
@@ -101,12 +106,19 @@ class ResourceSliceSpec implements JsonSerializable
 
     public function nodeSelector(): NodeSelector
     {
-        return $this->nodeSelector;
+        return $this->nodeSelector ??= new NodeSelector();
     }
 
     public function setAllNodes(bool $allNodes): self
     {
         $this->allNodes = $allNodes;
+
+        return $this;
+    }
+
+    public function setDevices(DeviceList $devices): self
+    {
+        $this->devices = $devices;
 
         return $this;
     }
@@ -125,6 +137,13 @@ class ResourceSliceSpec implements JsonSerializable
         return $this;
     }
 
+    public function setNodeSelector(NodeSelector $nodeSelector): self
+    {
+        $this->nodeSelector = $nodeSelector;
+
+        return $this;
+    }
+
     public function setPool(ResourcePool $pool): self
     {
         $this->pool = $pool;
@@ -132,15 +151,15 @@ class ResourceSliceSpec implements JsonSerializable
         return $this;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'allNodes' => $this->allNodes,
             'devices' => $this->devices,
             'driver' => $this->driver,
             'nodeName' => $this->nodeName,
             'nodeSelector' => $this->nodeSelector,
             'pool' => $this->pool,
-        ];
+        ]);
     }
 }

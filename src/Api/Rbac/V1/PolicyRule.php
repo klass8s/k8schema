@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Rbac\V1;
 
+use ArrayObject;
 use JsonSerializable;
 use K8Schema\Collection\StringList;
 
@@ -79,19 +80,54 @@ class PolicyRule implements JsonSerializable
         return $this->resources;
     }
 
+    public function setApiGroups(StringList $apiGroups): self
+    {
+        $this->apiGroups = $apiGroups;
+
+        return $this;
+    }
+
+    public function setNonResourceURLs(StringList $nonResourceURLs): self
+    {
+        $this->nonResourceURLs = $nonResourceURLs;
+
+        return $this;
+    }
+
+    public function setResourceNames(StringList $resourceNames): self
+    {
+        $this->resourceNames = $resourceNames;
+
+        return $this;
+    }
+
+    public function setResources(StringList $resources): self
+    {
+        $this->resources = $resources;
+
+        return $this;
+    }
+
+    public function setVerbs(StringList $verbs): self
+    {
+        $this->verbs = $verbs;
+
+        return $this;
+    }
+
     public function verbs(): StringList
     {
         return $this->verbs;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'apiGroups' => $this->apiGroups,
             'nonResourceURLs' => $this->nonResourceURLs,
             'resourceNames' => $this->resourceNames,
             'resources' => $this->resources,
             'verbs' => $this->verbs,
-        ];
+        ]);
     }
 }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Batch\V1;
 
+use ArrayObject;
 use JsonSerializable;
 use K8Schema\Collection\IntList;
 
@@ -79,17 +80,24 @@ class PodFailurePolicyOnExitCodesRequirement implements JsonSerializable
         return $this;
     }
 
+    public function setValues(IntList $values): self
+    {
+        $this->values = $values;
+
+        return $this;
+    }
+
     public function values(): IntList
     {
         return $this->values;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'containerName' => $this->containerName,
             'operator' => $this->operator,
             'values' => $this->values,
-        ];
+        ]);
     }
 }

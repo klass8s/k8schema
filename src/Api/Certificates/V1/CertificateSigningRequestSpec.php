@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Certificates\V1;
 
+use ArrayObject;
 use JsonSerializable;
 use K8Schema\Collection\StringList;
 use K8Schema\Collection\StringListMap;
@@ -177,6 +178,20 @@ class CertificateSigningRequestSpec implements JsonSerializable
         return $this;
     }
 
+    public function setExtra(StringListMap $extra): self
+    {
+        $this->extra = $extra;
+
+        return $this;
+    }
+
+    public function setGroups(StringList $groups): self
+    {
+        $this->groups = $groups;
+
+        return $this;
+    }
+
     public function setRequest(string $request): self
     {
         $this->request = $request;
@@ -198,6 +213,13 @@ class CertificateSigningRequestSpec implements JsonSerializable
         return $this;
     }
 
+    public function setUsages(StringList $usages): self
+    {
+        $this->usages = $usages;
+
+        return $this;
+    }
+
     public function setUsername(string $username): self
     {
         $this->username = $username;
@@ -210,9 +232,9 @@ class CertificateSigningRequestSpec implements JsonSerializable
         return $this->usages;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'expirationSeconds' => $this->expirationSeconds,
             'extra' => $this->extra,
             'groups' => $this->groups,
@@ -221,6 +243,6 @@ class CertificateSigningRequestSpec implements JsonSerializable
             'uid' => $this->uid,
             'usages' => $this->usages,
             'username' => $this->username,
-        ];
+        ]);
     }
 }

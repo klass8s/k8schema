@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Admissionregistration\V1;
 
+use ArrayObject;
 use JsonSerializable;
 use K8Schema\Apimachinery\Pkg\Apis\Meta\V1\LabelSelector;
 
@@ -84,7 +85,7 @@ class MatchResources implements JsonSerializable
      *
      * Default to the empty LabelSelector, which matches everything.
      */
-    private LabelSelector $namespaceSelector;
+    private LabelSelector|null $namespaceSelector = null;
 
     /**
      * ObjectSelector decides whether to run the validation based on if the object has
@@ -97,7 +98,7 @@ class MatchResources implements JsonSerializable
      * may skip the admission webhook by setting the labels. Default to the empty
      * LabelSelector, which matches everything.
      */
-    private LabelSelector $objectSelector;
+    private LabelSelector|null $objectSelector = null;
 
     /**
      * ResourceRules describes what operations on what resources/subresources the
@@ -109,8 +110,6 @@ class MatchResources implements JsonSerializable
     public function __construct()
     {
         $this->excludeResourceRules = new NamedRuleWithOperationsList();
-        $this->namespaceSelector = new LabelSelector();
-        $this->objectSelector = new LabelSelector();
         $this->resourceRules = new NamedRuleWithOperationsList();
     }
 
@@ -124,19 +123,36 @@ class MatchResources implements JsonSerializable
         return $this->matchPolicy;
     }
 
-    public function namespaceSelector(): LabelSelector
+    public function getNamespaceSelector(): LabelSelector|null
     {
         return $this->namespaceSelector;
     }
 
-    public function objectSelector(): LabelSelector
+    public function getObjectSelector(): LabelSelector|null
     {
         return $this->objectSelector;
+    }
+
+    public function namespaceSelector(): LabelSelector
+    {
+        return $this->namespaceSelector ??= new LabelSelector();
+    }
+
+    public function objectSelector(): LabelSelector
+    {
+        return $this->objectSelector ??= new LabelSelector();
     }
 
     public function resourceRules(): NamedRuleWithOperationsList
     {
         return $this->resourceRules;
+    }
+
+    public function setExcludeResourceRules(NamedRuleWithOperationsList $excludeResourceRules): self
+    {
+        $this->excludeResourceRules = $excludeResourceRules;
+
+        return $this;
     }
 
     public function setMatchPolicy(string $matchPolicy): self
@@ -146,14 +162,35 @@ class MatchResources implements JsonSerializable
         return $this;
     }
 
-    public function jsonSerialize(): array
+    public function setNamespaceSelector(LabelSelector $namespaceSelector): self
     {
-        return [
+        $this->namespaceSelector = $namespaceSelector;
+
+        return $this;
+    }
+
+    public function setObjectSelector(LabelSelector $objectSelector): self
+    {
+        $this->objectSelector = $objectSelector;
+
+        return $this;
+    }
+
+    public function setResourceRules(NamedRuleWithOperationsList $resourceRules): self
+    {
+        $this->resourceRules = $resourceRules;
+
+        return $this;
+    }
+
+    public function jsonSerialize(): ArrayObject
+    {
+        return new ArrayObject([
             'excludeResourceRules' => $this->excludeResourceRules,
             'matchPolicy' => $this->matchPolicy,
             'namespaceSelector' => $this->namespaceSelector,
             'objectSelector' => $this->objectSelector,
             'resourceRules' => $this->resourceRules,
-        ];
+        ]);
     }
 }

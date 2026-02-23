@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Resource\V1beta1;
 
+use ArrayObject;
 use JsonSerializable;
 
 /**
@@ -15,7 +16,7 @@ class Device implements JsonSerializable
     /**
      * Basic defines one device instance.
      */
-    private BasicDevice $basic;
+    private BasicDevice|null $basic = null;
 
     /**
      * Name is unique identifier among all devices managed by the driver in the pool.
@@ -25,11 +26,15 @@ class Device implements JsonSerializable
 
     public function __construct(string $name)
     {
-        $this->basic = new BasicDevice();
         $this->name = $name;
     }
 
     public function basic(): BasicDevice
+    {
+        return $this->basic ??= new BasicDevice();
+    }
+
+    public function getBasic(): BasicDevice|null
     {
         return $this->basic;
     }
@@ -39,6 +44,13 @@ class Device implements JsonSerializable
         return $this->name;
     }
 
+    public function setBasic(BasicDevice $basic): self
+    {
+        $this->basic = $basic;
+
+        return $this;
+    }
+
     public function setName(string $name): self
     {
         $this->name = $name;
@@ -46,11 +58,11 @@ class Device implements JsonSerializable
         return $this;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'basic' => $this->basic,
             'name' => $this->name,
-        ];
+        ]);
     }
 }

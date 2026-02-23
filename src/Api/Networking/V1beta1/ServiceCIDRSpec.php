@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Networking\V1beta1;
 
+use ArrayObject;
 use JsonSerializable;
 use K8Schema\Collection\StringList;
 
@@ -30,10 +31,17 @@ class ServiceCIDRSpec implements JsonSerializable
         return $this->cidrs;
     }
 
-    public function jsonSerialize(): array
+    public function setCidrs(StringList $cidrs): self
     {
-        return [
+        $this->cidrs = $cidrs;
+
+        return $this;
+    }
+
+    public function jsonSerialize(): ArrayObject
+    {
+        return new ArrayObject([
             'cidrs' => $this->cidrs,
-        ];
+        ]);
     }
 }

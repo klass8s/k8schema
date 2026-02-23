@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Core\V1;
 
+use ArrayObject;
 use JsonSerializable;
 use K8Schema\Collection\StringOrFloatMap;
 
@@ -60,12 +61,33 @@ class ResourceRequirements implements JsonSerializable
         return $this->requests;
     }
 
-    public function jsonSerialize(): array
+    public function setClaims(ResourceClaimList $claims): self
     {
-        return [
+        $this->claims = $claims;
+
+        return $this;
+    }
+
+    public function setLimits(StringOrFloatMap $limits): self
+    {
+        $this->limits = $limits;
+
+        return $this;
+    }
+
+    public function setRequests(StringOrFloatMap $requests): self
+    {
+        $this->requests = $requests;
+
+        return $this;
+    }
+
+    public function jsonSerialize(): ArrayObject
+    {
+        return new ArrayObject([
             'claims' => $this->claims,
             'limits' => $this->limits,
             'requests' => $this->requests,
-        ];
+        ]);
     }
 }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Storage\V1;
 
+use ArrayObject;
 use JsonSerializable;
 
 /**
@@ -28,10 +29,17 @@ class CSINodeSpec implements JsonSerializable
         return $this->drivers;
     }
 
-    public function jsonSerialize(): array
+    public function setDrivers(CSINodeDriverList $drivers): self
     {
-        return [
+        $this->drivers = $drivers;
+
+        return $this;
+    }
+
+    public function jsonSerialize(): ArrayObject
+    {
+        return new ArrayObject([
             'drivers' => $this->drivers,
-        ];
+        ]);
     }
 }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Resource\V1beta1;
 
+use ArrayObject;
 use JsonSerializable;
 
 /**
@@ -15,22 +16,33 @@ class ResourceClaimSpec implements JsonSerializable
     /**
      * Devices defines how to request devices.
      */
-    private DeviceClaim $devices;
+    private DeviceClaim|null $devices = null;
 
     public function __construct()
     {
-        $this->devices = new DeviceClaim();
     }
 
     public function devices(): DeviceClaim
     {
+        return $this->devices ??= new DeviceClaim();
+    }
+
+    public function getDevices(): DeviceClaim|null
+    {
         return $this->devices;
     }
 
-    public function jsonSerialize(): array
+    public function setDevices(DeviceClaim $devices): self
     {
-        return [
+        $this->devices = $devices;
+
+        return $this;
+    }
+
+    public function jsonSerialize(): ArrayObject
+    {
+        return new ArrayObject([
             'devices' => $this->devices,
-        ];
+        ]);
     }
 }

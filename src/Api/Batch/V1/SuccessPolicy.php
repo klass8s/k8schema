@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Batch\V1;
 
+use ArrayObject;
 use JsonSerializable;
 
 /**
@@ -32,10 +33,17 @@ class SuccessPolicy implements JsonSerializable
         return $this->rules;
     }
 
-    public function jsonSerialize(): array
+    public function setRules(SuccessPolicyRuleList $rules): self
     {
-        return [
+        $this->rules = $rules;
+
+        return $this;
+    }
+
+    public function jsonSerialize(): ArrayObject
+    {
+        return new ArrayObject([
             'rules' => $this->rules,
-        ];
+        ]);
     }
 }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Networking\V1;
 
+use ArrayObject;
 use JsonSerializable;
 
 /**
@@ -37,11 +38,10 @@ class IngressRule implements JsonSerializable
      * equal to the suffix (removing the first label) of the wildcard rule.
      */
     private string|null $host = null;
-    private HTTPIngressRuleValue $http;
+    private HTTPIngressRuleValue|null $http = null;
 
     public function __construct()
     {
-        $this->http = new HTTPIngressRuleValue();
     }
 
     public function getHost(): string|null
@@ -49,9 +49,14 @@ class IngressRule implements JsonSerializable
         return $this->host;
     }
 
-    public function http(): HTTPIngressRuleValue
+    public function getHttp(): HTTPIngressRuleValue|null
     {
         return $this->http;
+    }
+
+    public function http(): HTTPIngressRuleValue
+    {
+        return $this->http ??= new HTTPIngressRuleValue();
     }
 
     public function setHost(string $host): self
@@ -61,11 +66,18 @@ class IngressRule implements JsonSerializable
         return $this;
     }
 
-    public function jsonSerialize(): array
+    public function setHttp(HTTPIngressRuleValue $http): self
     {
-        return [
+        $this->http = $http;
+
+        return $this;
+    }
+
+    public function jsonSerialize(): ArrayObject
+    {
+        return new ArrayObject([
             'host' => $this->host,
             'http' => $this->http,
-        ];
+        ]);
     }
 }

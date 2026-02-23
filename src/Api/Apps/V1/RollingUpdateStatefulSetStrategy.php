@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Apps\V1;
 
+use ArrayObject;
 use JsonSerializable;
 
 /**
@@ -60,11 +61,11 @@ class RollingUpdateStatefulSetStrategy implements JsonSerializable
         return $this;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'maxUnavailable' => $this->maxUnavailable,
             'partition' => $this->partition,
-        ];
+        ]);
     }
 }

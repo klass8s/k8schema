@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Core\V1;
 
+use ArrayObject;
 use JsonSerializable;
 
 /**
@@ -15,7 +16,7 @@ class Probe implements JsonSerializable
     /**
      * Exec specifies a command to execute in the container.
      */
-    private ExecAction $exec;
+    private ExecAction|null $exec = null;
 
     /**
      * Minimum consecutive failures for the probe to be considered failed after having
@@ -82,10 +83,14 @@ class Probe implements JsonSerializable
 
     public function __construct()
     {
-        $this->exec = new ExecAction();
     }
 
     public function exec(): ExecAction
+    {
+        return $this->exec ??= new ExecAction();
+    }
+
+    public function getExec(): ExecAction|null
     {
         return $this->exec;
     }
@@ -133,6 +138,13 @@ class Probe implements JsonSerializable
     public function getTimeoutSeconds(): int|null
     {
         return $this->timeoutSeconds;
+    }
+
+    public function setExec(ExecAction $exec): self
+    {
+        $this->exec = $exec;
+
+        return $this;
     }
 
     public function setFailureThreshold(int $failureThreshold): self
@@ -198,9 +210,9 @@ class Probe implements JsonSerializable
         return $this;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'exec' => $this->exec,
             'failureThreshold' => $this->failureThreshold,
             'grpc' => $this->grpc,
@@ -211,6 +223,6 @@ class Probe implements JsonSerializable
             'tcpSocket' => $this->tcpSocket,
             'terminationGracePeriodSeconds' => $this->terminationGracePeriodSeconds,
             'timeoutSeconds' => $this->timeoutSeconds,
-        ];
+        ]);
     }
 }

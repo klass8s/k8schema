@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Storage\V1;
 
+use ArrayObject;
 use K8Schema\APIResourceInterface;
 use K8Schema\Api\Core\V1\TopologySelectorTermList;
 use K8Schema\Apimachinery\Pkg\Apis\Meta\V1\ObjectMeta;
@@ -40,7 +41,7 @@ class StorageClass implements APIResourceInterface
      * Standard object's metadata. More info:
      * https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
      */
-    private ObjectMeta $metadata;
+    private ObjectMeta|null $metadata = null;
 
     /**
      * mountOptions controls the mountOptions for dynamically provisioned
@@ -76,7 +77,6 @@ class StorageClass implements APIResourceInterface
     public function __construct(string $provisioner)
     {
         $this->allowedTopologies = new TopologySelectorTermList();
-        $this->metadata = new ObjectMeta();
         $this->mountOptions = new StringList();
         $this->parameters = new StringMap();
         $this->provisioner = $provisioner;
@@ -90,6 +90,11 @@ class StorageClass implements APIResourceInterface
     public function getAllowVolumeExpansion(): bool|null
     {
         return $this->allowVolumeExpansion;
+    }
+
+    public function getMetadata(): ObjectMeta|null
+    {
+        return $this->metadata;
     }
 
     public function getProvisioner(): string
@@ -109,7 +114,7 @@ class StorageClass implements APIResourceInterface
 
     public function metadata(): ObjectMeta
     {
-        return $this->metadata;
+        return $this->metadata ??= new ObjectMeta();
     }
 
     public function mountOptions(): StringList
@@ -125,6 +130,34 @@ class StorageClass implements APIResourceInterface
     public function setAllowVolumeExpansion(bool $allowVolumeExpansion): self
     {
         $this->allowVolumeExpansion = $allowVolumeExpansion;
+
+        return $this;
+    }
+
+    public function setAllowedTopologies(TopologySelectorTermList $allowedTopologies): self
+    {
+        $this->allowedTopologies = $allowedTopologies;
+
+        return $this;
+    }
+
+    public function setMetadata(ObjectMeta $metadata): self
+    {
+        $this->metadata = $metadata;
+
+        return $this;
+    }
+
+    public function setMountOptions(StringList $mountOptions): self
+    {
+        $this->mountOptions = $mountOptions;
+
+        return $this;
+    }
+
+    public function setParameters(StringMap $parameters): self
+    {
+        $this->parameters = $parameters;
 
         return $this;
     }
@@ -150,9 +183,9 @@ class StorageClass implements APIResourceInterface
         return $this;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'apiVersion' => self::API_VERSION,
             'kind' => self::KIND,
             'allowVolumeExpansion' => $this->allowVolumeExpansion,
@@ -163,6 +196,6 @@ class StorageClass implements APIResourceInterface
             'provisioner' => $this->provisioner,
             'reclaimPolicy' => $this->reclaimPolicy,
             'volumeBindingMode' => $this->volumeBindingMode,
-        ];
+        ]);
     }
 }

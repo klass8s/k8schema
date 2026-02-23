@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Core\V1;
 
+use ArrayObject;
 use JsonSerializable;
 use K8Schema\Collection\StringMap;
 
@@ -41,12 +42,11 @@ class ReplicationControllerSpec implements JsonSerializable
      * The only allowed template.spec.restartPolicy value is "Always". More info:
      * https://kubernetes.io/docs/concepts/workloads/controllers/replicationcontroller#pod-template
      */
-    private PodTemplateSpec $template;
+    private PodTemplateSpec|null $template = null;
 
     public function __construct()
     {
         $this->selector = new StringMap();
-        $this->template = new PodTemplateSpec();
     }
 
     public function getMinReadySeconds(): int|null
@@ -57,6 +57,11 @@ class ReplicationControllerSpec implements JsonSerializable
     public function getReplicas(): int|null
     {
         return $this->replicas;
+    }
+
+    public function getTemplate(): PodTemplateSpec|null
+    {
+        return $this->template;
     }
 
     public function selector(): StringMap
@@ -78,18 +83,32 @@ class ReplicationControllerSpec implements JsonSerializable
         return $this;
     }
 
-    public function template(): PodTemplateSpec
+    public function setSelector(StringMap $selector): self
     {
-        return $this->template;
+        $this->selector = $selector;
+
+        return $this;
     }
 
-    public function jsonSerialize(): array
+    public function setTemplate(PodTemplateSpec $template): self
     {
-        return [
+        $this->template = $template;
+
+        return $this;
+    }
+
+    public function template(): PodTemplateSpec
+    {
+        return $this->template ??= new PodTemplateSpec();
+    }
+
+    public function jsonSerialize(): ArrayObject
+    {
+        return new ArrayObject([
             'minReadySeconds' => $this->minReadySeconds,
             'replicas' => $this->replicas,
             'selector' => $this->selector,
             'template' => $this->template,
-        ];
+        ]);
     }
 }

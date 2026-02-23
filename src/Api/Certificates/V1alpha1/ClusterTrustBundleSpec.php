@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Certificates\V1alpha1;
 
+use ArrayObject;
 use JsonSerializable;
 
 /**
@@ -75,11 +76,11 @@ class ClusterTrustBundleSpec implements JsonSerializable
         return $this;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'signerName' => $this->signerName,
             'trustBundle' => $this->trustBundle,
-        ];
+        ]);
     }
 }

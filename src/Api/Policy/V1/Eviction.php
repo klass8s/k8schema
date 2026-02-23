@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Policy\V1;
 
+use ArrayObject;
 use K8Schema\APIResourceInterface;
 use K8Schema\Apimachinery\Pkg\Apis\Meta\V1\DeleteOptions;
 use K8Schema\Apimachinery\Pkg\Apis\Meta\V1\ObjectMeta;
@@ -21,36 +22,58 @@ class Eviction implements APIResourceInterface
     /**
      * DeleteOptions may be provided
      */
-    private DeleteOptions $deleteOptions;
+    private DeleteOptions|null $deleteOptions = null;
 
     /**
      * ObjectMeta describes the pod that is being evicted.
      */
-    private ObjectMeta $metadata;
+    private ObjectMeta|null $metadata = null;
 
     public function __construct()
     {
-        $this->deleteOptions = new DeleteOptions();
-        $this->metadata = new ObjectMeta();
     }
 
     public function deleteOptions(): DeleteOptions
     {
+        return $this->deleteOptions ??= new DeleteOptions();
+    }
+
+    public function getDeleteOptions(): DeleteOptions|null
+    {
         return $this->deleteOptions;
     }
 
-    public function metadata(): ObjectMeta
+    public function getMetadata(): ObjectMeta|null
     {
         return $this->metadata;
     }
 
-    public function jsonSerialize(): array
+    public function metadata(): ObjectMeta
     {
-        return [
+        return $this->metadata ??= new ObjectMeta();
+    }
+
+    public function setDeleteOptions(DeleteOptions $deleteOptions): self
+    {
+        $this->deleteOptions = $deleteOptions;
+
+        return $this;
+    }
+
+    public function setMetadata(ObjectMeta $metadata): self
+    {
+        $this->metadata = $metadata;
+
+        return $this;
+    }
+
+    public function jsonSerialize(): ArrayObject
+    {
+        return new ArrayObject([
             'apiVersion' => self::API_VERSION,
             'kind' => self::KIND,
             'deleteOptions' => $this->deleteOptions,
             'metadata' => $this->metadata,
-        ];
+        ]);
     }
 }

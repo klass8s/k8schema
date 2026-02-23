@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Core\V1;
 
+use ArrayObject;
 use JsonSerializable;
 
 /**
@@ -26,10 +27,17 @@ class LimitRangeSpec implements JsonSerializable
         return $this->limits;
     }
 
-    public function jsonSerialize(): array
+    public function setLimits(LimitRangeItemList $limits): self
     {
-        return [
+        $this->limits = $limits;
+
+        return $this;
+    }
+
+    public function jsonSerialize(): ArrayObject
+    {
+        return new ArrayObject([
             'limits' => $this->limits,
-        ];
+        ]);
     }
 }

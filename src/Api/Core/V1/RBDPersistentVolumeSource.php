@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Core\V1;
 
+use ArrayObject;
 use JsonSerializable;
 use K8Schema\Collection\StringList;
 
@@ -56,7 +57,7 @@ class RBDPersistentVolumeSource implements JsonSerializable
      * overrides keyring. Default is nil. More info:
      * https://examples.k8s.io/volumes/rbd/README.md#how-to-use-it
      */
-    private SecretReference $secretRef;
+    private SecretReference|null $secretRef = null;
 
     /**
      * user is the rados user name. Default is admin. More info:
@@ -68,7 +69,6 @@ class RBDPersistentVolumeSource implements JsonSerializable
     {
         $this->image = $image;
         $this->monitors = new StringList();
-        $this->secretRef = new SecretReference();
     }
 
     public function getFsType(): string|null
@@ -96,6 +96,11 @@ class RBDPersistentVolumeSource implements JsonSerializable
         return $this->readOnly;
     }
 
+    public function getSecretRef(): SecretReference|null
+    {
+        return $this->secretRef;
+    }
+
     public function getUser(): string|null
     {
         return $this->user;
@@ -108,7 +113,7 @@ class RBDPersistentVolumeSource implements JsonSerializable
 
     public function secretRef(): SecretReference
     {
-        return $this->secretRef;
+        return $this->secretRef ??= new SecretReference();
     }
 
     public function setFsType(string $fsType): self
@@ -132,6 +137,13 @@ class RBDPersistentVolumeSource implements JsonSerializable
         return $this;
     }
 
+    public function setMonitors(StringList $monitors): self
+    {
+        $this->monitors = $monitors;
+
+        return $this;
+    }
+
     public function setPool(string $pool): self
     {
         $this->pool = $pool;
@@ -146,6 +158,13 @@ class RBDPersistentVolumeSource implements JsonSerializable
         return $this;
     }
 
+    public function setSecretRef(SecretReference $secretRef): self
+    {
+        $this->secretRef = $secretRef;
+
+        return $this;
+    }
+
     public function setUser(string $user): self
     {
         $this->user = $user;
@@ -153,9 +172,9 @@ class RBDPersistentVolumeSource implements JsonSerializable
         return $this;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'fsType' => $this->fsType,
             'image' => $this->image,
             'keyring' => $this->keyring,
@@ -164,6 +183,6 @@ class RBDPersistentVolumeSource implements JsonSerializable
             'readOnly' => $this->readOnly,
             'secretRef' => $this->secretRef,
             'user' => $this->user,
-        ];
+        ]);
     }
 }

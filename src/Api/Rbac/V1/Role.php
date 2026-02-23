@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Rbac\V1;
 
+use ArrayObject;
 use K8Schema\APIResourceInterface;
 use K8Schema\Apimachinery\Pkg\Apis\Meta\V1\ObjectMeta;
 
@@ -19,7 +20,7 @@ class Role implements APIResourceInterface
     /**
      * Standard object's metadata.
      */
-    private ObjectMeta $metadata;
+    private ObjectMeta|null $metadata = null;
 
     /**
      * Rules holds all the PolicyRules for this Role
@@ -28,13 +29,17 @@ class Role implements APIResourceInterface
 
     public function __construct()
     {
-        $this->metadata = new ObjectMeta();
         $this->rules = new PolicyRuleList();
+    }
+
+    public function getMetadata(): ObjectMeta|null
+    {
+        return $this->metadata;
     }
 
     public function metadata(): ObjectMeta
     {
-        return $this->metadata;
+        return $this->metadata ??= new ObjectMeta();
     }
 
     public function rules(): PolicyRuleList
@@ -42,13 +47,27 @@ class Role implements APIResourceInterface
         return $this->rules;
     }
 
-    public function jsonSerialize(): array
+    public function setMetadata(ObjectMeta $metadata): self
     {
-        return [
+        $this->metadata = $metadata;
+
+        return $this;
+    }
+
+    public function setRules(PolicyRuleList $rules): self
+    {
+        $this->rules = $rules;
+
+        return $this;
+    }
+
+    public function jsonSerialize(): ArrayObject
+    {
+        return new ArrayObject([
             'apiVersion' => self::API_VERSION,
             'kind' => self::KIND,
             'metadata' => $this->metadata,
             'rules' => $this->rules,
-        ];
+        ]);
     }
 }

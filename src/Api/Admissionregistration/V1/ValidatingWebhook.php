@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Admissionregistration\V1;
 
+use ArrayObject;
 use JsonSerializable;
 use K8Schema\Apimachinery\Pkg\Apis\Meta\V1\LabelSelector;
 use K8Schema\Collection\StringList;
@@ -121,7 +122,7 @@ class ValidatingWebhook implements JsonSerializable
      *
      * Default to the empty LabelSelector, which matches everything.
      */
-    private LabelSelector $namespaceSelector;
+    private LabelSelector|null $namespaceSelector = null;
 
     /**
      * ObjectSelector decides whether to run the webhook based on if the object has
@@ -134,7 +135,7 @@ class ValidatingWebhook implements JsonSerializable
      * may skip the admission webhook by setting the labels. Default to the empty
      * LabelSelector, which matches everything.
      */
-    private LabelSelector $objectSelector;
+    private LabelSelector|null $objectSelector = null;
 
     /**
      * Rules describes what operations on what resources/subresources the webhook cares
@@ -172,8 +173,6 @@ class ValidatingWebhook implements JsonSerializable
         $this->clientConfig = new WebhookClientConfig();
         $this->matchConditions = new MatchConditionList();
         $this->name = $name;
-        $this->namespaceSelector = new LabelSelector();
-        $this->objectSelector = new LabelSelector();
         $this->rules = new RuleWithOperationsList();
         $this->sideEffects = $sideEffects;
     }
@@ -203,6 +202,16 @@ class ValidatingWebhook implements JsonSerializable
         return $this->name;
     }
 
+    public function getNamespaceSelector(): LabelSelector|null
+    {
+        return $this->namespaceSelector;
+    }
+
+    public function getObjectSelector(): LabelSelector|null
+    {
+        return $this->objectSelector;
+    }
+
     public function getSideEffects(): string
     {
         return $this->sideEffects;
@@ -220,12 +229,12 @@ class ValidatingWebhook implements JsonSerializable
 
     public function namespaceSelector(): LabelSelector
     {
-        return $this->namespaceSelector;
+        return $this->namespaceSelector ??= new LabelSelector();
     }
 
     public function objectSelector(): LabelSelector
     {
-        return $this->objectSelector;
+        return $this->objectSelector ??= new LabelSelector();
     }
 
     public function rules(): RuleWithOperationsList
@@ -233,9 +242,30 @@ class ValidatingWebhook implements JsonSerializable
         return $this->rules;
     }
 
+    public function setAdmissionReviewVersions(StringList $admissionReviewVersions): self
+    {
+        $this->admissionReviewVersions = $admissionReviewVersions;
+
+        return $this;
+    }
+
+    public function setClientConfig(WebhookClientConfig $clientConfig): self
+    {
+        $this->clientConfig = $clientConfig;
+
+        return $this;
+    }
+
     public function setFailurePolicy(string $failurePolicy): self
     {
         $this->failurePolicy = $failurePolicy;
+
+        return $this;
+    }
+
+    public function setMatchConditions(MatchConditionList $matchConditions): self
+    {
+        $this->matchConditions = $matchConditions;
 
         return $this;
     }
@@ -254,6 +284,27 @@ class ValidatingWebhook implements JsonSerializable
         return $this;
     }
 
+    public function setNamespaceSelector(LabelSelector $namespaceSelector): self
+    {
+        $this->namespaceSelector = $namespaceSelector;
+
+        return $this;
+    }
+
+    public function setObjectSelector(LabelSelector $objectSelector): self
+    {
+        $this->objectSelector = $objectSelector;
+
+        return $this;
+    }
+
+    public function setRules(RuleWithOperationsList $rules): self
+    {
+        $this->rules = $rules;
+
+        return $this;
+    }
+
     public function setSideEffects(string $sideEffects): self
     {
         $this->sideEffects = $sideEffects;
@@ -268,9 +319,9 @@ class ValidatingWebhook implements JsonSerializable
         return $this;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'admissionReviewVersions' => $this->admissionReviewVersions,
             'clientConfig' => $this->clientConfig,
             'failurePolicy' => $this->failurePolicy,
@@ -282,6 +333,6 @@ class ValidatingWebhook implements JsonSerializable
             'rules' => $this->rules,
             'sideEffects' => $this->sideEffects,
             'timeoutSeconds' => $this->timeoutSeconds,
-        ];
+        ]);
     }
 }

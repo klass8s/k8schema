@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Autoscaling\V2;
 
+use ArrayObject;
 use JsonSerializable;
 
 /**
@@ -17,7 +18,7 @@ class HorizontalPodAutoscalerSpec implements JsonSerializable
      * directions (scaleUp and scaleDown fields respectively). If not set, the default
      * HPAScalingRules for scale up and scale down are used.
      */
-    private HorizontalPodAutoscalerBehavior $behavior;
+    private HorizontalPodAutoscalerBehavior|null $behavior = null;
 
     /**
      * maxReplicas is the upper limit for the number of replicas to which the
@@ -55,13 +56,17 @@ class HorizontalPodAutoscalerSpec implements JsonSerializable
 
     public function __construct(int $maxReplicas, CrossVersionObjectReference $scaleTargetRef)
     {
-        $this->behavior = new HorizontalPodAutoscalerBehavior();
         $this->maxReplicas = $maxReplicas;
         $this->metrics = new MetricSpecList();
         $this->scaleTargetRef = $scaleTargetRef;
     }
 
     public function behavior(): HorizontalPodAutoscalerBehavior
+    {
+        return $this->behavior ??= new HorizontalPodAutoscalerBehavior();
+    }
+
+    public function getBehavior(): HorizontalPodAutoscalerBehavior|null
     {
         return $this->behavior;
     }
@@ -86,9 +91,23 @@ class HorizontalPodAutoscalerSpec implements JsonSerializable
         return $this->metrics;
     }
 
+    public function setBehavior(HorizontalPodAutoscalerBehavior $behavior): self
+    {
+        $this->behavior = $behavior;
+
+        return $this;
+    }
+
     public function setMaxReplicas(int $maxReplicas): self
     {
         $this->maxReplicas = $maxReplicas;
+
+        return $this;
+    }
+
+    public function setMetrics(MetricSpecList $metrics): self
+    {
+        $this->metrics = $metrics;
 
         return $this;
     }
@@ -107,14 +126,14 @@ class HorizontalPodAutoscalerSpec implements JsonSerializable
         return $this;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'behavior' => $this->behavior,
             'maxReplicas' => $this->maxReplicas,
             'metrics' => $this->metrics,
             'minReplicas' => $this->minReplicas,
             'scaleTargetRef' => $this->scaleTargetRef,
-        ];
+        ]);
     }
 }

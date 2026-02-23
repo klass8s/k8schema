@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Core\V1;
 
+use ArrayObject;
 use JsonSerializable;
 use K8Schema\Apimachinery\Pkg\Apis\Meta\V1\LabelSelector;
 use K8Schema\Collection\StringList;
@@ -19,7 +20,7 @@ class TopologySpreadConstraint implements JsonSerializable
      * are counted to determine the number of pods in their corresponding topology
      * domain.
      */
-    private LabelSelector $labelSelector;
+    private LabelSelector|null $labelSelector = null;
 
     /**
      * MatchLabelKeys is a set of pod label keys to select the pods over which
@@ -133,11 +134,15 @@ class TopologySpreadConstraint implements JsonSerializable
 
     public function __construct(int $maxSkew, string $topologyKey, string $whenUnsatisfiable)
     {
-        $this->labelSelector = new LabelSelector();
         $this->matchLabelKeys = new StringList();
         $this->maxSkew = $maxSkew;
         $this->topologyKey = $topologyKey;
         $this->whenUnsatisfiable = $whenUnsatisfiable;
+    }
+
+    public function getLabelSelector(): LabelSelector|null
+    {
+        return $this->labelSelector;
     }
 
     public function getMaxSkew(): int
@@ -172,12 +177,26 @@ class TopologySpreadConstraint implements JsonSerializable
 
     public function labelSelector(): LabelSelector
     {
-        return $this->labelSelector;
+        return $this->labelSelector ??= new LabelSelector();
     }
 
     public function matchLabelKeys(): StringList
     {
         return $this->matchLabelKeys;
+    }
+
+    public function setLabelSelector(LabelSelector $labelSelector): self
+    {
+        $this->labelSelector = $labelSelector;
+
+        return $this;
+    }
+
+    public function setMatchLabelKeys(StringList $matchLabelKeys): self
+    {
+        $this->matchLabelKeys = $matchLabelKeys;
+
+        return $this;
     }
 
     public function setMaxSkew(int $maxSkew): self
@@ -222,9 +241,9 @@ class TopologySpreadConstraint implements JsonSerializable
         return $this;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'labelSelector' => $this->labelSelector,
             'matchLabelKeys' => $this->matchLabelKeys,
             'maxSkew' => $this->maxSkew,
@@ -233,6 +252,6 @@ class TopologySpreadConstraint implements JsonSerializable
             'nodeTaintsPolicy' => $this->nodeTaintsPolicy,
             'topologyKey' => $this->topologyKey,
             'whenUnsatisfiable' => $this->whenUnsatisfiable,
-        ];
+        ]);
     }
 }

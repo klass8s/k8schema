@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Core\V1;
 
+use ArrayObject;
 use JsonSerializable;
 
 /**
@@ -40,6 +41,13 @@ class PreferredSchedulingTerm implements JsonSerializable
         return $this->preference;
     }
 
+    public function setPreference(NodeSelectorTerm $preference): self
+    {
+        $this->preference = $preference;
+
+        return $this;
+    }
+
     public function setWeight(int $weight): self
     {
         $this->weight = $weight;
@@ -47,11 +55,11 @@ class PreferredSchedulingTerm implements JsonSerializable
         return $this;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'preference' => $this->preference,
             'weight' => $this->weight,
-        ];
+        ]);
     }
 }

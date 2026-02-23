@@ -4,14 +4,15 @@ declare(strict_types=1);
 
 namespace K8Schema\Collection;
 
+use ArrayObject;
 use JsonSerializable;
 
 class StringListMap implements JsonSerializable
 {
     /**
-     * @var StringList[]
+     * @var ArrayObject<string, StringList>
      */
-    private array $items = [];
+    private ArrayObject $items;
 
     public function __construct()
     {
@@ -25,11 +26,6 @@ class StringListMap implements JsonSerializable
         return $this;
     }
 
-    /**
-     * @var StringList[] $items
-     *
-     * @return self
-     */
     public function addAll(array $items): self
     {
         foreach ($items as $key => $value) {
@@ -40,16 +36,16 @@ class StringListMap implements JsonSerializable
     }
 
     /**
-     * @return StringList[]
+     * @return ArrayObject<string, StringList>
      */
-    public function all(): array
+    public function all(): ArrayObject
     {
         return $this->items;
     }
 
     public function clear(): self
     {
-        $this->items = [];
+        $this->items = new ArrayObject();
 
         return $this;
     }
@@ -66,18 +62,18 @@ class StringListMap implements JsonSerializable
 
     public function has(string $name): bool
     {
-        return array_key_exists($name, $this->items);
+        return $this->items->offsetExists($name);
     }
 
     public function remove(string $name): self
     {
-        unset($this->items[$name]);
+        $this->items->offsetUnset($name);
 
         return $this;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject|null
     {
-        return $this->items;
+        return $this->items->count() > 0 ? $this->items : null;
     }
 }

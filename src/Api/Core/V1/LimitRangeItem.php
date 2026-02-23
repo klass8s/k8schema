@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Core\V1;
 
+use ArrayObject;
 use JsonSerializable;
 use K8Schema\Collection\StringOrFloatMap;
 
@@ -88,6 +89,41 @@ class LimitRangeItem implements JsonSerializable
         return $this->min;
     }
 
+    public function setDefault(StringOrFloatMap $default): self
+    {
+        $this->default = $default;
+
+        return $this;
+    }
+
+    public function setDefaultRequest(StringOrFloatMap $defaultRequest): self
+    {
+        $this->defaultRequest = $defaultRequest;
+
+        return $this;
+    }
+
+    public function setMax(StringOrFloatMap $max): self
+    {
+        $this->max = $max;
+
+        return $this;
+    }
+
+    public function setMaxLimitRequestRatio(StringOrFloatMap $maxLimitRequestRatio): self
+    {
+        $this->maxLimitRequestRatio = $maxLimitRequestRatio;
+
+        return $this;
+    }
+
+    public function setMin(StringOrFloatMap $min): self
+    {
+        $this->min = $min;
+
+        return $this;
+    }
+
     public function setType(string $type): self
     {
         $this->type = $type;
@@ -95,15 +131,15 @@ class LimitRangeItem implements JsonSerializable
         return $this;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'default' => $this->default,
             'defaultRequest' => $this->defaultRequest,
             'max' => $this->max,
             'maxLimitRequestRatio' => $this->maxLimitRequestRatio,
             'min' => $this->min,
             'type' => $this->type,
-        ];
+        ]);
     }
 }

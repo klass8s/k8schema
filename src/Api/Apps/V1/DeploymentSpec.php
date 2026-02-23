@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Apps\V1;
 
+use ArrayObject;
 use JsonSerializable;
 use K8Schema\Api\Core\V1\PodTemplateSpec;
 use K8Schema\Apimachinery\Pkg\Apis\Meta\V1\LabelSelector;
@@ -56,7 +57,7 @@ class DeploymentSpec implements JsonSerializable
     /**
      * The deployment strategy to use to replace existing pods with new ones.
      */
-    private DeploymentStrategy $strategy;
+    private DeploymentStrategy|null $strategy = null;
 
     /**
      * Template describes the pods that will be created. The only allowed
@@ -67,7 +68,6 @@ class DeploymentSpec implements JsonSerializable
     public function __construct()
     {
         $this->selector = new LabelSelector();
-        $this->strategy = new DeploymentStrategy();
         $this->template = new PodTemplateSpec();
     }
 
@@ -94,6 +94,11 @@ class DeploymentSpec implements JsonSerializable
     public function getRevisionHistoryLimit(): int|null
     {
         return $this->revisionHistoryLimit;
+    }
+
+    public function getStrategy(): DeploymentStrategy|null
+    {
+        return $this->strategy;
     }
 
     public function selector(): LabelSelector
@@ -136,9 +141,30 @@ class DeploymentSpec implements JsonSerializable
         return $this;
     }
 
+    public function setSelector(LabelSelector $selector): self
+    {
+        $this->selector = $selector;
+
+        return $this;
+    }
+
+    public function setStrategy(DeploymentStrategy $strategy): self
+    {
+        $this->strategy = $strategy;
+
+        return $this;
+    }
+
+    public function setTemplate(PodTemplateSpec $template): self
+    {
+        $this->template = $template;
+
+        return $this;
+    }
+
     public function strategy(): DeploymentStrategy
     {
-        return $this->strategy;
+        return $this->strategy ??= new DeploymentStrategy();
     }
 
     public function template(): PodTemplateSpec
@@ -146,9 +172,9 @@ class DeploymentSpec implements JsonSerializable
         return $this->template;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'minReadySeconds' => $this->minReadySeconds,
             'paused' => $this->paused,
             'progressDeadlineSeconds' => $this->progressDeadlineSeconds,
@@ -157,6 +183,6 @@ class DeploymentSpec implements JsonSerializable
             'selector' => $this->selector,
             'strategy' => $this->strategy,
             'template' => $this->template,
-        ];
+        ]);
     }
 }

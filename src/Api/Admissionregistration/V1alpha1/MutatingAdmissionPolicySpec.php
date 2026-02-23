@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Admissionregistration\V1alpha1;
 
+use ArrayObject;
 use JsonSerializable;
 
 /**
@@ -54,7 +55,7 @@ class MutatingAdmissionPolicySpec implements JsonSerializable
      * CREATE, UPDATE and CONNECT operations are allowed.  The DELETE operation may not
      * be matched. '*' matches CREATE, UPDATE and CONNECT. Required.
      */
-    private MatchResources $matchConstraints;
+    private MatchResources|null $matchConstraints = null;
 
     /**
      * mutations contain operations to perform on matching objects. mutations may not
@@ -73,7 +74,7 @@ class MutatingAdmissionPolicySpec implements JsonSerializable
      * If paramKind is specified but paramRef is unset in
      * MutatingAdmissionPolicyBinding, the params variable will be null.
      */
-    private ParamKind $paramKind;
+    private ParamKind|null $paramKind = null;
 
     /**
      * reinvocationPolicy indicates whether mutations may be called multiple times per
@@ -107,15 +108,23 @@ class MutatingAdmissionPolicySpec implements JsonSerializable
     public function __construct()
     {
         $this->matchConditions = new MatchConditionList();
-        $this->matchConstraints = new MatchResources();
         $this->mutations = new MutationList();
-        $this->paramKind = new ParamKind();
         $this->variables = new VariableList();
     }
 
     public function getFailurePolicy(): string|null
     {
         return $this->failurePolicy;
+    }
+
+    public function getMatchConstraints(): MatchResources|null
+    {
+        return $this->matchConstraints;
+    }
+
+    public function getParamKind(): ParamKind|null
+    {
+        return $this->paramKind;
     }
 
     public function getReinvocationPolicy(): string|null
@@ -130,7 +139,7 @@ class MutatingAdmissionPolicySpec implements JsonSerializable
 
     public function matchConstraints(): MatchResources
     {
-        return $this->matchConstraints;
+        return $this->matchConstraints ??= new MatchResources();
     }
 
     public function mutations(): MutationList
@@ -140,12 +149,40 @@ class MutatingAdmissionPolicySpec implements JsonSerializable
 
     public function paramKind(): ParamKind
     {
-        return $this->paramKind;
+        return $this->paramKind ??= new ParamKind();
     }
 
     public function setFailurePolicy(string $failurePolicy): self
     {
         $this->failurePolicy = $failurePolicy;
+
+        return $this;
+    }
+
+    public function setMatchConditions(MatchConditionList $matchConditions): self
+    {
+        $this->matchConditions = $matchConditions;
+
+        return $this;
+    }
+
+    public function setMatchConstraints(MatchResources $matchConstraints): self
+    {
+        $this->matchConstraints = $matchConstraints;
+
+        return $this;
+    }
+
+    public function setMutations(MutationList $mutations): self
+    {
+        $this->mutations = $mutations;
+
+        return $this;
+    }
+
+    public function setParamKind(ParamKind $paramKind): self
+    {
+        $this->paramKind = $paramKind;
 
         return $this;
     }
@@ -157,14 +194,21 @@ class MutatingAdmissionPolicySpec implements JsonSerializable
         return $this;
     }
 
+    public function setVariables(VariableList $variables): self
+    {
+        $this->variables = $variables;
+
+        return $this;
+    }
+
     public function variables(): VariableList
     {
         return $this->variables;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'failurePolicy' => $this->failurePolicy,
             'matchConditions' => $this->matchConditions,
             'matchConstraints' => $this->matchConstraints,
@@ -172,6 +216,6 @@ class MutatingAdmissionPolicySpec implements JsonSerializable
             'paramKind' => $this->paramKind,
             'reinvocationPolicy' => $this->reinvocationPolicy,
             'variables' => $this->variables,
-        ];
+        ]);
     }
 }

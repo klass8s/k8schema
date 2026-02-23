@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Core\V1;
 
+use ArrayObject;
 use JsonSerializable;
 
 /**
@@ -61,6 +62,13 @@ class ConfigMapProjection implements JsonSerializable
         return $this->items;
     }
 
+    public function setItems(KeyToPathList $items): self
+    {
+        $this->items = $items;
+
+        return $this;
+    }
+
     public function setName(string $name): self
     {
         $this->name = $name;
@@ -75,12 +83,12 @@ class ConfigMapProjection implements JsonSerializable
         return $this;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'items' => $this->items,
             'name' => $this->name,
             'optional' => $this->optional,
-        ];
+        ]);
     }
 }

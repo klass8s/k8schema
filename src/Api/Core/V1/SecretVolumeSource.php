@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Core\V1;
 
+use ArrayObject;
 use JsonSerializable;
 
 /**
@@ -79,6 +80,13 @@ class SecretVolumeSource implements JsonSerializable
         return $this;
     }
 
+    public function setItems(KeyToPathList $items): self
+    {
+        $this->items = $items;
+
+        return $this;
+    }
+
     public function setOptional(bool $optional): self
     {
         $this->optional = $optional;
@@ -93,13 +101,13 @@ class SecretVolumeSource implements JsonSerializable
         return $this;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'defaultMode' => $this->defaultMode,
             'items' => $this->items,
             'optional' => $this->optional,
             'secretName' => $this->secretName,
-        ];
+        ]);
     }
 }

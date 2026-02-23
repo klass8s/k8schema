@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Resource\V1beta1;
 
+use ArrayObject;
 use JsonSerializable;
 
 /**
@@ -43,11 +44,25 @@ class BasicDevice implements JsonSerializable
         return $this->capacity;
     }
 
-    public function jsonSerialize(): array
+    public function setAttributes(DeviceAttributeMap $attributes): self
     {
-        return [
+        $this->attributes = $attributes;
+
+        return $this;
+    }
+
+    public function setCapacity(DeviceCapacityMap $capacity): self
+    {
+        $this->capacity = $capacity;
+
+        return $this;
+    }
+
+    public function jsonSerialize(): ArrayObject
+    {
+        return new ArrayObject([
             'attributes' => $this->attributes,
             'capacity' => $this->capacity,
-        ];
+        ]);
     }
 }

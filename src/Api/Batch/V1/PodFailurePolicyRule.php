@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Batch\V1;
 
+use ArrayObject;
 use JsonSerializable;
 
 /**
@@ -79,12 +80,19 @@ class PodFailurePolicyRule implements JsonSerializable
         return $this;
     }
 
-    public function jsonSerialize(): array
+    public function setOnPodConditions(PodFailurePolicyOnPodConditionsPatternList $onPodConditions): self
     {
-        return [
+        $this->onPodConditions = $onPodConditions;
+
+        return $this;
+    }
+
+    public function jsonSerialize(): ArrayObject
+    {
+        return new ArrayObject([
             'action' => $this->action,
             'onExitCodes' => $this->onExitCodes,
             'onPodConditions' => $this->onPodConditions,
-        ];
+        ]);
     }
 }

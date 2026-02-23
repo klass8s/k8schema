@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Core\V1;
 
+use ArrayObject;
 use JsonSerializable;
 
 /**
@@ -50,11 +51,18 @@ class DownwardAPIVolumeSource implements JsonSerializable
         return $this;
     }
 
-    public function jsonSerialize(): array
+    public function setItems(DownwardAPIVolumeFileList $items): self
     {
-        return [
+        $this->items = $items;
+
+        return $this;
+    }
+
+    public function jsonSerialize(): ArrayObject
+    {
+        return new ArrayObject([
             'defaultMode' => $this->defaultMode,
             'items' => $this->items,
-        ];
+        ]);
     }
 }

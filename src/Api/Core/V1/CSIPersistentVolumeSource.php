@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Core\V1;
 
+use ArrayObject;
 use JsonSerializable;
 use K8Schema\Collection\StringMap;
 
@@ -19,7 +20,7 @@ class CSIPersistentVolumeSource implements JsonSerializable
      * secret is required. If the secret object contains more than one secret, all
      * secrets are passed.
      */
-    private SecretReference $controllerExpandSecretRef;
+    private SecretReference|null $controllerExpandSecretRef = null;
 
     /**
      * controllerPublishSecretRef is a reference to the secret object containing
@@ -28,7 +29,7 @@ class CSIPersistentVolumeSource implements JsonSerializable
      * optional, and may be empty if no secret is required. If the secret object
      * contains more than one secret, all secrets are passed.
      */
-    private SecretReference $controllerPublishSecretRef;
+    private SecretReference|null $controllerPublishSecretRef = null;
 
     /**
      * driver is the name of the driver to use for this volume. Required.
@@ -47,7 +48,7 @@ class CSIPersistentVolumeSource implements JsonSerializable
      * This field is optional, may be omitted if no secret is required. If the secret
      * object contains more than one secret, all secrets are passed.
      */
-    private SecretReference $nodeExpandSecretRef;
+    private SecretReference|null $nodeExpandSecretRef = null;
 
     /**
      * nodePublishSecretRef is a reference to the secret object containing sensitive
@@ -56,7 +57,7 @@ class CSIPersistentVolumeSource implements JsonSerializable
      * is required. If the secret object contains more than one secret, all secrets are
      * passed.
      */
-    private SecretReference $nodePublishSecretRef;
+    private SecretReference|null $nodePublishSecretRef = null;
 
     /**
      * nodeStageSecretRef is a reference to the secret object containing sensitive
@@ -65,7 +66,7 @@ class CSIPersistentVolumeSource implements JsonSerializable
      * empty if no secret is required. If the secret object contains more than one
      * secret, all secrets are passed.
      */
-    private SecretReference $nodeStageSecretRef;
+    private SecretReference|null $nodeStageSecretRef = null;
 
     /**
      * readOnly value to pass to ControllerPublishVolumeRequest. Defaults to false
@@ -86,22 +87,27 @@ class CSIPersistentVolumeSource implements JsonSerializable
 
     public function __construct(string $driver, string $volumeHandle)
     {
-        $this->controllerExpandSecretRef = new SecretReference();
-        $this->controllerPublishSecretRef = new SecretReference();
         $this->driver = $driver;
-        $this->nodeExpandSecretRef = new SecretReference();
-        $this->nodePublishSecretRef = new SecretReference();
-        $this->nodeStageSecretRef = new SecretReference();
         $this->volumeAttributes = new StringMap();
         $this->volumeHandle = $volumeHandle;
     }
 
     public function controllerExpandSecretRef(): SecretReference
     {
-        return $this->controllerExpandSecretRef;
+        return $this->controllerExpandSecretRef ??= new SecretReference();
     }
 
     public function controllerPublishSecretRef(): SecretReference
+    {
+        return $this->controllerPublishSecretRef ??= new SecretReference();
+    }
+
+    public function getControllerExpandSecretRef(): SecretReference|null
+    {
+        return $this->controllerExpandSecretRef;
+    }
+
+    public function getControllerPublishSecretRef(): SecretReference|null
     {
         return $this->controllerPublishSecretRef;
     }
@@ -116,6 +122,21 @@ class CSIPersistentVolumeSource implements JsonSerializable
         return $this->fsType;
     }
 
+    public function getNodeExpandSecretRef(): SecretReference|null
+    {
+        return $this->nodeExpandSecretRef;
+    }
+
+    public function getNodePublishSecretRef(): SecretReference|null
+    {
+        return $this->nodePublishSecretRef;
+    }
+
+    public function getNodeStageSecretRef(): SecretReference|null
+    {
+        return $this->nodeStageSecretRef;
+    }
+
     public function getReadOnly(): bool|null
     {
         return $this->readOnly;
@@ -128,17 +149,31 @@ class CSIPersistentVolumeSource implements JsonSerializable
 
     public function nodeExpandSecretRef(): SecretReference
     {
-        return $this->nodeExpandSecretRef;
+        return $this->nodeExpandSecretRef ??= new SecretReference();
     }
 
     public function nodePublishSecretRef(): SecretReference
     {
-        return $this->nodePublishSecretRef;
+        return $this->nodePublishSecretRef ??= new SecretReference();
     }
 
     public function nodeStageSecretRef(): SecretReference
     {
-        return $this->nodeStageSecretRef;
+        return $this->nodeStageSecretRef ??= new SecretReference();
+    }
+
+    public function setControllerExpandSecretRef(SecretReference $controllerExpandSecretRef): self
+    {
+        $this->controllerExpandSecretRef = $controllerExpandSecretRef;
+
+        return $this;
+    }
+
+    public function setControllerPublishSecretRef(SecretReference $controllerPublishSecretRef): self
+    {
+        $this->controllerPublishSecretRef = $controllerPublishSecretRef;
+
+        return $this;
     }
 
     public function setDriver(string $driver): self
@@ -155,9 +190,37 @@ class CSIPersistentVolumeSource implements JsonSerializable
         return $this;
     }
 
+    public function setNodeExpandSecretRef(SecretReference $nodeExpandSecretRef): self
+    {
+        $this->nodeExpandSecretRef = $nodeExpandSecretRef;
+
+        return $this;
+    }
+
+    public function setNodePublishSecretRef(SecretReference $nodePublishSecretRef): self
+    {
+        $this->nodePublishSecretRef = $nodePublishSecretRef;
+
+        return $this;
+    }
+
+    public function setNodeStageSecretRef(SecretReference $nodeStageSecretRef): self
+    {
+        $this->nodeStageSecretRef = $nodeStageSecretRef;
+
+        return $this;
+    }
+
     public function setReadOnly(bool $readOnly): self
     {
         $this->readOnly = $readOnly;
+
+        return $this;
+    }
+
+    public function setVolumeAttributes(StringMap $volumeAttributes): self
+    {
+        $this->volumeAttributes = $volumeAttributes;
 
         return $this;
     }
@@ -174,9 +237,9 @@ class CSIPersistentVolumeSource implements JsonSerializable
         return $this->volumeAttributes;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'controllerExpandSecretRef' => $this->controllerExpandSecretRef,
             'controllerPublishSecretRef' => $this->controllerPublishSecretRef,
             'driver' => $this->driver,
@@ -187,6 +250,6 @@ class CSIPersistentVolumeSource implements JsonSerializable
             'readOnly' => $this->readOnly,
             'volumeAttributes' => $this->volumeAttributes,
             'volumeHandle' => $this->volumeHandle,
-        ];
+        ]);
     }
 }

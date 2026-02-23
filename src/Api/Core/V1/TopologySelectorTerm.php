@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Core\V1;
 
+use ArrayObject;
 use JsonSerializable;
 
 /**
@@ -29,10 +30,17 @@ class TopologySelectorTerm implements JsonSerializable
         return $this->matchLabelExpressions;
     }
 
-    public function jsonSerialize(): array
+    public function setMatchLabelExpressions(TopologySelectorLabelRequirementList $matchLabelExpressions): self
     {
-        return [
+        $this->matchLabelExpressions = $matchLabelExpressions;
+
+        return $this;
+    }
+
+    public function jsonSerialize(): ArrayObject
+    {
+        return new ArrayObject([
             'matchLabelExpressions' => $this->matchLabelExpressions,
-        ];
+        ]);
     }
 }

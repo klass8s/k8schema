@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Flowcontrol\V1;
 
+use ArrayObject;
 use JsonSerializable;
 
 /**
@@ -17,13 +18,13 @@ class PriorityLevelConfigurationSpec implements JsonSerializable
      * `type` is `"Exempt"`. If empty and `type` is `"Exempt"` then the default values
      * for `ExemptPriorityLevelConfiguration` apply.
      */
-    private ExemptPriorityLevelConfiguration $exempt;
+    private ExemptPriorityLevelConfiguration|null $exempt = null;
 
     /**
      * `limited` specifies how requests are handled for a Limited priority level. This
      * field must be non-empty if and only if `type` is `"Limited"`.
      */
-    private LimitedPriorityLevelConfiguration $limited;
+    private LimitedPriorityLevelConfiguration|null $limited = null;
 
     /**
      * `type` indicates whether this priority level is subject to limitation on request
@@ -38,14 +39,22 @@ class PriorityLevelConfigurationSpec implements JsonSerializable
 
     public function __construct(string $type)
     {
-        $this->exempt = new ExemptPriorityLevelConfiguration();
-        $this->limited = new LimitedPriorityLevelConfiguration();
         $this->type = $type;
     }
 
     public function exempt(): ExemptPriorityLevelConfiguration
     {
+        return $this->exempt ??= new ExemptPriorityLevelConfiguration();
+    }
+
+    public function getExempt(): ExemptPriorityLevelConfiguration|null
+    {
         return $this->exempt;
+    }
+
+    public function getLimited(): LimitedPriorityLevelConfiguration|null
+    {
+        return $this->limited;
     }
 
     public function getType(): string
@@ -55,7 +64,21 @@ class PriorityLevelConfigurationSpec implements JsonSerializable
 
     public function limited(): LimitedPriorityLevelConfiguration
     {
-        return $this->limited;
+        return $this->limited ??= new LimitedPriorityLevelConfiguration();
+    }
+
+    public function setExempt(ExemptPriorityLevelConfiguration $exempt): self
+    {
+        $this->exempt = $exempt;
+
+        return $this;
+    }
+
+    public function setLimited(LimitedPriorityLevelConfiguration $limited): self
+    {
+        $this->limited = $limited;
+
+        return $this;
     }
 
     public function setType(string $type): self
@@ -65,12 +88,12 @@ class PriorityLevelConfigurationSpec implements JsonSerializable
         return $this;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'exempt' => $this->exempt,
             'limited' => $this->limited,
             'type' => $this->type,
-        ];
+        ]);
     }
 }

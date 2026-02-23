@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Admissionregistration\V1;
 
+use ArrayObject;
 use JsonSerializable;
 
 /**
@@ -64,7 +65,7 @@ class ValidatingAdmissionPolicySpec implements JsonSerializable
      * cannot be recovered from via the API ValidatingAdmissionPolicy cannot match
      * ValidatingAdmissionPolicy and ValidatingAdmissionPolicyBinding. Required.
      */
-    private MatchResources $matchConstraints;
+    private MatchResources|null $matchConstraints = null;
 
     /**
      * ParamKind specifies the kind of resources used to parameterize this policy. If
@@ -74,7 +75,7 @@ class ValidatingAdmissionPolicySpec implements JsonSerializable
      * If paramKind is specified but paramRef is unset in
      * ValidatingAdmissionPolicyBinding, the params variable will be null.
      */
-    private ParamKind $paramKind;
+    private ParamKind|null $paramKind = null;
 
     /**
      * Validations contain CEL expressions which is used to apply the validation.
@@ -100,8 +101,6 @@ class ValidatingAdmissionPolicySpec implements JsonSerializable
     {
         $this->auditAnnotations = new AuditAnnotationList();
         $this->matchConditions = new MatchConditionList();
-        $this->matchConstraints = new MatchResources();
-        $this->paramKind = new ParamKind();
         $this->validations = new ValidationList();
         $this->variables = new VariableList();
     }
@@ -116,6 +115,16 @@ class ValidatingAdmissionPolicySpec implements JsonSerializable
         return $this->failurePolicy;
     }
 
+    public function getMatchConstraints(): MatchResources|null
+    {
+        return $this->matchConstraints;
+    }
+
+    public function getParamKind(): ParamKind|null
+    {
+        return $this->paramKind;
+    }
+
     public function matchConditions(): MatchConditionList
     {
         return $this->matchConditions;
@@ -123,17 +132,59 @@ class ValidatingAdmissionPolicySpec implements JsonSerializable
 
     public function matchConstraints(): MatchResources
     {
-        return $this->matchConstraints;
+        return $this->matchConstraints ??= new MatchResources();
     }
 
     public function paramKind(): ParamKind
     {
-        return $this->paramKind;
+        return $this->paramKind ??= new ParamKind();
+    }
+
+    public function setAuditAnnotations(AuditAnnotationList $auditAnnotations): self
+    {
+        $this->auditAnnotations = $auditAnnotations;
+
+        return $this;
     }
 
     public function setFailurePolicy(string $failurePolicy): self
     {
         $this->failurePolicy = $failurePolicy;
+
+        return $this;
+    }
+
+    public function setMatchConditions(MatchConditionList $matchConditions): self
+    {
+        $this->matchConditions = $matchConditions;
+
+        return $this;
+    }
+
+    public function setMatchConstraints(MatchResources $matchConstraints): self
+    {
+        $this->matchConstraints = $matchConstraints;
+
+        return $this;
+    }
+
+    public function setParamKind(ParamKind $paramKind): self
+    {
+        $this->paramKind = $paramKind;
+
+        return $this;
+    }
+
+    public function setValidations(ValidationList $validations): self
+    {
+        $this->validations = $validations;
+
+        return $this;
+    }
+
+    public function setVariables(VariableList $variables): self
+    {
+        $this->variables = $variables;
 
         return $this;
     }
@@ -148,9 +199,9 @@ class ValidatingAdmissionPolicySpec implements JsonSerializable
         return $this->variables;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'auditAnnotations' => $this->auditAnnotations,
             'failurePolicy' => $this->failurePolicy,
             'matchConditions' => $this->matchConditions,
@@ -158,6 +209,6 @@ class ValidatingAdmissionPolicySpec implements JsonSerializable
             'paramKind' => $this->paramKind,
             'validations' => $this->validations,
             'variables' => $this->variables,
-        ];
+        ]);
     }
 }

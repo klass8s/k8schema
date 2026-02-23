@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Apimachinery\Pkg\Apis\Meta\V1;
 
+use ArrayObject;
 use JsonSerializable;
 use K8Schema\Collection\StringList;
 use K8Schema\Collection\StringMap;
@@ -161,6 +162,13 @@ class ObjectMeta implements JsonSerializable
         return $this->ownerReferences;
     }
 
+    public function setAnnotations(StringMap $annotations): self
+    {
+        $this->annotations = $annotations;
+
+        return $this;
+    }
+
     public function setDeletionGracePeriodSeconds(int $deletionGracePeriodSeconds): self
     {
         $this->deletionGracePeriodSeconds = $deletionGracePeriodSeconds;
@@ -168,9 +176,30 @@ class ObjectMeta implements JsonSerializable
         return $this;
     }
 
+    public function setFinalizers(StringList $finalizers): self
+    {
+        $this->finalizers = $finalizers;
+
+        return $this;
+    }
+
     public function setGenerateName(string $generateName): self
     {
         $this->generateName = $generateName;
+
+        return $this;
+    }
+
+    public function setLabels(StringMap $labels): self
+    {
+        $this->labels = $labels;
+
+        return $this;
+    }
+
+    public function setManagedFields(ManagedFieldsEntryList $managedFields): self
+    {
+        $this->managedFields = $managedFields;
 
         return $this;
     }
@@ -189,9 +218,16 @@ class ObjectMeta implements JsonSerializable
         return $this;
     }
 
-    public function jsonSerialize(): array
+    public function setOwnerReferences(OwnerReferenceList $ownerReferences): self
     {
-        return [
+        $this->ownerReferences = $ownerReferences;
+
+        return $this;
+    }
+
+    public function jsonSerialize(): ArrayObject
+    {
+        return new ArrayObject([
             'annotations' => $this->annotations,
             'deletionGracePeriodSeconds' => $this->deletionGracePeriodSeconds,
             'finalizers' => $this->finalizers,
@@ -201,6 +237,6 @@ class ObjectMeta implements JsonSerializable
             'name' => $this->name,
             'namespace' => $this->namespace,
             'ownerReferences' => $this->ownerReferences,
-        ];
+        ]);
     }
 }

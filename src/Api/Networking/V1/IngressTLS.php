@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Networking\V1;
 
+use ArrayObject;
 use JsonSerializable;
 use K8Schema\Collection\StringList;
 
@@ -44,6 +45,13 @@ class IngressTLS implements JsonSerializable
         return $this->hosts;
     }
 
+    public function setHosts(StringList $hosts): self
+    {
+        $this->hosts = $hosts;
+
+        return $this;
+    }
+
     public function setSecretName(string $secretName): self
     {
         $this->secretName = $secretName;
@@ -51,11 +59,11 @@ class IngressTLS implements JsonSerializable
         return $this;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'hosts' => $this->hosts,
             'secretName' => $this->secretName,
-        ];
+        ]);
     }
 }

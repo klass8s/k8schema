@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Networking\V1;
 
+use ArrayObject;
 use JsonSerializable;
 use K8Schema\Apimachinery\Pkg\Apis\Meta\V1\LabelSelector;
 
@@ -28,7 +29,7 @@ class NetworkPolicyPeer implements JsonSerializable
      * pods matching podSelector in the namespaces selected by namespaceSelector.
      * Otherwise it selects all pods in the namespaces selected by namespaceSelector.
      */
-    private LabelSelector $namespaceSelector;
+    private LabelSelector|null $namespaceSelector = null;
 
     /**
      * podSelector is a label selector which selects pods. This field follows standard
@@ -39,12 +40,10 @@ class NetworkPolicyPeer implements JsonSerializable
      * Otherwise it selects the pods matching podSelector in the policy's own
      * namespace.
      */
-    private LabelSelector $podSelector;
+    private LabelSelector|null $podSelector = null;
 
     public function __construct()
     {
-        $this->namespaceSelector = new LabelSelector();
-        $this->podSelector = new LabelSelector();
     }
 
     public function getIpBlock(): IPBlock|null
@@ -52,14 +51,24 @@ class NetworkPolicyPeer implements JsonSerializable
         return $this->ipBlock;
     }
 
-    public function namespaceSelector(): LabelSelector
+    public function getNamespaceSelector(): LabelSelector|null
     {
         return $this->namespaceSelector;
     }
 
-    public function podSelector(): LabelSelector
+    public function getPodSelector(): LabelSelector|null
     {
         return $this->podSelector;
+    }
+
+    public function namespaceSelector(): LabelSelector
+    {
+        return $this->namespaceSelector ??= new LabelSelector();
+    }
+
+    public function podSelector(): LabelSelector
+    {
+        return $this->podSelector ??= new LabelSelector();
     }
 
     public function setIpBlock(IPBlock $ipBlock): self
@@ -69,12 +78,26 @@ class NetworkPolicyPeer implements JsonSerializable
         return $this;
     }
 
-    public function jsonSerialize(): array
+    public function setNamespaceSelector(LabelSelector $namespaceSelector): self
     {
-        return [
+        $this->namespaceSelector = $namespaceSelector;
+
+        return $this;
+    }
+
+    public function setPodSelector(LabelSelector $podSelector): self
+    {
+        $this->podSelector = $podSelector;
+
+        return $this;
+    }
+
+    public function jsonSerialize(): ArrayObject
+    {
+        return new ArrayObject([
             'ipBlock' => $this->ipBlock,
             'namespaceSelector' => $this->namespaceSelector,
             'podSelector' => $this->podSelector,
-        ];
+        ]);
     }
 }

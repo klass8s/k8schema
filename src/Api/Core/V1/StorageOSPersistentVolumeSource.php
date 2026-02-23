@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Core\V1;
 
+use ArrayObject;
 use JsonSerializable;
 
 /**
@@ -28,7 +29,7 @@ class StorageOSPersistentVolumeSource implements JsonSerializable
      * secretRef specifies the secret to use for obtaining the StorageOS API
      * credentials.  If not specified, default values will be attempted.
      */
-    private ObjectReference $secretRef;
+    private ObjectReference|null $secretRef = null;
 
     /**
      * volumeName is the human-readable name of the StorageOS volume.  Volume names are
@@ -48,7 +49,6 @@ class StorageOSPersistentVolumeSource implements JsonSerializable
 
     public function __construct()
     {
-        $this->secretRef = new ObjectReference();
     }
 
     public function getFsType(): string|null
@@ -59,6 +59,11 @@ class StorageOSPersistentVolumeSource implements JsonSerializable
     public function getReadOnly(): bool|null
     {
         return $this->readOnly;
+    }
+
+    public function getSecretRef(): ObjectReference|null
+    {
+        return $this->secretRef;
     }
 
     public function getVolumeName(): string|null
@@ -73,7 +78,7 @@ class StorageOSPersistentVolumeSource implements JsonSerializable
 
     public function secretRef(): ObjectReference
     {
-        return $this->secretRef;
+        return $this->secretRef ??= new ObjectReference();
     }
 
     public function setFsType(string $fsType): self
@@ -86,6 +91,13 @@ class StorageOSPersistentVolumeSource implements JsonSerializable
     public function setReadOnly(bool $readOnly): self
     {
         $this->readOnly = $readOnly;
+
+        return $this;
+    }
+
+    public function setSecretRef(ObjectReference $secretRef): self
+    {
+        $this->secretRef = $secretRef;
 
         return $this;
     }
@@ -104,14 +116,14 @@ class StorageOSPersistentVolumeSource implements JsonSerializable
         return $this;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'fsType' => $this->fsType,
             'readOnly' => $this->readOnly,
             'secretRef' => $this->secretRef,
             'volumeName' => $this->volumeName,
             'volumeNamespace' => $this->volumeNamespace,
-        ];
+        ]);
     }
 }

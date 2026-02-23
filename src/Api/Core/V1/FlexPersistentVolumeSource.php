@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Core\V1;
 
+use ArrayObject;
 use JsonSerializable;
 use K8Schema\Collection\StringMap;
 
@@ -42,13 +43,12 @@ class FlexPersistentVolumeSource implements JsonSerializable
      * secret object is specified. If the secret object contains more than one secret,
      * all secrets are passed to the plugin scripts.
      */
-    private SecretReference $secretRef;
+    private SecretReference|null $secretRef = null;
 
     public function __construct(string $driver)
     {
         $this->driver = $driver;
         $this->options = new StringMap();
-        $this->secretRef = new SecretReference();
     }
 
     public function getDriver(): string
@@ -66,6 +66,11 @@ class FlexPersistentVolumeSource implements JsonSerializable
         return $this->readOnly;
     }
 
+    public function getSecretRef(): SecretReference|null
+    {
+        return $this->secretRef;
+    }
+
     public function options(): StringMap
     {
         return $this->options;
@@ -73,7 +78,7 @@ class FlexPersistentVolumeSource implements JsonSerializable
 
     public function secretRef(): SecretReference
     {
-        return $this->secretRef;
+        return $this->secretRef ??= new SecretReference();
     }
 
     public function setDriver(string $driver): self
@@ -90,6 +95,13 @@ class FlexPersistentVolumeSource implements JsonSerializable
         return $this;
     }
 
+    public function setOptions(StringMap $options): self
+    {
+        $this->options = $options;
+
+        return $this;
+    }
+
     public function setReadOnly(bool $readOnly): self
     {
         $this->readOnly = $readOnly;
@@ -97,14 +109,21 @@ class FlexPersistentVolumeSource implements JsonSerializable
         return $this;
     }
 
-    public function jsonSerialize(): array
+    public function setSecretRef(SecretReference $secretRef): self
     {
-        return [
+        $this->secretRef = $secretRef;
+
+        return $this;
+    }
+
+    public function jsonSerialize(): ArrayObject
+    {
+        return new ArrayObject([
             'driver' => $this->driver,
             'fsType' => $this->fsType,
             'options' => $this->options,
             'readOnly' => $this->readOnly,
             'secretRef' => $this->secretRef,
-        ];
+        ]);
     }
 }

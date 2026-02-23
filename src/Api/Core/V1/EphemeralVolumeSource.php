@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Core\V1;
 
+use ArrayObject;
 use JsonSerializable;
 
 /**
@@ -31,22 +32,33 @@ class EphemeralVolumeSource implements JsonSerializable
      *
      * Required, must not be nil.
      */
-    private PersistentVolumeClaimTemplate $volumeClaimTemplate;
+    private PersistentVolumeClaimTemplate|null $volumeClaimTemplate = null;
 
     public function __construct()
     {
-        $this->volumeClaimTemplate = new PersistentVolumeClaimTemplate();
     }
 
-    public function volumeClaimTemplate(): PersistentVolumeClaimTemplate
+    public function getVolumeClaimTemplate(): PersistentVolumeClaimTemplate|null
     {
         return $this->volumeClaimTemplate;
     }
 
-    public function jsonSerialize(): array
+    public function setVolumeClaimTemplate(PersistentVolumeClaimTemplate $volumeClaimTemplate): self
     {
-        return [
+        $this->volumeClaimTemplate = $volumeClaimTemplate;
+
+        return $this;
+    }
+
+    public function volumeClaimTemplate(): PersistentVolumeClaimTemplate
+    {
+        return $this->volumeClaimTemplate ??= new PersistentVolumeClaimTemplate();
+    }
+
+    public function jsonSerialize(): ArrayObject
+    {
+        return new ArrayObject([
             'volumeClaimTemplate' => $this->volumeClaimTemplate,
-        ];
+        ]);
     }
 }

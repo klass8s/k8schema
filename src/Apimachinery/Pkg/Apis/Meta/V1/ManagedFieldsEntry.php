@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Apimachinery\Pkg\Apis\Meta\V1;
 
+use ArrayObject;
 use JsonSerializable;
 use K8Schema\DateTimeInterface;
 
@@ -31,7 +32,7 @@ class ManagedFieldsEntry implements JsonSerializable
      * FieldsV1 holds the first JSON version format as described in the "FieldsV1"
      * type.
      */
-    private FieldsV1 $fieldsV1;
+    private FieldsV1|null $fieldsV1 = null;
 
     /**
      * Manager is an identifier of the workflow managing these fields.
@@ -64,12 +65,11 @@ class ManagedFieldsEntry implements JsonSerializable
 
     public function __construct()
     {
-        $this->fieldsV1 = new FieldsV1();
     }
 
     public function fieldsV1(): FieldsV1
     {
-        return $this->fieldsV1;
+        return $this->fieldsV1 ??= new FieldsV1();
     }
 
     public function getApiVersion(): string|null
@@ -80,6 +80,11 @@ class ManagedFieldsEntry implements JsonSerializable
     public function getFieldsType(): string|null
     {
         return $this->fieldsType;
+    }
+
+    public function getFieldsV1(): FieldsV1|null
+    {
+        return $this->fieldsV1;
     }
 
     public function getManager(): string|null
@@ -116,6 +121,13 @@ class ManagedFieldsEntry implements JsonSerializable
         return $this;
     }
 
+    public function setFieldsV1(FieldsV1 $fieldsV1): self
+    {
+        $this->fieldsV1 = $fieldsV1;
+
+        return $this;
+    }
+
     public function setManager(string $manager): self
     {
         $this->manager = $manager;
@@ -144,9 +156,9 @@ class ManagedFieldsEntry implements JsonSerializable
         return $this;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'apiVersion' => $this->apiVersion,
             'fieldsType' => $this->fieldsType,
             'fieldsV1' => $this->fieldsV1,
@@ -154,6 +166,6 @@ class ManagedFieldsEntry implements JsonSerializable
             'operation' => $this->operation,
             'subresource' => $this->subresource,
             'time' => $this->time,
-        ];
+        ]);
     }
 }

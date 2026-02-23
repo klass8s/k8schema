@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Core\V1;
 
+use ArrayObject;
 use JsonSerializable;
 
 /**
@@ -14,7 +15,7 @@ class EnvFromSource implements JsonSerializable
     /**
      * The ConfigMap to select from
      */
-    private ConfigMapEnvSource $configMapRef;
+    private ConfigMapEnvSource|null $configMapRef = null;
 
     /**
      * An optional identifier to prepend to each key in the ConfigMap. Must be a
@@ -25,15 +26,18 @@ class EnvFromSource implements JsonSerializable
     /**
      * The Secret to select from
      */
-    private SecretEnvSource $secretRef;
+    private SecretEnvSource|null $secretRef = null;
 
     public function __construct()
     {
-        $this->configMapRef = new ConfigMapEnvSource();
-        $this->secretRef = new SecretEnvSource();
     }
 
     public function configMapRef(): ConfigMapEnvSource
+    {
+        return $this->configMapRef ??= new ConfigMapEnvSource();
+    }
+
+    public function getConfigMapRef(): ConfigMapEnvSource|null
     {
         return $this->configMapRef;
     }
@@ -43,9 +47,21 @@ class EnvFromSource implements JsonSerializable
         return $this->prefix;
     }
 
-    public function secretRef(): SecretEnvSource
+    public function getSecretRef(): SecretEnvSource|null
     {
         return $this->secretRef;
+    }
+
+    public function secretRef(): SecretEnvSource
+    {
+        return $this->secretRef ??= new SecretEnvSource();
+    }
+
+    public function setConfigMapRef(ConfigMapEnvSource $configMapRef): self
+    {
+        $this->configMapRef = $configMapRef;
+
+        return $this;
     }
 
     public function setPrefix(string $prefix): self
@@ -55,12 +71,19 @@ class EnvFromSource implements JsonSerializable
         return $this;
     }
 
-    public function jsonSerialize(): array
+    public function setSecretRef(SecretEnvSource $secretRef): self
     {
-        return [
+        $this->secretRef = $secretRef;
+
+        return $this;
+    }
+
+    public function jsonSerialize(): ArrayObject
+    {
+        return new ArrayObject([
             'configMapRef' => $this->configMapRef,
             'prefix' => $this->prefix,
             'secretRef' => $this->secretRef,
-        ];
+        ]);
     }
 }

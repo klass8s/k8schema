@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Apimachinery\Pkg\Apis\Meta\V1;
 
+use ArrayObject;
 use JsonSerializable;
 use K8Schema\Collection\StringMap;
 
@@ -44,11 +45,25 @@ class LabelSelector implements JsonSerializable
         return $this->matchLabels;
     }
 
-    public function jsonSerialize(): array
+    public function setMatchExpressions(LabelSelectorRequirementList $matchExpressions): self
     {
-        return [
+        $this->matchExpressions = $matchExpressions;
+
+        return $this;
+    }
+
+    public function setMatchLabels(StringMap $matchLabels): self
+    {
+        $this->matchLabels = $matchLabels;
+
+        return $this;
+    }
+
+    public function jsonSerialize(): ArrayObject
+    {
+        return new ArrayObject([
             'matchExpressions' => $this->matchExpressions,
             'matchLabels' => $this->matchLabels,
-        ];
+        ]);
     }
 }

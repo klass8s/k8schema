@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Flowcontrol\V1;
 
+use ArrayObject;
 use JsonSerializable;
 
 /**
@@ -54,17 +55,38 @@ class PolicyRulesWithSubjects implements JsonSerializable
         return $this->resourceRules;
     }
 
+    public function setNonResourceRules(NonResourcePolicyRuleList $nonResourceRules): self
+    {
+        $this->nonResourceRules = $nonResourceRules;
+
+        return $this;
+    }
+
+    public function setResourceRules(ResourcePolicyRuleList $resourceRules): self
+    {
+        $this->resourceRules = $resourceRules;
+
+        return $this;
+    }
+
+    public function setSubjects(SubjectList $subjects): self
+    {
+        $this->subjects = $subjects;
+
+        return $this;
+    }
+
     public function subjects(): SubjectList
     {
         return $this->subjects;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'nonResourceRules' => $this->nonResourceRules,
             'resourceRules' => $this->resourceRules,
             'subjects' => $this->subjects,
-        ];
+        ]);
     }
 }

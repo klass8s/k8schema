@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Autoscaling\V2;
 
+use ArrayObject;
 use JsonSerializable;
 
 /**
@@ -59,6 +60,13 @@ class HPAScalingRules implements JsonSerializable
         return $this->policies;
     }
 
+    public function setPolicies(HPAScalingPolicyList $policies): self
+    {
+        $this->policies = $policies;
+
+        return $this;
+    }
+
     public function setSelectPolicy(string $selectPolicy): self
     {
         $this->selectPolicy = $selectPolicy;
@@ -73,12 +81,12 @@ class HPAScalingRules implements JsonSerializable
         return $this;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'policies' => $this->policies,
             'selectPolicy' => $this->selectPolicy,
             'stabilizationWindowSeconds' => $this->stabilizationWindowSeconds,
-        ];
+        ]);
     }
 }

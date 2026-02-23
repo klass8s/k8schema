@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Resource\V1beta1;
 
+use ArrayObject;
 use JsonSerializable;
 use K8Schema\Collection\StringList;
 
@@ -56,11 +57,18 @@ class DeviceConstraint implements JsonSerializable
         return $this;
     }
 
-    public function jsonSerialize(): array
+    public function setRequests(StringList $requests): self
     {
-        return [
+        $this->requests = $requests;
+
+        return $this;
+    }
+
+    public function jsonSerialize(): ArrayObject
+    {
+        return new ArrayObject([
             'matchAttribute' => $this->matchAttribute,
             'requests' => $this->requests,
-        ];
+        ]);
     }
 }

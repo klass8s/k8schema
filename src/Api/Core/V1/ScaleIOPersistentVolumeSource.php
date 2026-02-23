@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Core\V1;
 
+use ArrayObject;
 use JsonSerializable;
 
 /**
@@ -153,6 +154,13 @@ class ScaleIOPersistentVolumeSource implements JsonSerializable
         return $this;
     }
 
+    public function setSecretRef(SecretReference $secretRef): self
+    {
+        $this->secretRef = $secretRef;
+
+        return $this;
+    }
+
     public function setSslEnabled(bool $sslEnabled): self
     {
         $this->sslEnabled = $sslEnabled;
@@ -188,9 +196,9 @@ class ScaleIOPersistentVolumeSource implements JsonSerializable
         return $this;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'fsType' => $this->fsType,
             'gateway' => $this->gateway,
             'protectionDomain' => $this->protectionDomain,
@@ -201,6 +209,6 @@ class ScaleIOPersistentVolumeSource implements JsonSerializable
             'storagePool' => $this->storagePool,
             'system' => $this->system,
             'volumeName' => $this->volumeName,
-        ];
+        ]);
     }
 }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Resource\V1beta1;
 
+use ArrayObject;
 use JsonSerializable;
 
 /**
@@ -157,15 +158,22 @@ class DeviceRequest implements JsonSerializable
         return $this;
     }
 
-    public function jsonSerialize(): array
+    public function setSelectors(DeviceSelectorList $selectors): self
     {
-        return [
+        $this->selectors = $selectors;
+
+        return $this;
+    }
+
+    public function jsonSerialize(): ArrayObject
+    {
+        return new ArrayObject([
             'adminAccess' => $this->adminAccess,
             'allocationMode' => $this->allocationMode,
             'count' => $this->count,
             'deviceClassName' => $this->deviceClassName,
             'name' => $this->name,
             'selectors' => $this->selectors,
-        ];
+        ]);
     }
 }

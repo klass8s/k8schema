@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\KubeAggregator\Pkg\Apis\Apiregistration\V1;
 
+use ArrayObject;
 use JsonSerializable;
 
 /**
@@ -68,12 +69,12 @@ class ServiceReference implements JsonSerializable
         return $this;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'name' => $this->name,
             'namespace' => $this->namespace,
             'port' => $this->port,
-        ];
+        ]);
     }
 }

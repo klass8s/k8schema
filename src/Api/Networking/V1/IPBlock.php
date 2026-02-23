@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Networking\V1;
 
+use ArrayObject;
 use JsonSerializable;
 use K8Schema\Collection\StringList;
 
@@ -50,11 +51,18 @@ class IPBlock implements JsonSerializable
         return $this;
     }
 
-    public function jsonSerialize(): array
+    public function setExcept(StringList $except): self
     {
-        return [
+        $this->except = $except;
+
+        return $this;
+    }
+
+    public function jsonSerialize(): ArrayObject
+    {
+        return new ArrayObject([
             'cidr' => $this->cidr,
             'except' => $this->except,
-        ];
+        ]);
     }
 }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Scheduling\V1;
 
+use ArrayObject;
 use K8Schema\APIResourceInterface;
 use K8Schema\Apimachinery\Pkg\Apis\Meta\V1\ObjectMeta;
 
@@ -36,7 +37,7 @@ class PriorityClass implements APIResourceInterface
      * Standard object's metadata. More info:
      * https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
      */
-    private ObjectMeta $metadata;
+    private ObjectMeta|null $metadata = null;
 
     /**
      * preemptionPolicy is the Policy for preempting pods with lower priority. One of
@@ -53,7 +54,6 @@ class PriorityClass implements APIResourceInterface
 
     public function __construct(int $value)
     {
-        $this->metadata = new ObjectMeta();
         $this->value = $value;
     }
 
@@ -65,6 +65,11 @@ class PriorityClass implements APIResourceInterface
     public function getGlobalDefault(): bool|null
     {
         return $this->globalDefault;
+    }
+
+    public function getMetadata(): ObjectMeta|null
+    {
+        return $this->metadata;
     }
 
     public function getPreemptionPolicy(): string|null
@@ -79,7 +84,7 @@ class PriorityClass implements APIResourceInterface
 
     public function metadata(): ObjectMeta
     {
-        return $this->metadata;
+        return $this->metadata ??= new ObjectMeta();
     }
 
     public function setDescription(string $description): self
@@ -92,6 +97,13 @@ class PriorityClass implements APIResourceInterface
     public function setGlobalDefault(bool $globalDefault): self
     {
         $this->globalDefault = $globalDefault;
+
+        return $this;
+    }
+
+    public function setMetadata(ObjectMeta $metadata): self
+    {
+        $this->metadata = $metadata;
 
         return $this;
     }
@@ -110,9 +122,9 @@ class PriorityClass implements APIResourceInterface
         return $this;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'apiVersion' => self::API_VERSION,
             'kind' => self::KIND,
             'description' => $this->description,
@@ -120,6 +132,6 @@ class PriorityClass implements APIResourceInterface
             'metadata' => $this->metadata,
             'preemptionPolicy' => $this->preemptionPolicy,
             'value' => $this->value,
-        ];
+        ]);
     }
 }

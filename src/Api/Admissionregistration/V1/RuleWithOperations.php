@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Admissionregistration\V1;
 
+use ArrayObject;
 use JsonSerializable;
 use K8Schema\Collection\StringList;
 
@@ -91,6 +92,34 @@ class RuleWithOperations implements JsonSerializable
         return $this->resources;
     }
 
+    public function setApiGroups(StringList $apiGroups): self
+    {
+        $this->apiGroups = $apiGroups;
+
+        return $this;
+    }
+
+    public function setApiVersions(StringList $apiVersions): self
+    {
+        $this->apiVersions = $apiVersions;
+
+        return $this;
+    }
+
+    public function setOperations(StringList $operations): self
+    {
+        $this->operations = $operations;
+
+        return $this;
+    }
+
+    public function setResources(StringList $resources): self
+    {
+        $this->resources = $resources;
+
+        return $this;
+    }
+
     public function setScope(string $scope): self
     {
         $this->scope = $scope;
@@ -98,14 +127,14 @@ class RuleWithOperations implements JsonSerializable
         return $this;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'apiGroups' => $this->apiGroups,
             'apiVersions' => $this->apiVersions,
             'operations' => $this->operations,
             'resources' => $this->resources,
             'scope' => $this->scope,
-        ];
+        ]);
     }
 }

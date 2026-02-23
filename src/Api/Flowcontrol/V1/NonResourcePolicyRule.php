@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Flowcontrol\V1;
 
+use ArrayObject;
 use JsonSerializable;
 use K8Schema\Collection\StringList;
 
@@ -45,16 +46,30 @@ class NonResourcePolicyRule implements JsonSerializable
         return $this->nonResourceURLs;
     }
 
+    public function setNonResourceURLs(StringList $nonResourceURLs): self
+    {
+        $this->nonResourceURLs = $nonResourceURLs;
+
+        return $this;
+    }
+
+    public function setVerbs(StringList $verbs): self
+    {
+        $this->verbs = $verbs;
+
+        return $this;
+    }
+
     public function verbs(): StringList
     {
         return $this->verbs;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'nonResourceURLs' => $this->nonResourceURLs,
             'verbs' => $this->verbs,
-        ];
+        ]);
     }
 }

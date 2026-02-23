@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Core\V1;
 
+use ArrayObject;
 use JsonSerializable;
 use K8Schema\Collection\StringList;
 use K8Schema\Collection\StringMap;
@@ -231,7 +232,7 @@ class ServiceSpec implements JsonSerializable
     /**
      * sessionAffinityConfig contains the configurations of session affinity.
      */
-    private SessionAffinityConfig $sessionAffinityConfig;
+    private SessionAffinityConfig|null $sessionAffinityConfig = null;
 
     /**
      * TrafficDistribution offers a way to express preferences for how traffic is
@@ -269,7 +270,6 @@ class ServiceSpec implements JsonSerializable
         $this->loadBalancerSourceRanges = new StringList();
         $this->ports = new ServicePortList();
         $this->selector = new StringMap();
-        $this->sessionAffinityConfig = new SessionAffinityConfig();
     }
 
     public function clusterIPs(): StringList
@@ -337,6 +337,11 @@ class ServiceSpec implements JsonSerializable
         return $this->sessionAffinity;
     }
 
+    public function getSessionAffinityConfig(): SessionAffinityConfig|null
+    {
+        return $this->sessionAffinityConfig;
+    }
+
     public function getTrafficDistribution(): string|null
     {
         return $this->trafficDistribution;
@@ -369,7 +374,7 @@ class ServiceSpec implements JsonSerializable
 
     public function sessionAffinityConfig(): SessionAffinityConfig
     {
-        return $this->sessionAffinityConfig;
+        return $this->sessionAffinityConfig ??= new SessionAffinityConfig();
     }
 
     public function setAllocateLoadBalancerNodePorts(bool $allocateLoadBalancerNodePorts): self
@@ -382,6 +387,20 @@ class ServiceSpec implements JsonSerializable
     public function setClusterIP(string $clusterIP): self
     {
         $this->clusterIP = $clusterIP;
+
+        return $this;
+    }
+
+    public function setClusterIPs(StringList $clusterIPs): self
+    {
+        $this->clusterIPs = $clusterIPs;
+
+        return $this;
+    }
+
+    public function setExternalIPs(StringList $externalIPs): self
+    {
+        $this->externalIPs = $externalIPs;
 
         return $this;
     }
@@ -414,6 +433,13 @@ class ServiceSpec implements JsonSerializable
         return $this;
     }
 
+    public function setIpFamilies(StringList $ipFamilies): self
+    {
+        $this->ipFamilies = $ipFamilies;
+
+        return $this;
+    }
+
     public function setIpFamilyPolicy(string $ipFamilyPolicy): self
     {
         $this->ipFamilyPolicy = $ipFamilyPolicy;
@@ -435,6 +461,20 @@ class ServiceSpec implements JsonSerializable
         return $this;
     }
 
+    public function setLoadBalancerSourceRanges(StringList $loadBalancerSourceRanges): self
+    {
+        $this->loadBalancerSourceRanges = $loadBalancerSourceRanges;
+
+        return $this;
+    }
+
+    public function setPorts(ServicePortList $ports): self
+    {
+        $this->ports = $ports;
+
+        return $this;
+    }
+
     public function setPublishNotReadyAddresses(bool $publishNotReadyAddresses): self
     {
         $this->publishNotReadyAddresses = $publishNotReadyAddresses;
@@ -442,9 +482,23 @@ class ServiceSpec implements JsonSerializable
         return $this;
     }
 
+    public function setSelector(StringMap $selector): self
+    {
+        $this->selector = $selector;
+
+        return $this;
+    }
+
     public function setSessionAffinity(string $sessionAffinity): self
     {
         $this->sessionAffinity = $sessionAffinity;
+
+        return $this;
+    }
+
+    public function setSessionAffinityConfig(SessionAffinityConfig $sessionAffinityConfig): self
+    {
+        $this->sessionAffinityConfig = $sessionAffinityConfig;
 
         return $this;
     }
@@ -463,9 +517,9 @@ class ServiceSpec implements JsonSerializable
         return $this;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'allocateLoadBalancerNodePorts' => $this->allocateLoadBalancerNodePorts,
             'clusterIP' => $this->clusterIP,
             'clusterIPs' => $this->clusterIPs,
@@ -486,6 +540,6 @@ class ServiceSpec implements JsonSerializable
             'sessionAffinityConfig' => $this->sessionAffinityConfig,
             'trafficDistribution' => $this->trafficDistribution,
             'type' => $this->type,
-        ];
+        ]);
     }
 }

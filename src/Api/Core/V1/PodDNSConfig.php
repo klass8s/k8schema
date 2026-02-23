@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Core\V1;
 
+use ArrayObject;
 use JsonSerializable;
 use K8Schema\Collection\StringList;
 
@@ -55,12 +56,33 @@ class PodDNSConfig implements JsonSerializable
         return $this->searches;
     }
 
-    public function jsonSerialize(): array
+    public function setNameservers(StringList $nameservers): self
     {
-        return [
+        $this->nameservers = $nameservers;
+
+        return $this;
+    }
+
+    public function setOptions(PodDNSConfigOptionList $options): self
+    {
+        $this->options = $options;
+
+        return $this;
+    }
+
+    public function setSearches(StringList $searches): self
+    {
+        $this->searches = $searches;
+
+        return $this;
+    }
+
+    public function jsonSerialize(): ArrayObject
+    {
+        return new ArrayObject([
             'nameservers' => $this->nameservers,
             'options' => $this->options,
             'searches' => $this->searches,
-        ];
+        ]);
     }
 }

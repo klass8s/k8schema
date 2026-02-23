@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Rbac\V1;
 
+use ArrayObject;
 use K8Schema\APIResourceInterface;
 use K8Schema\Apimachinery\Pkg\Apis\Meta\V1\ObjectMeta;
 
@@ -21,7 +22,7 @@ class RoleBinding implements APIResourceInterface
     /**
      * Standard object's metadata.
      */
-    private ObjectMeta $metadata;
+    private ObjectMeta|null $metadata = null;
 
     /**
      * RoleRef can reference a Role in the current namespace or a ClusterRole in the
@@ -37,9 +38,13 @@ class RoleBinding implements APIResourceInterface
 
     public function __construct(RoleRef $roleRef)
     {
-        $this->metadata = new ObjectMeta();
         $this->roleRef = $roleRef;
         $this->subjects = new SubjectList();
+    }
+
+    public function getMetadata(): ObjectMeta|null
+    {
+        return $this->metadata;
     }
 
     public function getRoleRef(): RoleRef
@@ -49,7 +54,14 @@ class RoleBinding implements APIResourceInterface
 
     public function metadata(): ObjectMeta
     {
-        return $this->metadata;
+        return $this->metadata ??= new ObjectMeta();
+    }
+
+    public function setMetadata(ObjectMeta $metadata): self
+    {
+        $this->metadata = $metadata;
+
+        return $this;
     }
 
     public function setRoleRef(RoleRef $roleRef): self
@@ -59,19 +71,26 @@ class RoleBinding implements APIResourceInterface
         return $this;
     }
 
+    public function setSubjects(SubjectList $subjects): self
+    {
+        $this->subjects = $subjects;
+
+        return $this;
+    }
+
     public function subjects(): SubjectList
     {
         return $this->subjects;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'apiVersion' => self::API_VERSION,
             'kind' => self::KIND,
             'metadata' => $this->metadata,
             'roleRef' => $this->roleRef,
             'subjects' => $this->subjects,
-        ];
+        ]);
     }
 }

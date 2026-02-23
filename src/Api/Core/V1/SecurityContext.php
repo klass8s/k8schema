@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Core\V1;
 
+use ArrayObject;
 use JsonSerializable;
 
 /**
@@ -35,7 +36,7 @@ class SecurityContext implements JsonSerializable
      * set of capabilities granted by the container runtime. Note that this field
      * cannot be set when spec.os.name is windows.
      */
-    private Capabilities $capabilities;
+    private Capabilities|null $capabilities = null;
 
     /**
      * Run container in privileged mode. Processes in privileged containers are
@@ -92,7 +93,7 @@ class SecurityContext implements JsonSerializable
      * PodSecurityContext, the value specified in SecurityContext takes precedence.
      * Note that this field cannot be set when spec.os.name is windows.
      */
-    private SELinuxOptions $seLinuxOptions;
+    private SELinuxOptions|null $seLinuxOptions = null;
 
     /**
      * The seccomp options to use by this container. If seccomp options are provided at
@@ -107,18 +108,15 @@ class SecurityContext implements JsonSerializable
      * and PodSecurityContext, the value specified in SecurityContext takes precedence.
      * Note that this field cannot be set when spec.os.name is linux.
      */
-    private WindowsSecurityContextOptions $windowsOptions;
+    private WindowsSecurityContextOptions|null $windowsOptions = null;
 
     public function __construct()
     {
-        $this->capabilities = new Capabilities();
-        $this->seLinuxOptions = new SELinuxOptions();
-        $this->windowsOptions = new WindowsSecurityContextOptions();
     }
 
     public function capabilities(): Capabilities
     {
-        return $this->capabilities;
+        return $this->capabilities ??= new Capabilities();
     }
 
     public function getAllowPrivilegeEscalation(): bool|null
@@ -129,6 +127,11 @@ class SecurityContext implements JsonSerializable
     public function getAppArmorProfile(): AppArmorProfile|null
     {
         return $this->appArmorProfile;
+    }
+
+    public function getCapabilities(): Capabilities|null
+    {
+        return $this->capabilities;
     }
 
     public function getPrivileged(): bool|null
@@ -161,14 +164,24 @@ class SecurityContext implements JsonSerializable
         return $this->runAsUser;
     }
 
+    public function getSeLinuxOptions(): SELinuxOptions|null
+    {
+        return $this->seLinuxOptions;
+    }
+
     public function getSeccompProfile(): SeccompProfile|null
     {
         return $this->seccompProfile;
     }
 
+    public function getWindowsOptions(): WindowsSecurityContextOptions|null
+    {
+        return $this->windowsOptions;
+    }
+
     public function seLinuxOptions(): SELinuxOptions
     {
-        return $this->seLinuxOptions;
+        return $this->seLinuxOptions ??= new SELinuxOptions();
     }
 
     public function setAllowPrivilegeEscalation(bool $allowPrivilegeEscalation): self
@@ -181,6 +194,13 @@ class SecurityContext implements JsonSerializable
     public function setAppArmorProfile(AppArmorProfile $appArmorProfile): self
     {
         $this->appArmorProfile = $appArmorProfile;
+
+        return $this;
+    }
+
+    public function setCapabilities(Capabilities $capabilities): self
+    {
+        $this->capabilities = $capabilities;
 
         return $this;
     }
@@ -227,6 +247,13 @@ class SecurityContext implements JsonSerializable
         return $this;
     }
 
+    public function setSeLinuxOptions(SELinuxOptions $seLinuxOptions): self
+    {
+        $this->seLinuxOptions = $seLinuxOptions;
+
+        return $this;
+    }
+
     public function setSeccompProfile(SeccompProfile $seccompProfile): self
     {
         $this->seccompProfile = $seccompProfile;
@@ -234,14 +261,21 @@ class SecurityContext implements JsonSerializable
         return $this;
     }
 
-    public function windowsOptions(): WindowsSecurityContextOptions
+    public function setWindowsOptions(WindowsSecurityContextOptions $windowsOptions): self
     {
-        return $this->windowsOptions;
+        $this->windowsOptions = $windowsOptions;
+
+        return $this;
     }
 
-    public function jsonSerialize(): array
+    public function windowsOptions(): WindowsSecurityContextOptions
     {
-        return [
+        return $this->windowsOptions ??= new WindowsSecurityContextOptions();
+    }
+
+    public function jsonSerialize(): ArrayObject
+    {
+        return new ArrayObject([
             'allowPrivilegeEscalation' => $this->allowPrivilegeEscalation,
             'appArmorProfile' => $this->appArmorProfile,
             'capabilities' => $this->capabilities,
@@ -254,6 +288,6 @@ class SecurityContext implements JsonSerializable
             'seLinuxOptions' => $this->seLinuxOptions,
             'seccompProfile' => $this->seccompProfile,
             'windowsOptions' => $this->windowsOptions,
-        ];
+        ]);
     }
 }

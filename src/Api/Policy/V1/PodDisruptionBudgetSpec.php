@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Policy\V1;
 
+use ArrayObject;
 use JsonSerializable;
 use K8Schema\Apimachinery\Pkg\Apis\Meta\V1\LabelSelector;
 
@@ -33,7 +34,7 @@ class PodDisruptionBudgetSpec implements JsonSerializable
      * null selector will match no pods, while an empty ({}) selector will select all
      * pods within the namespace.
      */
-    private LabelSelector $selector;
+    private LabelSelector|null $selector = null;
 
     /**
      * UnhealthyPodEvictionPolicy defines the criteria for when unhealthy pods should
@@ -66,7 +67,6 @@ class PodDisruptionBudgetSpec implements JsonSerializable
 
     public function __construct()
     {
-        $this->selector = new LabelSelector();
     }
 
     public function getMaxUnavailable(): string|int|null
@@ -79,6 +79,11 @@ class PodDisruptionBudgetSpec implements JsonSerializable
         return $this->minAvailable;
     }
 
+    public function getSelector(): LabelSelector|null
+    {
+        return $this->selector;
+    }
+
     public function getUnhealthyPodEvictionPolicy(): string|null
     {
         return $this->unhealthyPodEvictionPolicy;
@@ -86,7 +91,7 @@ class PodDisruptionBudgetSpec implements JsonSerializable
 
     public function selector(): LabelSelector
     {
-        return $this->selector;
+        return $this->selector ??= new LabelSelector();
     }
 
     public function setMaxUnavailable(string|int $maxUnavailable): self
@@ -103,6 +108,13 @@ class PodDisruptionBudgetSpec implements JsonSerializable
         return $this;
     }
 
+    public function setSelector(LabelSelector $selector): self
+    {
+        $this->selector = $selector;
+
+        return $this;
+    }
+
     public function setUnhealthyPodEvictionPolicy(string $unhealthyPodEvictionPolicy): self
     {
         $this->unhealthyPodEvictionPolicy = $unhealthyPodEvictionPolicy;
@@ -110,13 +122,13 @@ class PodDisruptionBudgetSpec implements JsonSerializable
         return $this;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'maxUnavailable' => $this->maxUnavailable,
             'minAvailable' => $this->minAvailable,
             'selector' => $this->selector,
             'unhealthyPodEvictionPolicy' => $this->unhealthyPodEvictionPolicy,
-        ];
+        ]);
     }
 }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Apps\V1;
 
+use ArrayObject;
 use JsonSerializable;
 use K8Schema\Api\Core\V1\PersistentVolumeClaimList;
 use K8Schema\Api\Core\V1\PodTemplateSpec;
@@ -26,7 +27,7 @@ class StatefulSetSpec implements JsonSerializable
      * ordinals behavior assigns a "0" index to the first replica and increments the
      * index by one for each additional replica requested.
      */
-    private StatefulSetOrdinals $ordinals;
+    private StatefulSetOrdinals|null $ordinals = null;
 
     /**
      * persistentVolumeClaimRetentionPolicy describes the lifecycle of persistent
@@ -36,7 +37,7 @@ class StatefulSetSpec implements JsonSerializable
      * volume claims when their stateful set is deleted, or when their pod is scaled
      * down.
      */
-    private StatefulSetPersistentVolumeClaimRetentionPolicy $persistentVolumeClaimRetentionPolicy;
+    private StatefulSetPersistentVolumeClaimRetentionPolicy|null $persistentVolumeClaimRetentionPolicy = null;
 
     /**
      * podManagementPolicy controls how pods are created during initial scale up, when
@@ -96,7 +97,7 @@ class StatefulSetSpec implements JsonSerializable
      * updateStrategy indicates the StatefulSetUpdateStrategy that will be employed to
      * update Pods in the StatefulSet when a revision is made to Template.
      */
-    private StatefulSetUpdateStrategy $updateStrategy;
+    private StatefulSetUpdateStrategy|null $updateStrategy = null;
 
     /**
      * volumeClaimTemplates is a list of claims that pods are allowed to reference. The
@@ -110,18 +111,25 @@ class StatefulSetSpec implements JsonSerializable
 
     public function __construct(string $serviceName)
     {
-        $this->ordinals = new StatefulSetOrdinals();
-        $this->persistentVolumeClaimRetentionPolicy = new StatefulSetPersistentVolumeClaimRetentionPolicy();
         $this->selector = new LabelSelector();
         $this->serviceName = $serviceName;
         $this->template = new PodTemplateSpec();
-        $this->updateStrategy = new StatefulSetUpdateStrategy();
         $this->volumeClaimTemplates = new PersistentVolumeClaimList();
     }
 
     public function getMinReadySeconds(): int|null
     {
         return $this->minReadySeconds;
+    }
+
+    public function getOrdinals(): StatefulSetOrdinals|null
+    {
+        return $this->ordinals;
+    }
+
+    public function getPersistentVolumeClaimRetentionPolicy(): StatefulSetPersistentVolumeClaimRetentionPolicy|null
+    {
+        return $this->persistentVolumeClaimRetentionPolicy;
     }
 
     public function getPodManagementPolicy(): string|null
@@ -144,14 +152,19 @@ class StatefulSetSpec implements JsonSerializable
         return $this->serviceName;
     }
 
+    public function getUpdateStrategy(): StatefulSetUpdateStrategy|null
+    {
+        return $this->updateStrategy;
+    }
+
     public function ordinals(): StatefulSetOrdinals
     {
-        return $this->ordinals;
+        return $this->ordinals ??= new StatefulSetOrdinals();
     }
 
     public function persistentVolumeClaimRetentionPolicy(): StatefulSetPersistentVolumeClaimRetentionPolicy
     {
-        return $this->persistentVolumeClaimRetentionPolicy;
+        return $this->persistentVolumeClaimRetentionPolicy ??= new StatefulSetPersistentVolumeClaimRetentionPolicy();
     }
 
     public function selector(): LabelSelector
@@ -162,6 +175,21 @@ class StatefulSetSpec implements JsonSerializable
     public function setMinReadySeconds(int $minReadySeconds): self
     {
         $this->minReadySeconds = $minReadySeconds;
+
+        return $this;
+    }
+
+    public function setOrdinals(StatefulSetOrdinals $ordinals): self
+    {
+        $this->ordinals = $ordinals;
+
+        return $this;
+    }
+
+    public function setPersistentVolumeClaimRetentionPolicy(
+        StatefulSetPersistentVolumeClaimRetentionPolicy $persistentVolumeClaimRetentionPolicy,
+    ): self {
+        $this->persistentVolumeClaimRetentionPolicy = $persistentVolumeClaimRetentionPolicy;
 
         return $this;
     }
@@ -187,9 +215,37 @@ class StatefulSetSpec implements JsonSerializable
         return $this;
     }
 
+    public function setSelector(LabelSelector $selector): self
+    {
+        $this->selector = $selector;
+
+        return $this;
+    }
+
     public function setServiceName(string $serviceName): self
     {
         $this->serviceName = $serviceName;
+
+        return $this;
+    }
+
+    public function setTemplate(PodTemplateSpec $template): self
+    {
+        $this->template = $template;
+
+        return $this;
+    }
+
+    public function setUpdateStrategy(StatefulSetUpdateStrategy $updateStrategy): self
+    {
+        $this->updateStrategy = $updateStrategy;
+
+        return $this;
+    }
+
+    public function setVolumeClaimTemplates(PersistentVolumeClaimList $volumeClaimTemplates): self
+    {
+        $this->volumeClaimTemplates = $volumeClaimTemplates;
 
         return $this;
     }
@@ -201,7 +257,7 @@ class StatefulSetSpec implements JsonSerializable
 
     public function updateStrategy(): StatefulSetUpdateStrategy
     {
-        return $this->updateStrategy;
+        return $this->updateStrategy ??= new StatefulSetUpdateStrategy();
     }
 
     public function volumeClaimTemplates(): PersistentVolumeClaimList
@@ -209,9 +265,9 @@ class StatefulSetSpec implements JsonSerializable
         return $this->volumeClaimTemplates;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'minReadySeconds' => $this->minReadySeconds,
             'ordinals' => $this->ordinals,
             'persistentVolumeClaimRetentionPolicy' => $this->persistentVolumeClaimRetentionPolicy,
@@ -223,6 +279,6 @@ class StatefulSetSpec implements JsonSerializable
             'template' => $this->template,
             'updateStrategy' => $this->updateStrategy,
             'volumeClaimTemplates' => $this->volumeClaimTemplates,
-        ];
+        ]);
     }
 }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Certificates\V1;
 
+use ArrayObject;
 use K8Schema\APIResourceListInterface;
 use K8Schema\Apimachinery\Pkg\Apis\Meta\V1\ListMeta;
 
@@ -19,14 +20,13 @@ class CertificateSigningRequestList implements APIResourceListInterface
     /**
      * @var CertificateSigningRequest[]
      */
-    private array $items = [];
-    private ListMeta $metadata;
+    private array $items;
+    private ListMeta|null $metadata = null;
 
     public function __construct()
     {
         $this->clear();
         $this->items = [];
-        $this->metadata = new ListMeta();
     }
 
     public function add(CertificateSigningRequest $value): self
@@ -36,11 +36,6 @@ class CertificateSigningRequestList implements APIResourceListInterface
         return $this;
     }
 
-    /**
-     * @var CertificateSigningRequest[] $items
-     *
-     * @return self
-     */
     public function addAll(array $items): self
     {
         foreach ($items as $value) {
@@ -70,18 +65,30 @@ class CertificateSigningRequestList implements APIResourceListInterface
         return count($this->items);
     }
 
-    public function metadata(): ListMeta
+    public function getMetadata(): ListMeta|null
     {
         return $this->metadata;
     }
 
-    public function jsonSerialize(): array
+    public function metadata(): ListMeta
     {
-        return [
+        return $this->metadata ??= new ListMeta();
+    }
+
+    public function setMetadata(ListMeta $metadata): self
+    {
+        $this->metadata = $metadata;
+
+        return $this;
+    }
+
+    public function jsonSerialize(): ArrayObject
+    {
+        return new ArrayObject([
             'apiVersion' => self::API_VERSION,
             'kind' => self::KIND,
             'items' => $this->items,
             'metadata' => $this->metadata,
-        ];
+        ]);
     }
 }

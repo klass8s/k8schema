@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Node\V1;
 
+use ArrayObject;
 use JsonSerializable;
 use K8Schema\Collection\StringOrFloatMap;
 
@@ -28,10 +29,17 @@ class Overhead implements JsonSerializable
         return $this->podFixed;
     }
 
-    public function jsonSerialize(): array
+    public function setPodFixed(StringOrFloatMap $podFixed): self
     {
-        return [
+        $this->podFixed = $podFixed;
+
+        return $this;
+    }
+
+    public function jsonSerialize(): ArrayObject
+    {
+        return new ArrayObject([
             'podFixed' => $this->podFixed,
-        ];
+        ]);
     }
 }

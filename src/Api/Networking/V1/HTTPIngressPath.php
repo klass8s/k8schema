@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Networking\V1;
 
+use ArrayObject;
 use JsonSerializable;
 
 /**
@@ -64,6 +65,13 @@ class HTTPIngressPath implements JsonSerializable
         return $this->pathType;
     }
 
+    public function setBackend(IngressBackend $backend): self
+    {
+        $this->backend = $backend;
+
+        return $this;
+    }
+
     public function setPath(string $path): self
     {
         $this->path = $path;
@@ -78,12 +86,12 @@ class HTTPIngressPath implements JsonSerializable
         return $this;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'backend' => $this->backend,
             'path' => $this->path,
             'pathType' => $this->pathType,
-        ];
+        ]);
     }
 }

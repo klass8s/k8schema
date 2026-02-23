@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Storage\V1;
 
+use ArrayObject;
 use JsonSerializable;
 use K8Schema\Collection\StringList;
 
@@ -17,7 +18,7 @@ class CSINodeDriver implements JsonSerializable
      * allocatable represents the volume resources of a node that are available for
      * scheduling. This field is beta.
      */
-    private VolumeNodeResources $allocatable;
+    private VolumeNodeResources|null $allocatable = null;
 
     /**
      * name represents the name of the CSI driver that this object refers to. This MUST
@@ -51,13 +52,17 @@ class CSINodeDriver implements JsonSerializable
 
     public function __construct(string $name, string $nodeID)
     {
-        $this->allocatable = new VolumeNodeResources();
         $this->name = $name;
         $this->nodeID = $nodeID;
         $this->topologyKeys = new StringList();
     }
 
     public function allocatable(): VolumeNodeResources
+    {
+        return $this->allocatable ??= new VolumeNodeResources();
+    }
+
+    public function getAllocatable(): VolumeNodeResources|null
     {
         return $this->allocatable;
     }
@@ -70,6 +75,13 @@ class CSINodeDriver implements JsonSerializable
     public function getNodeID(): string
     {
         return $this->nodeID;
+    }
+
+    public function setAllocatable(VolumeNodeResources $allocatable): self
+    {
+        $this->allocatable = $allocatable;
+
+        return $this;
     }
 
     public function setName(string $name): self
@@ -86,18 +98,25 @@ class CSINodeDriver implements JsonSerializable
         return $this;
     }
 
+    public function setTopologyKeys(StringList $topologyKeys): self
+    {
+        $this->topologyKeys = $topologyKeys;
+
+        return $this;
+    }
+
     public function topologyKeys(): StringList
     {
         return $this->topologyKeys;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'allocatable' => $this->allocatable,
             'name' => $this->name,
             'nodeID' => $this->nodeID,
             'topologyKeys' => $this->topologyKeys,
-        ];
+        ]);
     }
 }

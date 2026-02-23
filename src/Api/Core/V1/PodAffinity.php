@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Core\V1;
 
+use ArrayObject;
 use JsonSerializable;
 
 /**
@@ -50,11 +51,27 @@ class PodAffinity implements JsonSerializable
         return $this->requiredDuringSchedulingIgnoredDuringExecution;
     }
 
-    public function jsonSerialize(): array
+    public function setPreferredDuringSchedulingIgnoredDuringExecution(
+        WeightedPodAffinityTermList $preferredDuringSchedulingIgnoredDuringExecution,
+    ): self {
+        $this->preferredDuringSchedulingIgnoredDuringExecution = $preferredDuringSchedulingIgnoredDuringExecution;
+
+        return $this;
+    }
+
+    public function setRequiredDuringSchedulingIgnoredDuringExecution(
+        PodAffinityTermList $requiredDuringSchedulingIgnoredDuringExecution,
+    ): self {
+        $this->requiredDuringSchedulingIgnoredDuringExecution = $requiredDuringSchedulingIgnoredDuringExecution;
+
+        return $this;
+    }
+
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'preferredDuringSchedulingIgnoredDuringExecution' => $this->preferredDuringSchedulingIgnoredDuringExecution,
             'requiredDuringSchedulingIgnoredDuringExecution' => $this->requiredDuringSchedulingIgnoredDuringExecution,
-        ];
+        ]);
     }
 }

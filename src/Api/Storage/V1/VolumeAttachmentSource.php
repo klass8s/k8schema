@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Storage\V1;
 
+use ArrayObject;
 use JsonSerializable;
 use K8Schema\Api\Core\V1\PersistentVolumeSpec;
 
@@ -21,7 +22,7 @@ class VolumeAttachmentSource implements JsonSerializable
      * VolumeSource to a PersistentVolumeSpec. This field is beta-level and is only
      * honored by servers that enabled the CSIMigration feature.
      */
-    private PersistentVolumeSpec $inlineVolumeSpec;
+    private PersistentVolumeSpec|null $inlineVolumeSpec = null;
 
     /**
      * persistentVolumeName represents the name of the persistent volume to attach.
@@ -30,7 +31,11 @@ class VolumeAttachmentSource implements JsonSerializable
 
     public function __construct()
     {
-        $this->inlineVolumeSpec = new PersistentVolumeSpec();
+    }
+
+    public function getInlineVolumeSpec(): PersistentVolumeSpec|null
+    {
+        return $this->inlineVolumeSpec;
     }
 
     public function getPersistentVolumeName(): string|null
@@ -40,7 +45,14 @@ class VolumeAttachmentSource implements JsonSerializable
 
     public function inlineVolumeSpec(): PersistentVolumeSpec
     {
-        return $this->inlineVolumeSpec;
+        return $this->inlineVolumeSpec ??= new PersistentVolumeSpec();
+    }
+
+    public function setInlineVolumeSpec(PersistentVolumeSpec $inlineVolumeSpec): self
+    {
+        $this->inlineVolumeSpec = $inlineVolumeSpec;
+
+        return $this;
     }
 
     public function setPersistentVolumeName(string $persistentVolumeName): self
@@ -50,11 +62,11 @@ class VolumeAttachmentSource implements JsonSerializable
         return $this;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'inlineVolumeSpec' => $this->inlineVolumeSpec,
             'persistentVolumeName' => $this->persistentVolumeName,
-        ];
+        ]);
     }
 }

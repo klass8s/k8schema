@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Node\V1;
 
+use ArrayObject;
 use JsonSerializable;
 use K8Schema\Api\Core\V1\TolerationList;
 use K8Schema\Collection\StringMap;
@@ -41,16 +42,30 @@ class Scheduling implements JsonSerializable
         return $this->nodeSelector;
     }
 
+    public function setNodeSelector(StringMap $nodeSelector): self
+    {
+        $this->nodeSelector = $nodeSelector;
+
+        return $this;
+    }
+
+    public function setTolerations(TolerationList $tolerations): self
+    {
+        $this->tolerations = $tolerations;
+
+        return $this;
+    }
+
     public function tolerations(): TolerationList
     {
         return $this->tolerations;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'nodeSelector' => $this->nodeSelector,
             'tolerations' => $this->tolerations,
-        ];
+        ]);
     }
 }

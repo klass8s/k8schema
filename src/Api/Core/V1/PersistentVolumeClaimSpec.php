@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Core\V1;
 
+use ArrayObject;
 use JsonSerializable;
 use K8Schema\Apimachinery\Pkg\Apis\Meta\V1\LabelSelector;
 use K8Schema\Collection\StringList;
@@ -65,12 +66,12 @@ class PersistentVolumeClaimSpec implements JsonSerializable
      * higher than capacity recorded in the status field of the claim. More info:
      * https://kubernetes.io/docs/concepts/storage/persistent-volumes#resources
      */
-    private VolumeResourceRequirements $resources;
+    private VolumeResourceRequirements|null $resources = null;
 
     /**
      * selector is a label query over volumes to consider for binding.
      */
-    private LabelSelector $selector;
+    private LabelSelector|null $selector = null;
 
     /**
      * storageClassName is the name of the StorageClass required by the claim. More
@@ -110,8 +111,6 @@ class PersistentVolumeClaimSpec implements JsonSerializable
     public function __construct()
     {
         $this->accessModes = new StringList();
-        $this->resources = new VolumeResourceRequirements();
-        $this->selector = new LabelSelector();
     }
 
     public function accessModes(): StringList
@@ -127,6 +126,16 @@ class PersistentVolumeClaimSpec implements JsonSerializable
     public function getDataSourceRef(): TypedObjectReference|null
     {
         return $this->dataSourceRef;
+    }
+
+    public function getResources(): VolumeResourceRequirements|null
+    {
+        return $this->resources;
+    }
+
+    public function getSelector(): LabelSelector|null
+    {
+        return $this->selector;
     }
 
     public function getStorageClassName(): string|null
@@ -151,12 +160,19 @@ class PersistentVolumeClaimSpec implements JsonSerializable
 
     public function resources(): VolumeResourceRequirements
     {
-        return $this->resources;
+        return $this->resources ??= new VolumeResourceRequirements();
     }
 
     public function selector(): LabelSelector
     {
-        return $this->selector;
+        return $this->selector ??= new LabelSelector();
+    }
+
+    public function setAccessModes(StringList $accessModes): self
+    {
+        $this->accessModes = $accessModes;
+
+        return $this;
     }
 
     public function setDataSource(TypedLocalObjectReference $dataSource): self
@@ -169,6 +185,20 @@ class PersistentVolumeClaimSpec implements JsonSerializable
     public function setDataSourceRef(TypedObjectReference $dataSourceRef): self
     {
         $this->dataSourceRef = $dataSourceRef;
+
+        return $this;
+    }
+
+    public function setResources(VolumeResourceRequirements $resources): self
+    {
+        $this->resources = $resources;
+
+        return $this;
+    }
+
+    public function setSelector(LabelSelector $selector): self
+    {
+        $this->selector = $selector;
 
         return $this;
     }
@@ -201,9 +231,9 @@ class PersistentVolumeClaimSpec implements JsonSerializable
         return $this;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'accessModes' => $this->accessModes,
             'dataSource' => $this->dataSource,
             'dataSourceRef' => $this->dataSourceRef,
@@ -213,6 +243,6 @@ class PersistentVolumeClaimSpec implements JsonSerializable
             'volumeAttributesClassName' => $this->volumeAttributesClassName,
             'volumeMode' => $this->volumeMode,
             'volumeName' => $this->volumeName,
-        ];
+        ]);
     }
 }

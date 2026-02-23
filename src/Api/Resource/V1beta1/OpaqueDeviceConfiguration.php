@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Resource\V1beta1;
 
+use ArrayObject;
 use JsonSerializable;
 use K8Schema\Apimachinery\Pkg\Runtime\RawExtension;
 
@@ -58,11 +59,18 @@ class OpaqueDeviceConfiguration implements JsonSerializable
         return $this;
     }
 
-    public function jsonSerialize(): array
+    public function setParameters(RawExtension $parameters): self
     {
-        return [
+        $this->parameters = $parameters;
+
+        return $this;
+    }
+
+    public function jsonSerialize(): ArrayObject
+    {
+        return new ArrayObject([
             'driver' => $this->driver,
             'parameters' => $this->parameters,
-        ];
+        ]);
     }
 }

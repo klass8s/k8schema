@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Apimachinery\Pkg\Apis\Meta\V1;
 
+use ArrayObject;
 use K8Schema\APIResourceListInterface;
 
 /**
@@ -24,7 +25,7 @@ class Status implements APIResourceListInterface
      * extended details. This field is optional and the data returned is not guaranteed
      * to conform to any schema except that defined by the reason type.
      */
-    private StatusDetails $details;
+    private StatusDetails|null $details = null;
 
     /**
      * A human-readable description of the status of this operation.
@@ -35,7 +36,7 @@ class Status implements APIResourceListInterface
      * Standard list metadata. More info:
      * https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
      */
-    private ListMeta $metadata;
+    private ListMeta|null $metadata = null;
 
     /**
      * A machine-readable description of why this operation is in the "Failure" status.
@@ -46,13 +47,11 @@ class Status implements APIResourceListInterface
 
     public function __construct()
     {
-        $this->details = new StatusDetails();
-        $this->metadata = new ListMeta();
     }
 
     public function details(): StatusDetails
     {
-        return $this->details;
+        return $this->details ??= new StatusDetails();
     }
 
     public function getCode(): int|null
@@ -60,9 +59,19 @@ class Status implements APIResourceListInterface
         return $this->code;
     }
 
+    public function getDetails(): StatusDetails|null
+    {
+        return $this->details;
+    }
+
     public function getMessage(): string|null
     {
         return $this->message;
+    }
+
+    public function getMetadata(): ListMeta|null
+    {
+        return $this->metadata;
     }
 
     public function getReason(): string|null
@@ -72,12 +81,19 @@ class Status implements APIResourceListInterface
 
     public function metadata(): ListMeta
     {
-        return $this->metadata;
+        return $this->metadata ??= new ListMeta();
     }
 
     public function setCode(int $code): self
     {
         $this->code = $code;
+
+        return $this;
+    }
+
+    public function setDetails(StatusDetails $details): self
+    {
+        $this->details = $details;
 
         return $this;
     }
@@ -89,6 +105,13 @@ class Status implements APIResourceListInterface
         return $this;
     }
 
+    public function setMetadata(ListMeta $metadata): self
+    {
+        $this->metadata = $metadata;
+
+        return $this;
+    }
+
     public function setReason(string $reason): self
     {
         $this->reason = $reason;
@@ -96,9 +119,9 @@ class Status implements APIResourceListInterface
         return $this;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'apiVersion' => self::API_VERSION,
             'kind' => self::KIND,
             'code' => $this->code,
@@ -106,6 +129,6 @@ class Status implements APIResourceListInterface
             'message' => $this->message,
             'metadata' => $this->metadata,
             'reason' => $this->reason,
-        ];
+        ]);
     }
 }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Core\V1;
 
+use ArrayObject;
 use JsonSerializable;
 
 /**
@@ -73,12 +74,12 @@ class GlusterfsVolumeSource implements JsonSerializable
         return $this;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'endpoints' => $this->endpoints,
             'path' => $this->path,
             'readOnly' => $this->readOnly,
-        ];
+        ]);
     }
 }

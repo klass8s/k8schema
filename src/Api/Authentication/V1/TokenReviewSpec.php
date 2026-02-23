@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Authentication\V1;
 
+use ArrayObject;
 use JsonSerializable;
 use K8Schema\Collection\StringList;
 
@@ -41,6 +42,13 @@ class TokenReviewSpec implements JsonSerializable
         return $this->token;
     }
 
+    public function setAudiences(StringList $audiences): self
+    {
+        $this->audiences = $audiences;
+
+        return $this;
+    }
+
     public function setToken(string $token): self
     {
         $this->token = $token;
@@ -48,11 +56,11 @@ class TokenReviewSpec implements JsonSerializable
         return $this;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'audiences' => $this->audiences,
             'token' => $this->token,
-        ];
+        ]);
     }
 }

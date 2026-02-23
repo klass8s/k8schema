@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Storage\V1;
 
+use ArrayObject;
 use K8Schema\APIResourceInterface;
 use K8Schema\Apimachinery\Pkg\Apis\Meta\V1\LabelSelector;
 use K8Schema\Apimachinery\Pkg\Apis\Meta\V1\ObjectMeta;
@@ -72,7 +73,7 @@ class CSIStorageCapacity implements APIResourceInterface
      * More info:
      * https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
      */
-    private ObjectMeta $metadata;
+    private ObjectMeta|null $metadata = null;
 
     /**
      * nodeTopology defines which nodes have access to the storage for which capacity
@@ -80,7 +81,7 @@ class CSIStorageCapacity implements APIResourceInterface
      * cluster. If empty, the storage is accessible from all nodes. This field is
      * immutable.
      */
-    private LabelSelector $nodeTopology;
+    private LabelSelector|null $nodeTopology = null;
 
     /**
      * storageClassName represents the name of the StorageClass that the reported
@@ -93,8 +94,6 @@ class CSIStorageCapacity implements APIResourceInterface
 
     public function __construct(string $storageClassName)
     {
-        $this->metadata = new ObjectMeta();
-        $this->nodeTopology = new LabelSelector();
         $this->storageClassName = $storageClassName;
     }
 
@@ -108,6 +107,16 @@ class CSIStorageCapacity implements APIResourceInterface
         return $this->maximumVolumeSize;
     }
 
+    public function getMetadata(): ObjectMeta|null
+    {
+        return $this->metadata;
+    }
+
+    public function getNodeTopology(): LabelSelector|null
+    {
+        return $this->nodeTopology;
+    }
+
     public function getStorageClassName(): string
     {
         return $this->storageClassName;
@@ -115,12 +124,12 @@ class CSIStorageCapacity implements APIResourceInterface
 
     public function metadata(): ObjectMeta
     {
-        return $this->metadata;
+        return $this->metadata ??= new ObjectMeta();
     }
 
     public function nodeTopology(): LabelSelector
     {
-        return $this->nodeTopology;
+        return $this->nodeTopology ??= new LabelSelector();
     }
 
     public function setCapacity(string|float $capacity): self
@@ -137,6 +146,20 @@ class CSIStorageCapacity implements APIResourceInterface
         return $this;
     }
 
+    public function setMetadata(ObjectMeta $metadata): self
+    {
+        $this->metadata = $metadata;
+
+        return $this;
+    }
+
+    public function setNodeTopology(LabelSelector $nodeTopology): self
+    {
+        $this->nodeTopology = $nodeTopology;
+
+        return $this;
+    }
+
     public function setStorageClassName(string $storageClassName): self
     {
         $this->storageClassName = $storageClassName;
@@ -144,9 +167,9 @@ class CSIStorageCapacity implements APIResourceInterface
         return $this;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'apiVersion' => self::API_VERSION,
             'kind' => self::KIND,
             'capacity' => $this->capacity,
@@ -154,6 +177,6 @@ class CSIStorageCapacity implements APIResourceInterface
             'metadata' => $this->metadata,
             'nodeTopology' => $this->nodeTopology,
             'storageClassName' => $this->storageClassName,
-        ];
+        ]);
     }
 }

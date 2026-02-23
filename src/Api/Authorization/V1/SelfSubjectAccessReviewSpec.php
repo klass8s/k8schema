@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Authorization\V1;
 
+use ArrayObject;
 use JsonSerializable;
 
 /**
@@ -16,35 +17,57 @@ class SelfSubjectAccessReviewSpec implements JsonSerializable
     /**
      * NonResourceAttributes describes information for a non-resource access request
      */
-    private NonResourceAttributes $nonResourceAttributes;
+    private NonResourceAttributes|null $nonResourceAttributes = null;
 
     /**
      * ResourceAuthorizationAttributes describes information for a resource access
      * request
      */
-    private ResourceAttributes $resourceAttributes;
+    private ResourceAttributes|null $resourceAttributes = null;
 
     public function __construct()
     {
-        $this->nonResourceAttributes = new NonResourceAttributes();
-        $this->resourceAttributes = new ResourceAttributes();
     }
 
-    public function nonResourceAttributes(): NonResourceAttributes
+    public function getNonResourceAttributes(): NonResourceAttributes|null
     {
         return $this->nonResourceAttributes;
     }
 
-    public function resourceAttributes(): ResourceAttributes
+    public function getResourceAttributes(): ResourceAttributes|null
     {
         return $this->resourceAttributes;
     }
 
-    public function jsonSerialize(): array
+    public function nonResourceAttributes(): NonResourceAttributes
     {
-        return [
+        return $this->nonResourceAttributes ??= new NonResourceAttributes();
+    }
+
+    public function resourceAttributes(): ResourceAttributes
+    {
+        return $this->resourceAttributes ??= new ResourceAttributes();
+    }
+
+    public function setNonResourceAttributes(NonResourceAttributes $nonResourceAttributes): self
+    {
+        $this->nonResourceAttributes = $nonResourceAttributes;
+
+        return $this;
+    }
+
+    public function setResourceAttributes(ResourceAttributes $resourceAttributes): self
+    {
+        $this->resourceAttributes = $resourceAttributes;
+
+        return $this;
+    }
+
+    public function jsonSerialize(): ArrayObject
+    {
+        return new ArrayObject([
             'nonResourceAttributes' => $this->nonResourceAttributes,
             'resourceAttributes' => $this->resourceAttributes,
-        ];
+        ]);
     }
 }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Discovery\V1;
 
+use ArrayObject;
 use JsonSerializable;
 use K8Schema\Api\Core\V1\ObjectReference;
 use K8Schema\Collection\StringList;
@@ -27,7 +28,7 @@ class Endpoint implements JsonSerializable
     /**
      * conditions contains information about the current status of the endpoint.
      */
-    private EndpointConditions $conditions;
+    private EndpointConditions|null $conditions = null;
 
     /**
      * deprecatedTopology contains topology information part of the v1beta1 API. This
@@ -42,7 +43,7 @@ class Endpoint implements JsonSerializable
     /**
      * hints contains information associated with how an endpoint should be consumed.
      */
-    private EndpointHints $hints;
+    private EndpointHints|null $hints = null;
 
     /**
      * hostname of this endpoint. This field may be used by consumers of endpoints to
@@ -61,7 +62,7 @@ class Endpoint implements JsonSerializable
     /**
      * targetRef is a reference to a Kubernetes object that represents this endpoint.
      */
-    private ObjectReference $targetRef;
+    private ObjectReference|null $targetRef = null;
 
     /**
      * zone is the name of the Zone this endpoint exists in.
@@ -71,10 +72,7 @@ class Endpoint implements JsonSerializable
     public function __construct()
     {
         $this->addresses = new StringList();
-        $this->conditions = new EndpointConditions();
         $this->deprecatedTopology = new StringMap();
-        $this->hints = new EndpointHints();
-        $this->targetRef = new ObjectReference();
     }
 
     public function addresses(): StringList
@@ -84,12 +82,22 @@ class Endpoint implements JsonSerializable
 
     public function conditions(): EndpointConditions
     {
-        return $this->conditions;
+        return $this->conditions ??= new EndpointConditions();
     }
 
     public function deprecatedTopology(): StringMap
     {
         return $this->deprecatedTopology;
+    }
+
+    public function getConditions(): EndpointConditions|null
+    {
+        return $this->conditions;
+    }
+
+    public function getHints(): EndpointHints|null
+    {
+        return $this->hints;
     }
 
     public function getHostname(): string|null
@@ -102,6 +110,11 @@ class Endpoint implements JsonSerializable
         return $this->nodeName;
     }
 
+    public function getTargetRef(): ObjectReference|null
+    {
+        return $this->targetRef;
+    }
+
     public function getZone(): string|null
     {
         return $this->zone;
@@ -109,7 +122,35 @@ class Endpoint implements JsonSerializable
 
     public function hints(): EndpointHints
     {
-        return $this->hints;
+        return $this->hints ??= new EndpointHints();
+    }
+
+    public function setAddresses(StringList $addresses): self
+    {
+        $this->addresses = $addresses;
+
+        return $this;
+    }
+
+    public function setConditions(EndpointConditions $conditions): self
+    {
+        $this->conditions = $conditions;
+
+        return $this;
+    }
+
+    public function setDeprecatedTopology(StringMap $deprecatedTopology): self
+    {
+        $this->deprecatedTopology = $deprecatedTopology;
+
+        return $this;
+    }
+
+    public function setHints(EndpointHints $hints): self
+    {
+        $this->hints = $hints;
+
+        return $this;
     }
 
     public function setHostname(string $hostname): self
@@ -126,6 +167,13 @@ class Endpoint implements JsonSerializable
         return $this;
     }
 
+    public function setTargetRef(ObjectReference $targetRef): self
+    {
+        $this->targetRef = $targetRef;
+
+        return $this;
+    }
+
     public function setZone(string $zone): self
     {
         $this->zone = $zone;
@@ -135,12 +183,12 @@ class Endpoint implements JsonSerializable
 
     public function targetRef(): ObjectReference
     {
-        return $this->targetRef;
+        return $this->targetRef ??= new ObjectReference();
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'addresses' => $this->addresses,
             'conditions' => $this->conditions,
             'deprecatedTopology' => $this->deprecatedTopology,
@@ -149,6 +197,6 @@ class Endpoint implements JsonSerializable
             'nodeName' => $this->nodeName,
             'targetRef' => $this->targetRef,
             'zone' => $this->zone,
-        ];
+        ]);
     }
 }

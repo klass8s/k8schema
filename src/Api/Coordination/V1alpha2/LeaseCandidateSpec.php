@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Coordination\V1alpha2;
 
+use ArrayObject;
 use JsonSerializable;
 use K8Schema\DateTimeInterface;
 
@@ -138,15 +139,15 @@ class LeaseCandidateSpec implements JsonSerializable
         return $this;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): ArrayObject
     {
-        return [
+        return new ArrayObject([
             'binaryVersion' => $this->binaryVersion,
             'emulationVersion' => $this->emulationVersion,
             'leaseName' => $this->leaseName,
             'pingTime' => $this->pingTime,
             'renewTime' => $this->renewTime,
             'strategy' => $this->strategy,
-        ];
+        ]);
     }
 }

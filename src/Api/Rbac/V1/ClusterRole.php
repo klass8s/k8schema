@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace K8Schema\Api\Rbac\V1;
 
+use ArrayObject;
 use K8Schema\APIResourceInterface;
 use K8Schema\Apimachinery\Pkg\Apis\Meta\V1\ObjectMeta;
 
@@ -21,12 +22,12 @@ class ClusterRole implements APIResourceInterface
      * this ClusterRole. If AggregationRule is set, then the Rules are controller
      * managed and direct changes to Rules will be stomped by the controller.
      */
-    private AggregationRule $aggregationRule;
+    private AggregationRule|null $aggregationRule = null;
 
     /**
      * Standard object's metadata.
      */
-    private ObjectMeta $metadata;
+    private ObjectMeta|null $metadata = null;
 
     /**
      * Rules holds all the PolicyRules for this ClusterRole
@@ -35,19 +36,27 @@ class ClusterRole implements APIResourceInterface
 
     public function __construct()
     {
-        $this->aggregationRule = new AggregationRule();
-        $this->metadata = new ObjectMeta();
         $this->rules = new PolicyRuleList();
     }
 
     public function aggregationRule(): AggregationRule
     {
+        return $this->aggregationRule ??= new AggregationRule();
+    }
+
+    public function getAggregationRule(): AggregationRule|null
+    {
         return $this->aggregationRule;
+    }
+
+    public function getMetadata(): ObjectMeta|null
+    {
+        return $this->metadata;
     }
 
     public function metadata(): ObjectMeta
     {
-        return $this->metadata;
+        return $this->metadata ??= new ObjectMeta();
     }
 
     public function rules(): PolicyRuleList
@@ -55,14 +64,35 @@ class ClusterRole implements APIResourceInterface
         return $this->rules;
     }
 
-    public function jsonSerialize(): array
+    public function setAggregationRule(AggregationRule $aggregationRule): self
     {
-        return [
+        $this->aggregationRule = $aggregationRule;
+
+        return $this;
+    }
+
+    public function setMetadata(ObjectMeta $metadata): self
+    {
+        $this->metadata = $metadata;
+
+        return $this;
+    }
+
+    public function setRules(PolicyRuleList $rules): self
+    {
+        $this->rules = $rules;
+
+        return $this;
+    }
+
+    public function jsonSerialize(): ArrayObject
+    {
+        return new ArrayObject([
             'apiVersion' => self::API_VERSION,
             'kind' => self::KIND,
             'aggregationRule' => $this->aggregationRule,
             'metadata' => $this->metadata,
             'rules' => $this->rules,
-        ];
+        ]);
     }
 }
