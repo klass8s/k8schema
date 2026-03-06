@@ -29,6 +29,12 @@ class CronJob implements APIResourceInterface
      */
     private CronJobSpec $spec;
 
+    /**
+     * Current status of a cron job. More info:
+     * https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
+     */
+    private CronJobStatus|null $status = null;
+
     public function __construct(CronJobSpec $spec)
     {
         $this->metadata = new ObjectMeta();
@@ -38,6 +44,11 @@ class CronJob implements APIResourceInterface
     public function getSpec(): CronJobSpec
     {
         return $this->spec;
+    }
+
+    public function getStatus(): CronJobStatus|null
+    {
+        return $this->status;
     }
 
     public function metadata(): ObjectMeta
@@ -59,6 +70,18 @@ class CronJob implements APIResourceInterface
         return $this;
     }
 
+    public function setStatus(CronJobStatus $status): self
+    {
+        $this->status = $status;
+
+        return $this;
+    }
+
+    public function status(): CronJobStatus
+    {
+        return $this->status ??= new CronJobStatus();
+    }
+
     public function jsonSerialize(): ArrayObject
     {
         return new ArrayObject([
@@ -66,6 +89,7 @@ class CronJob implements APIResourceInterface
             'kind' => self::KIND,
             'metadata' => $this->metadata,
             'spec' => $this->spec,
+            'status' => $this->status,
         ]);
     }
 }

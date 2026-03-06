@@ -24,12 +24,19 @@ class ComponentCondition implements JsonSerializable
     private string|null $message = null;
 
     /**
+     * Status of the condition for a component. Valid values for "Healthy": "True",
+     * "False", or "Unknown".
+     */
+    private string $status;
+
+    /**
      * Type of condition for a component. Valid value: "Healthy"
      */
     private string $type;
 
-    public function __construct(string $type)
+    public function __construct(string $status, string $type)
     {
+        $this->status = $status;
         $this->type = $type;
     }
 
@@ -41,6 +48,11 @@ class ComponentCondition implements JsonSerializable
     public function getMessage(): string|null
     {
         return $this->message;
+    }
+
+    public function getStatus(): string
+    {
+        return $this->status;
     }
 
     public function getType(): string
@@ -62,6 +74,13 @@ class ComponentCondition implements JsonSerializable
         return $this;
     }
 
+    public function setStatus(string $status): self
+    {
+        $this->status = $status;
+
+        return $this;
+    }
+
     public function setType(string $type): self
     {
         $this->type = $type;
@@ -74,6 +93,7 @@ class ComponentCondition implements JsonSerializable
         return new ArrayObject([
             'error' => $this->error,
             'message' => $this->message,
+            'status' => $this->status,
             'type' => $this->type,
         ]);
     }

@@ -26,6 +26,11 @@ class SelfSubjectReview implements APIResourceInterface
      */
     private ObjectMeta|null $metadata = null;
 
+    /**
+     * Status is filled in by the server with the user attributes.
+     */
+    private SelfSubjectReviewStatus|null $status = null;
+
     public function __construct()
     {
     }
@@ -33,6 +38,11 @@ class SelfSubjectReview implements APIResourceInterface
     public function getMetadata(): ObjectMeta|null
     {
         return $this->metadata;
+    }
+
+    public function getStatus(): SelfSubjectReviewStatus|null
+    {
+        return $this->status;
     }
 
     public function metadata(): ObjectMeta
@@ -47,12 +57,25 @@ class SelfSubjectReview implements APIResourceInterface
         return $this;
     }
 
+    public function setStatus(SelfSubjectReviewStatus $status): self
+    {
+        $this->status = $status;
+
+        return $this;
+    }
+
+    public function status(): SelfSubjectReviewStatus
+    {
+        return $this->status ??= new SelfSubjectReviewStatus();
+    }
+
     public function jsonSerialize(): ArrayObject
     {
         return new ArrayObject([
             'apiVersion' => self::API_VERSION,
             'kind' => self::KIND,
             'metadata' => $this->metadata,
+            'status' => $this->status,
         ]);
     }
 }

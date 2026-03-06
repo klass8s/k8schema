@@ -28,10 +28,20 @@ class StorageVersionMigration implements APIResourceInterface
      */
     private StorageVersionMigrationSpec $spec;
 
+    /**
+     * Status of the migration.
+     */
+    private StorageVersionMigrationStatus|null $status = null;
+
     public function __construct()
     {
         $this->metadata = new ObjectMeta();
         $this->spec = new StorageVersionMigrationSpec();
+    }
+
+    public function getStatus(): StorageVersionMigrationStatus|null
+    {
+        return $this->status;
     }
 
     public function metadata(): ObjectMeta
@@ -53,9 +63,21 @@ class StorageVersionMigration implements APIResourceInterface
         return $this;
     }
 
+    public function setStatus(StorageVersionMigrationStatus $status): self
+    {
+        $this->status = $status;
+
+        return $this;
+    }
+
     public function spec(): StorageVersionMigrationSpec
     {
         return $this->spec;
+    }
+
+    public function status(): StorageVersionMigrationStatus
+    {
+        return $this->status ??= new StorageVersionMigrationStatus();
     }
 
     public function jsonSerialize(): ArrayObject
@@ -65,6 +87,7 @@ class StorageVersionMigration implements APIResourceInterface
             'kind' => self::KIND,
             'metadata' => $this->metadata,
             'spec' => $this->spec,
+            'status' => $this->status,
         ]);
     }
 }

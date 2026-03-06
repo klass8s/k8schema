@@ -33,10 +33,21 @@ class StatefulSet implements APIResourceInterface
      */
     private StatefulSetSpec $spec;
 
+    /**
+     * Status is the current status of Pods in this StatefulSet. This data may be out
+     * of date by some window of time.
+     */
+    private StatefulSetStatus|null $status = null;
+
     public function __construct()
     {
         $this->metadata = new ObjectMeta();
         $this->spec = new StatefulSetSpec();
+    }
+
+    public function getStatus(): StatefulSetStatus|null
+    {
+        return $this->status;
     }
 
     public function metadata(): ObjectMeta
@@ -58,6 +69,13 @@ class StatefulSet implements APIResourceInterface
         return $this;
     }
 
+    public function setStatus(StatefulSetStatus $status): self
+    {
+        $this->status = $status;
+
+        return $this;
+    }
+
     public function spec(): StatefulSetSpec
     {
         return $this->spec;
@@ -70,6 +88,7 @@ class StatefulSet implements APIResourceInterface
             'kind' => self::KIND,
             'metadata' => $this->metadata,
             'spec' => $this->spec,
+            'status' => $this->status,
         ]);
     }
 }

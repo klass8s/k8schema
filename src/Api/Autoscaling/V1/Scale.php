@@ -28,10 +28,22 @@ class Scale implements APIResourceInterface
      */
     private ScaleSpec $spec;
 
+    /**
+     * status is the current status of the scale. More info:
+     * https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status.
+     * Read-only.
+     */
+    private ScaleStatus|null $status = null;
+
     public function __construct()
     {
         $this->metadata = new ObjectMeta();
         $this->spec = new ScaleSpec();
+    }
+
+    public function getStatus(): ScaleStatus|null
+    {
+        return $this->status;
     }
 
     public function metadata(): ObjectMeta
@@ -53,6 +65,13 @@ class Scale implements APIResourceInterface
         return $this;
     }
 
+    public function setStatus(ScaleStatus $status): self
+    {
+        $this->status = $status;
+
+        return $this;
+    }
+
     public function spec(): ScaleSpec
     {
         return $this->spec;
@@ -65,6 +84,7 @@ class Scale implements APIResourceInterface
             'kind' => self::KIND,
             'metadata' => $this->metadata,
             'spec' => $this->spec,
+            'status' => $this->status,
         ]);
     }
 }

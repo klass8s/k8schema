@@ -45,6 +45,12 @@ class Status implements APIResourceListInterface
      */
     private string|null $reason = null;
 
+    /**
+     * Status of the operation. One of: "Success" or "Failure". More info:
+     * https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
+     */
+    private string|null $status = null;
+
     public function __construct()
     {
     }
@@ -77,6 +83,11 @@ class Status implements APIResourceListInterface
     public function getReason(): string|null
     {
         return $this->reason;
+    }
+
+    public function getStatus(): string|null
+    {
+        return $this->status;
     }
 
     public function metadata(): ListMeta
@@ -119,6 +130,13 @@ class Status implements APIResourceListInterface
         return $this;
     }
 
+    public function setStatus(string $status): self
+    {
+        $this->status = $status;
+
+        return $this;
+    }
+
     public function jsonSerialize(): ArrayObject
     {
         return new ArrayObject([
@@ -129,6 +147,7 @@ class Status implements APIResourceListInterface
             'message' => $this->message,
             'metadata' => $this->metadata,
             'reason' => $this->reason,
+            'status' => $this->status,
         ]);
     }
 }

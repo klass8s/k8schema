@@ -30,6 +30,11 @@ class HorizontalPodAutoscaler implements APIResourceInterface
      */
     private HorizontalPodAutoscalerSpec $spec;
 
+    /**
+     * status is the current information about the autoscaler.
+     */
+    private HorizontalPodAutoscalerStatus|null $status = null;
+
     public function __construct(HorizontalPodAutoscalerSpec $spec)
     {
         $this->metadata = new ObjectMeta();
@@ -39,6 +44,11 @@ class HorizontalPodAutoscaler implements APIResourceInterface
     public function getSpec(): HorizontalPodAutoscalerSpec
     {
         return $this->spec;
+    }
+
+    public function getStatus(): HorizontalPodAutoscalerStatus|null
+    {
+        return $this->status;
     }
 
     public function metadata(): ObjectMeta
@@ -60,6 +70,13 @@ class HorizontalPodAutoscaler implements APIResourceInterface
         return $this;
     }
 
+    public function setStatus(HorizontalPodAutoscalerStatus $status): self
+    {
+        $this->status = $status;
+
+        return $this;
+    }
+
     public function jsonSerialize(): ArrayObject
     {
         return new ArrayObject([
@@ -67,6 +84,7 @@ class HorizontalPodAutoscaler implements APIResourceInterface
             'kind' => self::KIND,
             'metadata' => $this->metadata,
             'spec' => $this->spec,
+            'status' => $this->status,
         ]);
     }
 }
