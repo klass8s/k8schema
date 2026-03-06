@@ -29,10 +29,22 @@ class Node implements APIResourceInterface
      */
     private NodeSpec $spec;
 
+    /**
+     * Most recently observed status of the node. Populated by the system. Read-only.
+     * More info:
+     * https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
+     */
+    private NodeStatus|null $status = null;
+
     public function __construct()
     {
         $this->metadata = new ObjectMeta();
         $this->spec = new NodeSpec();
+    }
+
+    public function getStatus(): NodeStatus|null
+    {
+        return $this->status;
     }
 
     public function metadata(): ObjectMeta
@@ -54,9 +66,21 @@ class Node implements APIResourceInterface
         return $this;
     }
 
+    public function setStatus(NodeStatus $status): self
+    {
+        $this->status = $status;
+
+        return $this;
+    }
+
     public function spec(): NodeSpec
     {
         return $this->spec;
+    }
+
+    public function status(): NodeStatus
+    {
+        return $this->status ??= new NodeStatus();
     }
 
     public function jsonSerialize(): ArrayObject
@@ -66,6 +90,7 @@ class Node implements APIResourceInterface
             'kind' => self::KIND,
             'metadata' => $this->metadata,
             'spec' => $this->spec,
+            'status' => $this->status,
         ]);
     }
 }

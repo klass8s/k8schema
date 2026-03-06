@@ -34,10 +34,20 @@ class ResourceClaim implements APIResourceInterface
      */
     private ResourceClaimSpec $spec;
 
+    /**
+     * Status describes whether the claim is ready to use and what has been allocated.
+     */
+    private ResourceClaimStatus|null $status = null;
+
     public function __construct()
     {
         $this->metadata = new ObjectMeta();
         $this->spec = new ResourceClaimSpec();
+    }
+
+    public function getStatus(): ResourceClaimStatus|null
+    {
+        return $this->status;
     }
 
     public function metadata(): ObjectMeta
@@ -59,9 +69,21 @@ class ResourceClaim implements APIResourceInterface
         return $this;
     }
 
+    public function setStatus(ResourceClaimStatus $status): self
+    {
+        $this->status = $status;
+
+        return $this;
+    }
+
     public function spec(): ResourceClaimSpec
     {
         return $this->spec;
+    }
+
+    public function status(): ResourceClaimStatus
+    {
+        return $this->status ??= new ResourceClaimStatus();
     }
 
     public function jsonSerialize(): ArrayObject
@@ -71,6 +93,7 @@ class ResourceClaim implements APIResourceInterface
             'kind' => self::KIND,
             'metadata' => $this->metadata,
             'spec' => $this->spec,
+            'status' => $this->status,
         ]);
     }
 }

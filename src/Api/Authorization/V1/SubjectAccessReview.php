@@ -27,10 +27,21 @@ class SubjectAccessReview implements APIResourceInterface
      */
     private SubjectAccessReviewSpec $spec;
 
+    /**
+     * Status is filled in by the server and indicates whether the request is allowed
+     * or not
+     */
+    private SubjectAccessReviewStatus|null $status = null;
+
     public function __construct()
     {
         $this->metadata = new ObjectMeta();
         $this->spec = new SubjectAccessReviewSpec();
+    }
+
+    public function getStatus(): SubjectAccessReviewStatus|null
+    {
+        return $this->status;
     }
 
     public function metadata(): ObjectMeta
@@ -52,6 +63,13 @@ class SubjectAccessReview implements APIResourceInterface
         return $this;
     }
 
+    public function setStatus(SubjectAccessReviewStatus $status): self
+    {
+        $this->status = $status;
+
+        return $this;
+    }
+
     public function spec(): SubjectAccessReviewSpec
     {
         return $this->spec;
@@ -64,6 +82,7 @@ class SubjectAccessReview implements APIResourceInterface
             'kind' => self::KIND,
             'metadata' => $this->metadata,
             'spec' => $this->spec,
+            'status' => $this->status,
         ]);
     }
 }

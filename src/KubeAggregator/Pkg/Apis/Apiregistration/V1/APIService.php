@@ -28,6 +28,11 @@ class APIService implements APIResourceInterface
      */
     private APIServiceSpec $spec;
 
+    /**
+     * Status contains derived information about an API server
+     */
+    private APIServiceStatus|null $status = null;
+
     public function __construct(APIServiceSpec $spec)
     {
         $this->metadata = new ObjectMeta();
@@ -37,6 +42,11 @@ class APIService implements APIResourceInterface
     public function getSpec(): APIServiceSpec
     {
         return $this->spec;
+    }
+
+    public function getStatus(): APIServiceStatus|null
+    {
+        return $this->status;
     }
 
     public function metadata(): ObjectMeta
@@ -58,6 +68,18 @@ class APIService implements APIResourceInterface
         return $this;
     }
 
+    public function setStatus(APIServiceStatus $status): self
+    {
+        $this->status = $status;
+
+        return $this;
+    }
+
+    public function status(): APIServiceStatus
+    {
+        return $this->status ??= new APIServiceStatus();
+    }
+
     public function jsonSerialize(): ArrayObject
     {
         return new ArrayObject([
@@ -65,6 +87,7 @@ class APIService implements APIResourceInterface
             'kind' => self::KIND,
             'metadata' => $this->metadata,
             'spec' => $this->spec,
+            'status' => $this->status,
         ]);
     }
 }

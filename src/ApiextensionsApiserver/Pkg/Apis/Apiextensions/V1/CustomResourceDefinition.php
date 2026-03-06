@@ -28,6 +28,11 @@ class CustomResourceDefinition implements APIResourceInterface
      */
     private CustomResourceDefinitionSpec $spec;
 
+    /**
+     * status indicates the actual state of the CustomResourceDefinition
+     */
+    private CustomResourceDefinitionStatus|null $status = null;
+
     public function __construct(CustomResourceDefinitionSpec $spec)
     {
         $this->metadata = new ObjectMeta();
@@ -37,6 +42,11 @@ class CustomResourceDefinition implements APIResourceInterface
     public function getSpec(): CustomResourceDefinitionSpec
     {
         return $this->spec;
+    }
+
+    public function getStatus(): CustomResourceDefinitionStatus|null
+    {
+        return $this->status;
     }
 
     public function metadata(): ObjectMeta
@@ -58,6 +68,18 @@ class CustomResourceDefinition implements APIResourceInterface
         return $this;
     }
 
+    public function setStatus(CustomResourceDefinitionStatus $status): self
+    {
+        $this->status = $status;
+
+        return $this;
+    }
+
+    public function status(): CustomResourceDefinitionStatus
+    {
+        return $this->status ??= new CustomResourceDefinitionStatus();
+    }
+
     public function jsonSerialize(): ArrayObject
     {
         return new ArrayObject([
@@ -65,6 +87,7 @@ class CustomResourceDefinition implements APIResourceInterface
             'kind' => self::KIND,
             'metadata' => $this->metadata,
             'spec' => $this->spec,
+            'status' => $this->status,
         ]);
     }
 }
