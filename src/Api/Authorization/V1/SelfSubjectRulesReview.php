@@ -35,10 +35,21 @@ class SelfSubjectRulesReview implements APIResourceInterface
      */
     private SelfSubjectRulesReviewSpec $spec;
 
+    /**
+     * Status is filled in by the server and indicates the set of actions a user can
+     * perform.
+     */
+    private SubjectRulesReviewStatus|null $status = null;
+
     public function __construct()
     {
         $this->metadata = new ObjectMeta();
         $this->spec = new SelfSubjectRulesReviewSpec();
+    }
+
+    public function getStatus(): SubjectRulesReviewStatus|null
+    {
+        return $this->status;
     }
 
     public function metadata(): ObjectMeta
@@ -60,6 +71,13 @@ class SelfSubjectRulesReview implements APIResourceInterface
         return $this;
     }
 
+    public function setStatus(SubjectRulesReviewStatus $status): self
+    {
+        $this->status = $status;
+
+        return $this;
+    }
+
     public function spec(): SelfSubjectRulesReviewSpec
     {
         return $this->spec;
@@ -72,6 +90,7 @@ class SelfSubjectRulesReview implements APIResourceInterface
             'kind' => self::KIND,
             'metadata' => $this->metadata,
             'spec' => $this->spec,
+            'status' => $this->status,
         ]);
     }
 }

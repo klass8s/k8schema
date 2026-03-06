@@ -30,6 +30,12 @@ class FlowSchema implements APIResourceInterface
      */
     private FlowSchemaSpec $spec;
 
+    /**
+     * `status` is the current status of a FlowSchema. More info:
+     * https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
+     */
+    private FlowSchemaStatus|null $status = null;
+
     public function __construct(FlowSchemaSpec $spec)
     {
         $this->metadata = new ObjectMeta();
@@ -39,6 +45,11 @@ class FlowSchema implements APIResourceInterface
     public function getSpec(): FlowSchemaSpec
     {
         return $this->spec;
+    }
+
+    public function getStatus(): FlowSchemaStatus|null
+    {
+        return $this->status;
     }
 
     public function metadata(): ObjectMeta
@@ -60,6 +71,18 @@ class FlowSchema implements APIResourceInterface
         return $this;
     }
 
+    public function setStatus(FlowSchemaStatus $status): self
+    {
+        $this->status = $status;
+
+        return $this;
+    }
+
+    public function status(): FlowSchemaStatus
+    {
+        return $this->status ??= new FlowSchemaStatus();
+    }
+
     public function jsonSerialize(): ArrayObject
     {
         return new ArrayObject([
@@ -67,6 +90,7 @@ class FlowSchema implements APIResourceInterface
             'kind' => self::KIND,
             'metadata' => $this->metadata,
             'spec' => $this->spec,
+            'status' => $this->status,
         ]);
     }
 }

@@ -31,6 +31,12 @@ class VolumeAttachment implements APIResourceInterface
      */
     private VolumeAttachmentSpec $spec;
 
+    /**
+     * status represents status of the VolumeAttachment request. Populated by the
+     * entity completing the attach or detach operation, i.e. the external-attacher.
+     */
+    private VolumeAttachmentStatus|null $status = null;
+
     public function __construct(VolumeAttachmentSpec $spec)
     {
         $this->metadata = new ObjectMeta();
@@ -40,6 +46,11 @@ class VolumeAttachment implements APIResourceInterface
     public function getSpec(): VolumeAttachmentSpec
     {
         return $this->spec;
+    }
+
+    public function getStatus(): VolumeAttachmentStatus|null
+    {
+        return $this->status;
     }
 
     public function metadata(): ObjectMeta
@@ -61,6 +72,13 @@ class VolumeAttachment implements APIResourceInterface
         return $this;
     }
 
+    public function setStatus(VolumeAttachmentStatus $status): self
+    {
+        $this->status = $status;
+
+        return $this;
+    }
+
     public function jsonSerialize(): ArrayObject
     {
         return new ArrayObject([
@@ -68,6 +86,7 @@ class VolumeAttachment implements APIResourceInterface
             'kind' => self::KIND,
             'metadata' => $this->metadata,
             'spec' => $this->spec,
+            'status' => $this->status,
         ]);
     }
 }

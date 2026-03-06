@@ -30,6 +30,11 @@ class DeviceTaintRule implements APIResourceInterface
      */
     private DeviceTaintRuleSpec $spec;
 
+    /**
+     * Status provides information about what was requested in the spec.
+     */
+    private DeviceTaintRuleStatus|null $status = null;
+
     public function __construct(DeviceTaintRuleSpec $spec)
     {
         $this->metadata = new ObjectMeta();
@@ -39,6 +44,11 @@ class DeviceTaintRule implements APIResourceInterface
     public function getSpec(): DeviceTaintRuleSpec
     {
         return $this->spec;
+    }
+
+    public function getStatus(): DeviceTaintRuleStatus|null
+    {
+        return $this->status;
     }
 
     public function metadata(): ObjectMeta
@@ -60,6 +70,18 @@ class DeviceTaintRule implements APIResourceInterface
         return $this;
     }
 
+    public function setStatus(DeviceTaintRuleStatus $status): self
+    {
+        $this->status = $status;
+
+        return $this;
+    }
+
+    public function status(): DeviceTaintRuleStatus
+    {
+        return $this->status ??= new DeviceTaintRuleStatus();
+    }
+
     public function jsonSerialize(): ArrayObject
     {
         return new ArrayObject([
@@ -67,6 +89,7 @@ class DeviceTaintRule implements APIResourceInterface
             'kind' => self::KIND,
             'metadata' => $this->metadata,
             'spec' => $this->spec,
+            'status' => $this->status,
         ]);
     }
 }

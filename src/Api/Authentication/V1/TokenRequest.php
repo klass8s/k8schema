@@ -27,10 +27,21 @@ class TokenRequest implements APIResourceInterface
      */
     private TokenRequestSpec $spec;
 
+    /**
+     * Status is filled in by the server and indicates whether the token can be
+     * authenticated.
+     */
+    private TokenRequestStatus|null $status = null;
+
     public function __construct()
     {
         $this->metadata = new ObjectMeta();
         $this->spec = new TokenRequestSpec();
+    }
+
+    public function getStatus(): TokenRequestStatus|null
+    {
+        return $this->status;
     }
 
     public function metadata(): ObjectMeta
@@ -52,6 +63,13 @@ class TokenRequest implements APIResourceInterface
         return $this;
     }
 
+    public function setStatus(TokenRequestStatus $status): self
+    {
+        $this->status = $status;
+
+        return $this;
+    }
+
     public function spec(): TokenRequestSpec
     {
         return $this->spec;
@@ -64,6 +82,7 @@ class TokenRequest implements APIResourceInterface
             'kind' => self::KIND,
             'metadata' => $this->metadata,
             'spec' => $this->spec,
+            'status' => $this->status,
         ]);
     }
 }

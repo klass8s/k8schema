@@ -29,10 +29,22 @@ class PersistentVolumeClaim implements APIResourceInterface
      */
     private PersistentVolumeClaimSpec $spec;
 
+    /**
+     * status represents the current information/status of a persistent volume claim.
+     * Read-only. More info:
+     * https://kubernetes.io/docs/concepts/storage/persistent-volumes#persistentvolumeclaims
+     */
+    private PersistentVolumeClaimStatus|null $status = null;
+
     public function __construct()
     {
         $this->metadata = new ObjectMeta();
         $this->spec = new PersistentVolumeClaimSpec();
+    }
+
+    public function getStatus(): PersistentVolumeClaimStatus|null
+    {
+        return $this->status;
     }
 
     public function metadata(): ObjectMeta
@@ -54,9 +66,21 @@ class PersistentVolumeClaim implements APIResourceInterface
         return $this;
     }
 
+    public function setStatus(PersistentVolumeClaimStatus $status): self
+    {
+        $this->status = $status;
+
+        return $this;
+    }
+
     public function spec(): PersistentVolumeClaimSpec
     {
         return $this->spec;
+    }
+
+    public function status(): PersistentVolumeClaimStatus
+    {
+        return $this->status ??= new PersistentVolumeClaimStatus();
     }
 
     public function jsonSerialize(): ArrayObject
@@ -66,6 +90,7 @@ class PersistentVolumeClaim implements APIResourceInterface
             'kind' => self::KIND,
             'metadata' => $this->metadata,
             'spec' => $this->spec,
+            'status' => $this->status,
         ]);
     }
 }

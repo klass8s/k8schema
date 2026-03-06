@@ -14,6 +14,13 @@ use JsonSerializable;
 class PodFailurePolicyOnPodConditionsPattern implements JsonSerializable
 {
     /**
+     * Specifies the required Pod condition status. To match a pod condition it is
+     * required that the specified status equals the pod condition status. Defaults to
+     * True.
+     */
+    private string|null $status = null;
+
+    /**
      * Specifies the required Pod condition type. To match a pod condition it is
      * required that specified type equals the pod condition type.
      */
@@ -24,9 +31,21 @@ class PodFailurePolicyOnPodConditionsPattern implements JsonSerializable
         $this->type = $type;
     }
 
+    public function getStatus(): string|null
+    {
+        return $this->status;
+    }
+
     public function getType(): string
     {
         return $this->type;
+    }
+
+    public function setStatus(string $status): self
+    {
+        $this->status = $status;
+
+        return $this;
     }
 
     public function setType(string $type): self
@@ -39,6 +58,7 @@ class PodFailurePolicyOnPodConditionsPattern implements JsonSerializable
     public function jsonSerialize(): ArrayObject
     {
         return new ArrayObject([
+            'status' => $this->status,
             'type' => $this->type,
         ]);
     }

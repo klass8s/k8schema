@@ -29,6 +29,12 @@ class PriorityLevelConfiguration implements APIResourceInterface
      */
     private PriorityLevelConfigurationSpec $spec;
 
+    /**
+     * `status` is the current status of a "request-priority". More info:
+     * https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
+     */
+    private PriorityLevelConfigurationStatus|null $status = null;
+
     public function __construct(PriorityLevelConfigurationSpec $spec)
     {
         $this->metadata = new ObjectMeta();
@@ -38,6 +44,11 @@ class PriorityLevelConfiguration implements APIResourceInterface
     public function getSpec(): PriorityLevelConfigurationSpec
     {
         return $this->spec;
+    }
+
+    public function getStatus(): PriorityLevelConfigurationStatus|null
+    {
+        return $this->status;
     }
 
     public function metadata(): ObjectMeta
@@ -59,6 +70,18 @@ class PriorityLevelConfiguration implements APIResourceInterface
         return $this;
     }
 
+    public function setStatus(PriorityLevelConfigurationStatus $status): self
+    {
+        $this->status = $status;
+
+        return $this;
+    }
+
+    public function status(): PriorityLevelConfigurationStatus
+    {
+        return $this->status ??= new PriorityLevelConfigurationStatus();
+    }
+
     public function jsonSerialize(): ArrayObject
     {
         return new ArrayObject([
@@ -66,6 +89,7 @@ class PriorityLevelConfiguration implements APIResourceInterface
             'kind' => self::KIND,
             'metadata' => $this->metadata,
             'spec' => $this->spec,
+            'status' => $this->status,
         ]);
     }
 }

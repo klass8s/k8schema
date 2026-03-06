@@ -30,10 +30,21 @@ class ServiceCIDR implements APIResourceInterface
      */
     private ServiceCIDRSpec $spec;
 
+    /**
+     * status represents the current state of the ServiceCIDR. More info:
+     * https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
+     */
+    private ServiceCIDRStatus|null $status = null;
+
     public function __construct()
     {
         $this->metadata = new ObjectMeta();
         $this->spec = new ServiceCIDRSpec();
+    }
+
+    public function getStatus(): ServiceCIDRStatus|null
+    {
+        return $this->status;
     }
 
     public function metadata(): ObjectMeta
@@ -55,9 +66,21 @@ class ServiceCIDR implements APIResourceInterface
         return $this;
     }
 
+    public function setStatus(ServiceCIDRStatus $status): self
+    {
+        $this->status = $status;
+
+        return $this;
+    }
+
     public function spec(): ServiceCIDRSpec
     {
         return $this->spec;
+    }
+
+    public function status(): ServiceCIDRStatus
+    {
+        return $this->status ??= new ServiceCIDRStatus();
     }
 
     public function jsonSerialize(): ArrayObject
@@ -67,6 +90,7 @@ class ServiceCIDR implements APIResourceInterface
             'kind' => self::KIND,
             'metadata' => $this->metadata,
             'spec' => $this->spec,
+            'status' => $this->status,
         ]);
     }
 }

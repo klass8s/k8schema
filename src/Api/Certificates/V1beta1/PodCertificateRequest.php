@@ -29,6 +29,11 @@ class PodCertificateRequest implements APIResourceInterface
      */
     private PodCertificateRequestSpec $spec;
 
+    /**
+     * status contains the issued certificate, and a standard set of conditions.
+     */
+    private PodCertificateRequestStatus|null $status = null;
+
     public function __construct(PodCertificateRequestSpec $spec)
     {
         $this->metadata = new ObjectMeta();
@@ -38,6 +43,11 @@ class PodCertificateRequest implements APIResourceInterface
     public function getSpec(): PodCertificateRequestSpec
     {
         return $this->spec;
+    }
+
+    public function getStatus(): PodCertificateRequestStatus|null
+    {
+        return $this->status;
     }
 
     public function metadata(): ObjectMeta
@@ -59,6 +69,18 @@ class PodCertificateRequest implements APIResourceInterface
         return $this;
     }
 
+    public function setStatus(PodCertificateRequestStatus $status): self
+    {
+        $this->status = $status;
+
+        return $this;
+    }
+
+    public function status(): PodCertificateRequestStatus
+    {
+        return $this->status ??= new PodCertificateRequestStatus();
+    }
+
     public function jsonSerialize(): ArrayObject
     {
         return new ArrayObject([
@@ -66,6 +88,7 @@ class PodCertificateRequest implements APIResourceInterface
             'kind' => self::KIND,
             'metadata' => $this->metadata,
             'spec' => $this->spec,
+            'status' => $this->status,
         ]);
     }
 }
