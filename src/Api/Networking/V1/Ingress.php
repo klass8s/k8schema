@@ -31,10 +31,21 @@ class Ingress implements APIResourceInterface
      */
     private IngressSpec $spec;
 
+    /**
+     * status is the current state of the Ingress. More info:
+     * https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
+     */
+    private IngressStatus|null $status = null;
+
     public function __construct()
     {
         $this->metadata = new ObjectMeta();
         $this->spec = new IngressSpec();
+    }
+
+    public function getStatus(): IngressStatus|null
+    {
+        return $this->status;
     }
 
     public function metadata(): ObjectMeta
@@ -56,9 +67,21 @@ class Ingress implements APIResourceInterface
         return $this;
     }
 
+    public function setStatus(IngressStatus $status): self
+    {
+        $this->status = $status;
+
+        return $this;
+    }
+
     public function spec(): IngressSpec
     {
         return $this->spec;
+    }
+
+    public function status(): IngressStatus
+    {
+        return $this->status ??= new IngressStatus();
     }
 
     public function jsonSerialize(): ArrayObject
@@ -68,6 +91,7 @@ class Ingress implements APIResourceInterface
             'kind' => self::KIND,
             'metadata' => $this->metadata,
             'spec' => $this->spec,
+            'status' => $this->status,
         ]);
     }
 }

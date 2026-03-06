@@ -29,10 +29,22 @@ class Pod implements APIResourceInterface
      */
     private PodSpec $spec;
 
+    /**
+     * Most recently observed status of the pod. This data may not be up to date.
+     * Populated by the system. Read-only. More info:
+     * https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
+     */
+    private PodStatus|null $status = null;
+
     public function __construct()
     {
         $this->metadata = new ObjectMeta();
         $this->spec = new PodSpec();
+    }
+
+    public function getStatus(): PodStatus|null
+    {
+        return $this->status;
     }
 
     public function metadata(): ObjectMeta
@@ -54,9 +66,21 @@ class Pod implements APIResourceInterface
         return $this;
     }
 
+    public function setStatus(PodStatus $status): self
+    {
+        $this->status = $status;
+
+        return $this;
+    }
+
     public function spec(): PodSpec
     {
         return $this->spec;
+    }
+
+    public function status(): PodStatus
+    {
+        return $this->status ??= new PodStatus();
     }
 
     public function jsonSerialize(): ArrayObject
@@ -66,6 +90,7 @@ class Pod implements APIResourceInterface
             'kind' => self::KIND,
             'metadata' => $this->metadata,
             'spec' => $this->spec,
+            'status' => $this->status,
         ]);
     }
 }

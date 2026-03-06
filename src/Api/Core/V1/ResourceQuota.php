@@ -28,10 +28,21 @@ class ResourceQuota implements APIResourceInterface
      */
     private ResourceQuotaSpec $spec;
 
+    /**
+     * Status defines the actual enforced quota and its current usage.
+     * https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
+     */
+    private ResourceQuotaStatus|null $status = null;
+
     public function __construct()
     {
         $this->metadata = new ObjectMeta();
         $this->spec = new ResourceQuotaSpec();
+    }
+
+    public function getStatus(): ResourceQuotaStatus|null
+    {
+        return $this->status;
     }
 
     public function metadata(): ObjectMeta
@@ -53,9 +64,21 @@ class ResourceQuota implements APIResourceInterface
         return $this;
     }
 
+    public function setStatus(ResourceQuotaStatus $status): self
+    {
+        $this->status = $status;
+
+        return $this;
+    }
+
     public function spec(): ResourceQuotaSpec
     {
         return $this->spec;
+    }
+
+    public function status(): ResourceQuotaStatus
+    {
+        return $this->status ??= new ResourceQuotaStatus();
     }
 
     public function jsonSerialize(): ArrayObject
@@ -65,6 +88,7 @@ class ResourceQuota implements APIResourceInterface
             'kind' => self::KIND,
             'metadata' => $this->metadata,
             'spec' => $this->spec,
+            'status' => $this->status,
         ]);
     }
 }

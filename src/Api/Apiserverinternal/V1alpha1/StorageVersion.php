@@ -26,10 +26,17 @@ class StorageVersion implements APIResourceInterface
      */
     private StorageVersionSpec $spec;
 
+    /**
+     * API server instances report the version they can decode and the version they
+     * encode objects to when persisting objects in the backend.
+     */
+    private StorageVersionStatus $status;
+
     public function __construct()
     {
         $this->metadata = new ObjectMeta();
         $this->spec = new StorageVersionSpec();
+        $this->status = new StorageVersionStatus();
     }
 
     public function metadata(): ObjectMeta
@@ -51,9 +58,21 @@ class StorageVersion implements APIResourceInterface
         return $this;
     }
 
+    public function setStatus(StorageVersionStatus $status): self
+    {
+        $this->status = $status;
+
+        return $this;
+    }
+
     public function spec(): StorageVersionSpec
     {
         return $this->spec;
+    }
+
+    public function status(): StorageVersionStatus
+    {
+        return $this->status;
     }
 
     public function jsonSerialize(): ArrayObject
@@ -63,6 +82,7 @@ class StorageVersion implements APIResourceInterface
             'kind' => self::KIND,
             'metadata' => $this->metadata,
             'spec' => $this->spec,
+            'status' => $this->status,
         ]);
     }
 }

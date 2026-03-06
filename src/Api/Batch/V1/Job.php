@@ -28,10 +28,21 @@ class Job implements APIResourceInterface
      */
     private JobSpec $spec;
 
+    /**
+     * Current status of a job. More info:
+     * https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
+     */
+    private JobStatus|null $status = null;
+
     public function __construct()
     {
         $this->metadata = new ObjectMeta();
         $this->spec = new JobSpec();
+    }
+
+    public function getStatus(): JobStatus|null
+    {
+        return $this->status;
     }
 
     public function metadata(): ObjectMeta
@@ -53,9 +64,21 @@ class Job implements APIResourceInterface
         return $this;
     }
 
+    public function setStatus(JobStatus $status): self
+    {
+        $this->status = $status;
+
+        return $this;
+    }
+
     public function spec(): JobSpec
     {
         return $this->spec;
+    }
+
+    public function status(): JobStatus
+    {
+        return $this->status ??= new JobStatus();
     }
 
     public function jsonSerialize(): ArrayObject
@@ -65,6 +88,7 @@ class Job implements APIResourceInterface
             'kind' => self::KIND,
             'metadata' => $this->metadata,
             'spec' => $this->spec,
+            'status' => $this->status,
         ]);
     }
 }

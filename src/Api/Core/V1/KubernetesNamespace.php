@@ -28,10 +28,21 @@ class KubernetesNamespace implements APIResourceInterface
      */
     private NamespaceSpec $spec;
 
+    /**
+     * Status describes the current status of a Namespace. More info:
+     * https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
+     */
+    private NamespaceStatus|null $status = null;
+
     public function __construct()
     {
         $this->metadata = new ObjectMeta();
         $this->spec = new NamespaceSpec();
+    }
+
+    public function getStatus(): NamespaceStatus|null
+    {
+        return $this->status;
     }
 
     public function metadata(): ObjectMeta
@@ -53,9 +64,21 @@ class KubernetesNamespace implements APIResourceInterface
         return $this;
     }
 
+    public function setStatus(NamespaceStatus $status): self
+    {
+        $this->status = $status;
+
+        return $this;
+    }
+
     public function spec(): NamespaceSpec
     {
         return $this->spec;
+    }
+
+    public function status(): NamespaceStatus
+    {
+        return $this->status ??= new NamespaceStatus();
     }
 
     public function jsonSerialize(): ArrayObject
@@ -65,6 +88,7 @@ class KubernetesNamespace implements APIResourceInterface
             'kind' => self::KIND,
             'metadata' => $this->metadata,
             'spec' => $this->spec,
+            'status' => $this->status,
         ]);
     }
 }

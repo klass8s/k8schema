@@ -28,10 +28,20 @@ class PodDisruptionBudget implements APIResourceInterface
      */
     private PodDisruptionBudgetSpec $spec;
 
+    /**
+     * Most recently observed status of the PodDisruptionBudget.
+     */
+    private PodDisruptionBudgetStatus|null $status = null;
+
     public function __construct()
     {
         $this->metadata = new ObjectMeta();
         $this->spec = new PodDisruptionBudgetSpec();
+    }
+
+    public function getStatus(): PodDisruptionBudgetStatus|null
+    {
+        return $this->status;
     }
 
     public function metadata(): ObjectMeta
@@ -53,6 +63,13 @@ class PodDisruptionBudget implements APIResourceInterface
         return $this;
     }
 
+    public function setStatus(PodDisruptionBudgetStatus $status): self
+    {
+        $this->status = $status;
+
+        return $this;
+    }
+
     public function spec(): PodDisruptionBudgetSpec
     {
         return $this->spec;
@@ -65,6 +82,7 @@ class PodDisruptionBudget implements APIResourceInterface
             'kind' => self::KIND,
             'metadata' => $this->metadata,
             'spec' => $this->spec,
+            'status' => $this->status,
         ]);
     }
 }

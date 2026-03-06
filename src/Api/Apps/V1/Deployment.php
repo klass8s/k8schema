@@ -27,10 +27,20 @@ class Deployment implements APIResourceInterface
      */
     private DeploymentSpec $spec;
 
+    /**
+     * Most recently observed status of the Deployment.
+     */
+    private DeploymentStatus|null $status = null;
+
     public function __construct()
     {
         $this->metadata = new ObjectMeta();
         $this->spec = new DeploymentSpec();
+    }
+
+    public function getStatus(): DeploymentStatus|null
+    {
+        return $this->status;
     }
 
     public function metadata(): ObjectMeta
@@ -52,9 +62,21 @@ class Deployment implements APIResourceInterface
         return $this;
     }
 
+    public function setStatus(DeploymentStatus $status): self
+    {
+        $this->status = $status;
+
+        return $this;
+    }
+
     public function spec(): DeploymentSpec
     {
         return $this->spec;
+    }
+
+    public function status(): DeploymentStatus
+    {
+        return $this->status ??= new DeploymentStatus();
     }
 
     public function jsonSerialize(): ArrayObject
@@ -64,6 +86,7 @@ class Deployment implements APIResourceInterface
             'kind' => self::KIND,
             'metadata' => $this->metadata,
             'spec' => $this->spec,
+            'status' => $this->status,
         ]);
     }
 }
