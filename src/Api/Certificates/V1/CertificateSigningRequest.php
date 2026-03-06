@@ -38,6 +38,13 @@ class CertificateSigningRequest implements APIResourceInterface
      */
     private CertificateSigningRequestSpec $spec;
 
+    /**
+     * status contains information about whether the request is approved or denied, and
+     * the certificate issued by the signer, or the failure condition indicating signer
+     * failure.
+     */
+    private CertificateSigningRequestStatus|null $status = null;
+
     public function __construct(CertificateSigningRequestSpec $spec)
     {
         $this->metadata = new ObjectMeta();
@@ -47,6 +54,11 @@ class CertificateSigningRequest implements APIResourceInterface
     public function getSpec(): CertificateSigningRequestSpec
     {
         return $this->spec;
+    }
+
+    public function getStatus(): CertificateSigningRequestStatus|null
+    {
+        return $this->status;
     }
 
     public function metadata(): ObjectMeta
@@ -68,6 +80,18 @@ class CertificateSigningRequest implements APIResourceInterface
         return $this;
     }
 
+    public function setStatus(CertificateSigningRequestStatus $status): self
+    {
+        $this->status = $status;
+
+        return $this;
+    }
+
+    public function status(): CertificateSigningRequestStatus
+    {
+        return $this->status ??= new CertificateSigningRequestStatus();
+    }
+
     public function jsonSerialize(): ArrayObject
     {
         return new ArrayObject([
@@ -75,6 +99,7 @@ class CertificateSigningRequest implements APIResourceInterface
             'kind' => self::KIND,
             'metadata' => $this->metadata,
             'spec' => $this->spec,
+            'status' => $this->status,
         ]);
     }
 }

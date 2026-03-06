@@ -31,10 +31,23 @@ class ReplicationController implements APIResourceInterface
      */
     private ReplicationControllerSpec $spec;
 
+    /**
+     * Status is the most recently observed status of the replication controller. This
+     * data may be out of date by some window of time. Populated by the system.
+     * Read-only. More info:
+     * https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
+     */
+    private ReplicationControllerStatus|null $status = null;
+
     public function __construct()
     {
         $this->metadata = new ObjectMeta();
         $this->spec = new ReplicationControllerSpec();
+    }
+
+    public function getStatus(): ReplicationControllerStatus|null
+    {
+        return $this->status;
     }
 
     public function metadata(): ObjectMeta
@@ -56,6 +69,13 @@ class ReplicationController implements APIResourceInterface
         return $this;
     }
 
+    public function setStatus(ReplicationControllerStatus $status): self
+    {
+        $this->status = $status;
+
+        return $this;
+    }
+
     public function spec(): ReplicationControllerSpec
     {
         return $this->spec;
@@ -68,6 +88,7 @@ class ReplicationController implements APIResourceInterface
             'kind' => self::KIND,
             'metadata' => $this->metadata,
             'spec' => $this->spec,
+            'status' => $this->status,
         ]);
     }
 }

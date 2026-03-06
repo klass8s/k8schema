@@ -29,10 +29,21 @@ class TokenReview implements APIResourceInterface
      */
     private TokenReviewSpec $spec;
 
+    /**
+     * Status is filled in by the server and indicates whether the request can be
+     * authenticated.
+     */
+    private TokenReviewStatus|null $status = null;
+
     public function __construct()
     {
         $this->metadata = new ObjectMeta();
         $this->spec = new TokenReviewSpec();
+    }
+
+    public function getStatus(): TokenReviewStatus|null
+    {
+        return $this->status;
     }
 
     public function metadata(): ObjectMeta
@@ -54,9 +65,21 @@ class TokenReview implements APIResourceInterface
         return $this;
     }
 
+    public function setStatus(TokenReviewStatus $status): self
+    {
+        $this->status = $status;
+
+        return $this;
+    }
+
     public function spec(): TokenReviewSpec
     {
         return $this->spec;
+    }
+
+    public function status(): TokenReviewStatus
+    {
+        return $this->status ??= new TokenReviewStatus();
     }
 
     public function jsonSerialize(): ArrayObject
@@ -66,6 +89,7 @@ class TokenReview implements APIResourceInterface
             'kind' => self::KIND,
             'metadata' => $this->metadata,
             'spec' => $this->spec,
+            'status' => $this->status,
         ]);
     }
 }

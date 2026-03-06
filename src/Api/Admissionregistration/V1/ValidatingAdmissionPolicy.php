@@ -28,10 +28,22 @@ class ValidatingAdmissionPolicy implements APIResourceInterface
      */
     private ValidatingAdmissionPolicySpec $spec;
 
+    /**
+     * The status of the ValidatingAdmissionPolicy, including warnings that are useful
+     * to determine if the policy behaves in the expected way. Populated by the system.
+     * Read-only.
+     */
+    private ValidatingAdmissionPolicyStatus|null $status = null;
+
     public function __construct()
     {
         $this->metadata = new ObjectMeta();
         $this->spec = new ValidatingAdmissionPolicySpec();
+    }
+
+    public function getStatus(): ValidatingAdmissionPolicyStatus|null
+    {
+        return $this->status;
     }
 
     public function metadata(): ObjectMeta
@@ -53,9 +65,21 @@ class ValidatingAdmissionPolicy implements APIResourceInterface
         return $this;
     }
 
+    public function setStatus(ValidatingAdmissionPolicyStatus $status): self
+    {
+        $this->status = $status;
+
+        return $this;
+    }
+
     public function spec(): ValidatingAdmissionPolicySpec
     {
         return $this->spec;
+    }
+
+    public function status(): ValidatingAdmissionPolicyStatus
+    {
+        return $this->status ??= new ValidatingAdmissionPolicyStatus();
     }
 
     public function jsonSerialize(): ArrayObject
@@ -65,6 +89,7 @@ class ValidatingAdmissionPolicy implements APIResourceInterface
             'kind' => self::KIND,
             'metadata' => $this->metadata,
             'spec' => $this->spec,
+            'status' => $this->status,
         ]);
     }
 }
