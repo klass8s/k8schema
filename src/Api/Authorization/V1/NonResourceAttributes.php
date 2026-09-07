@@ -1,0 +1,61 @@
+<?php
+
+declare(strict_types=1);
+
+namespace K8Schema\Api\Authorization\V1;
+
+use ArrayObject;
+use JsonSerializable;
+
+/**
+ * NonResourceAttributes includes the authorization attributes available for
+ * non-resource requests to the Authorizer interface
+ */
+class NonResourceAttributes implements JsonSerializable
+{
+    /**
+     * path is the URL path of the request
+     */
+    private string|null $path = null;
+
+    /**
+     * verb is the standard HTTP verb
+     */
+    private string|null $verb = null;
+
+    public function __construct()
+    {
+    }
+
+    public function getPath(): string|null
+    {
+        return $this->path;
+    }
+
+    public function getVerb(): string|null
+    {
+        return $this->verb;
+    }
+
+    public function setPath(string $path): self
+    {
+        $this->path = $path;
+
+        return $this;
+    }
+
+    public function setVerb(string $verb): self
+    {
+        $this->verb = $verb;
+
+        return $this;
+    }
+
+    public function jsonSerialize(): ArrayObject
+    {
+        return new ArrayObject([
+            'path' => $this->path,
+            'verb' => $this->verb,
+        ]);
+    }
+}

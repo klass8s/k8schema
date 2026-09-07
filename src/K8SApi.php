@@ -9,7 +9,7 @@ use Composer\Semver\VersionParser;
 
 final readonly class K8SApi
 {
-    public const string VERSION = 'SetMe';
+    public const string VERSION = 'v1.37';
 
     public static function versionIsHigherThan(string $version): bool
     {

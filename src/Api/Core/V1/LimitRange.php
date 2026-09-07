@@ -1,0 +1,70 @@
+<?php
+
+declare(strict_types=1);
+
+namespace K8Schema\Api\Core\V1;
+
+use ArrayObject;
+use K8Schema\APIResourceInterface;
+use K8Schema\Apimachinery\Pkg\Apis\Meta\V1\ObjectMeta;
+
+/**
+ * LimitRange sets resource usage limits for each kind of resource in a Namespace.
+ */
+class LimitRange implements APIResourceInterface
+{
+    public const string API_VERSION = 'v1';
+    public const string KIND = 'LimitRange';
+
+    /**
+     * Standard object's metadata. More info:
+     * https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
+     */
+    private ObjectMeta $metadata;
+
+    /**
+     * Spec defines the limits enforced. More info:
+     * https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
+     */
+    private LimitRangeSpec $spec;
+
+    public function __construct()
+    {
+        $this->metadata = new ObjectMeta();
+        $this->spec = new LimitRangeSpec();
+    }
+
+    public function metadata(): ObjectMeta
+    {
+        return $this->metadata;
+    }
+
+    public function setMetadata(ObjectMeta $metadata): self
+    {
+        $this->metadata = $metadata;
+
+        return $this;
+    }
+
+    public function setSpec(LimitRangeSpec $spec): self
+    {
+        $this->spec = $spec;
+
+        return $this;
+    }
+
+    public function spec(): LimitRangeSpec
+    {
+        return $this->spec;
+    }
+
+    public function jsonSerialize(): ArrayObject
+    {
+        return new ArrayObject([
+            'apiVersion' => self::API_VERSION,
+            'kind' => self::KIND,
+            'metadata' => $this->metadata,
+            'spec' => $this->spec,
+        ]);
+    }
+}

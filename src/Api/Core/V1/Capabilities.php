@@ -1,0 +1,63 @@
+<?php
+
+declare(strict_types=1);
+
+namespace K8Schema\Api\Core\V1;
+
+use ArrayObject;
+use JsonSerializable;
+use K8Schema\Collection\StringList;
+
+/**
+ * Adds and removes POSIX capabilities from running containers.
+ */
+class Capabilities implements JsonSerializable
+{
+    /**
+     * Added capabilities
+     */
+    private StringList $add;
+
+    /**
+     * Removed capabilities
+     */
+    private StringList $drop;
+
+    public function __construct()
+    {
+        $this->add = new StringList();
+        $this->drop = new StringList();
+    }
+
+    public function add(): StringList
+    {
+        return $this->add;
+    }
+
+    public function drop(): StringList
+    {
+        return $this->drop;
+    }
+
+    public function setAdd(StringList $add): self
+    {
+        $this->add = $add;
+
+        return $this;
+    }
+
+    public function setDrop(StringList $drop): self
+    {
+        $this->drop = $drop;
+
+        return $this;
+    }
+
+    public function jsonSerialize(): ArrayObject
+    {
+        return new ArrayObject([
+            'add' => $this->add,
+            'drop' => $this->drop,
+        ]);
+    }
+}

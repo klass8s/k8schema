@@ -1,0 +1,1019 @@
+<?php
+
+declare(strict_types=1);
+
+namespace K8Schema\Api\Core\V1;
+
+use ArrayObject;
+use JsonSerializable;
+use K8Schema\Collection\StringMap;
+use K8Schema\Collection\StringOrFloatMap;
+
+/**
+ * PodSpec is a description of a pod.
+ */
+class PodSpec implements JsonSerializable
+{
+    /**
+     * Optional duration in seconds the pod may be active on the node relative to
+     * StartTime before the system will actively try to mark it failed and kill
+     * associated containers. Value must be a positive integer.
+     */
+    private int|null $activeDeadlineSeconds = null;
+
+    /**
+     * If specified, the pod's scheduling constraints
+     */
+    private Affinity|null $affinity = null;
+
+    /**
+     * AutomountServiceAccountToken indicates whether a service account token should be
+     * automatically mounted.
+     */
+    private bool|null $automountServiceAccountToken = null;
+
+    /**
+     * List of containers belonging to the pod. Containers cannot currently be added or
+     * removed. There must be at least one container in a Pod. Cannot be updated.
+     */
+    private ContainerList $containers;
+
+    /**
+     * Specifies the DNS parameters of a pod. Parameters specified here will be merged
+     * to the generated DNS configuration based on DNSPolicy.
+     */
+    private PodDNSConfig|null $dnsConfig = null;
+
+    /**
+     * Set DNS policy for the pod. Defaults to "ClusterFirst". Valid values are
+     * 'ClusterFirstWithHostNet', 'ClusterFirst', 'Default' or 'None'. DNS parameters
+     * given in DNSConfig will be merged with the policy selected with DNSPolicy. To
+     * have DNS options set along with hostNetwork, you have to specify DNS policy
+     * explicitly to 'ClusterFirstWithHostNet'.
+     */
+    private string|null $dnsPolicy = null;
+
+    /**
+     * EnableServiceLinks indicates whether information about services should be
+     * injected into pod's environment variables, matching the syntax of Docker links.
+     * Optional: Defaults to true.
+     */
+    private bool|null $enableServiceLinks = null;
+
+    /**
+     * List of ephemeral containers run in this pod. Ephemeral containers may be run in
+     * an existing pod to perform user-initiated actions such as debugging. This list
+     * cannot be specified when creating a pod, and it cannot be modified by updating
+     * the pod spec. In order to add an ephemeral container to an existing pod, use the
+     * pod's ephemeralcontainers subresource.
+     */
+    private EphemeralContainerList $ephemeralContainers;
+
+    /**
+     * evictionResponders reference responders that react to Evictions based on
+     * EvictionRequests. Responders should observe and communicate through the Eviction
+     * Resource API to help with the graceful termination of a pod. The responders are
+     * selected sequentially, according to their specified priority.
+     *
+     * Responders should periodically report on an eviction progress by updating the
+     * .status.responders[].heartbeatTime field of the Eviction object. If this field
+     * is not updated within the heartbeat deadline defined by the Eviction API
+     * (currently 20 minutes), the eviction is passed over to the next responder with a
+     * lower priority. If there is no other responder, the last default
+     * imperative-eviction.k8s.io/evictor responder with a priority of 100 will evict
+     * the pod using the imperative Eviction API (pods/<name>/eviction subresource).
+     *
+     * The maximum length of the responders list is 10. Responders are not supported
+     * when the pod is part of a PodGroup (.spec.schedulingGroup is set). This field
+     * can only be set on creation and is immutable afterwards.
+     */
+    private EvictionResponderList $evictionResponders;
+
+    /**
+     * HostAliases is an optional list of hosts and IPs that will be injected into the
+     * pod's hosts file if specified.
+     */
+    private HostAliasList $hostAliases;
+
+    /**
+     * Use the host's ipc namespace. Optional: Default to false.
+     */
+    private bool|null $hostIPC = null;
+
+    /**
+     * Host networking requested for this pod. Use the host's network namespace. When
+     * using HostNetwork you should specify ports so the scheduler is aware. When
+     * `hostNetwork` is true, specified `hostPort` fields in port definitions must
+     * match `containerPort`, and unspecified `hostPort` fields in port definitions are
+     * defaulted to match `containerPort`. Default to false.
+     */
+    private bool|null $hostNetwork = null;
+
+    /**
+     * Use the host's pid namespace. Optional: Default to false.
+     */
+    private bool|null $hostPID = null;
+
+    /**
+     * Use the host's user namespace. Optional: Default to true. If set to true or not
+     * present, the pod will be run in the host user namespace, useful for when the pod
+     * needs a feature only available to the host user namespace, such as loading a
+     * kernel module with CAP_SYS_MODULE. When set to false, a new userns is created
+     * for the pod. Setting false is useful for mitigating container breakout
+     * vulnerabilities even allowing users to run their containers as root without
+     * actually having root privileges on the host.
+     */
+    private bool|null $hostUsers = null;
+
+    /**
+     * Specifies the hostname of the Pod If not specified, the pod's hostname will be
+     * set to a system-defined value.
+     */
+    private string|null $hostname = null;
+
+    /**
+     * HostnameOverride specifies an explicit override for the pod's hostname as
+     * perceived by the pod. This field only specifies the pod's hostname and does not
+     * affect its DNS records. When this field is set to a non-empty string: - It takes
+     * precedence over the values set in `hostname` and `subdomain`. - The Pod's
+     * hostname will be set to this value. - `setHostnameAsFQDN` must be nil or set to
+     * false. - `hostNetwork` must be set to false.
+     *
+     * This field must be a valid DNS subdomain as defined in RFC 1123 and contain at
+     * most 64 characters.
+     */
+    private string|null $hostnameOverride = null;
+
+    /**
+     * ImagePullSecrets is an optional list of references to secrets in the same
+     * namespace to use for pulling any of the images used by this PodSpec. If
+     * specified, these secrets will be passed to individual puller implementations for
+     * them to use. More info:
+     * https://kubernetes.io/docs/concepts/containers/images#specifying-imagepullsecrets-on-a-pod
+     */
+    private LocalObjectReferenceList $imagePullSecrets;
+
+    /**
+     * List of initialization containers belonging to the pod. Init containers are
+     * executed in order prior to containers being started. If any init container
+     * fails, the pod is considered to have failed and is handled according to its
+     * restartPolicy. The name for an init container or normal container must be unique
+     * among all containers. Init containers may not have Lifecycle actions, Readiness
+     * probes, Liveness probes, or Startup probes. The resourceRequirements of an init
+     * container are taken into account during scheduling by finding the highest
+     * request/limit for each resource type, and then using the max of that value or
+     * the sum of the normal containers. Limits are applied to init containers in a
+     * similar fashion. Init containers cannot currently be added or removed. Cannot be
+     * updated. More info:
+     * https://kubernetes.io/docs/concepts/workloads/pods/init-containers/
+     */
+    private ContainerList $initContainers;
+
+    /**
+     * NodeName indicates in which node this pod is scheduled. If empty, this pod is a
+     * candidate for scheduling by the scheduler defined in schedulerName. Once this
+     * field is set, the kubelet for this node becomes responsible for the lifecycle of
+     * this pod. This field should not be used to express a desire for the pod to be
+     * scheduled on a specific node.
+     * https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodename
+     */
+    private string|null $nodeName = null;
+
+    /**
+     * NodeSelector is a selector which must be true for the pod to fit on a node.
+     * Selector which must match a node's labels for the pod to be scheduled on that
+     * node. More info:
+     * https://kubernetes.io/docs/concepts/configuration/assign-pod-node/
+     */
+    private StringMap $nodeSelector;
+
+    /**
+     * Specifies the OS of the containers in the pod. Some pod and container fields are
+     * restricted if this is set.
+     *
+     * If the OS field is set to linux, the following fields must be unset:
+     * -securityContext.windowsOptions
+     *
+     * If the OS field is set to windows, following fields must be unset: -
+     * spec.hostPID - spec.hostIPC - spec.hostUsers - spec.resources -
+     * spec.securityContext.appArmorProfile - spec.securityContext.seLinuxOptions -
+     * spec.securityContext.seccompProfile - spec.securityContext.fsGroup -
+     * spec.securityContext.fsGroupChangePolicy - spec.securityContext.sysctls -
+     * spec.shareProcessNamespace - spec.securityContext.runAsUser -
+     * spec.securityContext.runAsGroup - spec.securityContext.supplementalGroups -
+     * spec.securityContext.supplementalGroupsPolicy -
+     * spec.containers[*].securityContext.appArmorProfile -
+     * spec.containers[*].securityContext.seLinuxOptions -
+     * spec.containers[*].securityContext.seccompProfile -
+     * spec.containers[*].securityContext.capabilities -
+     * spec.containers[*].securityContext.readOnlyRootFilesystem -
+     * spec.containers[*].securityContext.privileged -
+     * spec.containers[*].securityContext.allowPrivilegeEscalation -
+     * spec.containers[*].securityContext.procMount -
+     * spec.containers[*].securityContext.runAsUser -
+     * spec.containers[*].securityContext.runAsGroup
+     */
+    private PodOS|null $os = null;
+
+    /**
+     * Overhead represents the resource overhead associated with running a pod for a
+     * given RuntimeClass. This field will be autopopulated at admission time by the
+     * RuntimeClass admission controller. If the RuntimeClass admission controller is
+     * enabled, overhead must not be set in Pod create requests. The RuntimeClass
+     * admission controller will reject Pod create requests which have the overhead
+     * already set. If RuntimeClass is configured and selected in the PodSpec, Overhead
+     * will be set to the value defined in the corresponding RuntimeClass, otherwise it
+     * will remain unset and treated as zero. More info:
+     * https://git.k8s.io/enhancements/keps/sig-node/688-pod-overhead/README.md
+     */
+    private StringOrFloatMap $overhead;
+
+    /**
+     * PreemptionPolicy is the Policy for preempting pods with lower priority. One of
+     * Never, PreemptLowerPriority. When Priority Admission Controller is enabled, it
+     * prevents users from setting this field. The admission controller populates this
+     * field from PriorityClassName. Defaults to PreemptLowerPriority if unset.
+     */
+    private string|null $preemptionPolicy = null;
+
+    /**
+     * The priority value. Various system components use this field to find the
+     * priority of the pod. When Priority Admission Controller is enabled, it prevents
+     * users from setting this field. The admission controller populates this field
+     * from PriorityClassName. The higher the value, the higher the priority.
+     */
+    private int|null $priority = null;
+
+    /**
+     * If specified, indicates the pod's priority. "system-node-critical" and
+     * "system-cluster-critical" are two special keywords which indicate the highest
+     * priorities with the former being the highest priority. Any other name must be
+     * defined by creating a PriorityClass object with that name. If not specified, the
+     * pod priority will be default or zero if there is no default.
+     */
+    private string|null $priorityClassName = null;
+
+    /**
+     * If specified, all readiness gates will be evaluated for pod readiness. A pod is
+     * ready when all its containers are ready AND all conditions specified in the
+     * readiness gates have status equal to "True" More info:
+     * https://git.k8s.io/enhancements/keps/sig-network/580-pod-readiness-gates
+     */
+    private PodReadinessGateList $readinessGates;
+
+    /**
+     * ResourceClaims defines which ResourceClaims must be allocated and reserved
+     * before the Pod is allowed to start. The resources will be made available to
+     * those containers which consume them by name.
+     *
+     * This is a stable field but requires that the DynamicResourceAllocation feature
+     * gate is enabled.
+     *
+     * This field is immutable.
+     */
+    private PodResourceClaimList $resourceClaims;
+
+    /**
+     * Resources is the total amount of CPU and Memory resources required by all
+     * containers in the pod. It supports specifying Requests and Limits for "cpu",
+     * "memory" and "hugepages-" resource names only. ResourceClaims are not supported.
+     *
+     * This field enables fine-grained control over resource allocation for the entire
+     * pod, allowing resource sharing among containers in a pod.
+     *
+     * This is an alpha field and requires enabling the PodLevelResources feature gate.
+     */
+    private ResourceRequirements|null $resources = null;
+
+    /**
+     * Restart policy for all containers within the pod. One of Always, OnFailure,
+     * Never. In some contexts, only a subset of those values may be permitted. Default
+     * to Always. More info:
+     * https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#restart-policy
+     */
+    private string|null $restartPolicy = null;
+
+    /**
+     * RuntimeClassName refers to a RuntimeClass object in the node.k8s.io group, which
+     * should be used to run this pod.  If no RuntimeClass resource matches the named
+     * class, the pod will not be run. If unset or empty, the "legacy" RuntimeClass
+     * will be used, which is an implicit class with an empty definition that uses the
+     * default runtime handler. More info:
+     * https://git.k8s.io/enhancements/keps/sig-node/585-runtime-class
+     */
+    private string|null $runtimeClassName = null;
+
+    /**
+     * If specified, the pod will be dispatched by specified scheduler. If not
+     * specified, the pod will be dispatched by default scheduler.
+     */
+    private string|null $schedulerName = null;
+
+    /**
+     * SchedulingGates is an opaque list of values that if specified will block
+     * scheduling the pod. If schedulingGates is not empty, the pod will stay in the
+     * SchedulingGated state and the scheduler will not attempt to schedule the pod.
+     *
+     * SchedulingGates can only be set at pod creation time, and be removed only
+     * afterwards.
+     */
+    private PodSchedulingGateList $schedulingGates;
+
+    /**
+     * SchedulingGroup provides a reference to the immediate scheduling runtime
+     * grouping object that this Pod belongs to. This field is used by the scheduler to
+     * identify the group and apply the correct group scheduling policies. The
+     * association with a group also impacts other lifecycle aspects of a Pod that are
+     * relevant in a wider context of scheduling like preemption, resource attachment,
+     * etc. If not specified, the Pod is treated as a single unit in all of these
+     * aspects. The group object referenced by this field may not exist at the time the
+     * Pod is created. This field is immutable, but a group object with the same name
+     * may be recreated with different policies. Doing this during pod scheduling may
+     * result in the placement not conforming to the expected policies.
+     */
+    private PodSchedulingGroup|null $schedulingGroup = null;
+
+    /**
+     * SecurityContext holds pod-level security attributes and common container
+     * settings. Optional: Defaults to empty.  See type description for default values
+     * of each field.
+     */
+    private PodSecurityContext|null $securityContext = null;
+
+    /**
+     * DeprecatedServiceAccount is a deprecated alias for ServiceAccountName.
+     * Deprecated: Use serviceAccountName instead.
+     */
+    private string|null $serviceAccount = null;
+
+    /**
+     * ServiceAccountName is the name of the ServiceAccount to use to run this pod.
+     * More info:
+     * https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/
+     */
+    private string|null $serviceAccountName = null;
+
+    /**
+     * If true the pod's hostname will be configured as the pod's FQDN, rather than the
+     * leaf name (the default). In Linux containers, this means setting the FQDN in the
+     * hostname field of the kernel (the nodename field of struct utsname). In Windows
+     * containers, this means setting the registry value of hostname for the registry
+     * key HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\Tcpip\\Parameters
+     * to FQDN. If a pod does not have FQDN, this has no effect. Default to false.
+     */
+    private bool|null $setHostnameAsFQDN = null;
+
+    /**
+     * Share a single process namespace between all of the containers in a pod. When
+     * this is set containers will be able to view and signal processes from other
+     * containers in the same pod, and the first process in each container will not be
+     * assigned PID 1. HostPID and ShareProcessNamespace cannot both be set. Optional:
+     * Default to false.
+     */
+    private bool|null $shareProcessNamespace = null;
+
+    /**
+     * If specified, the fully qualified Pod hostname will be
+     * "<hostname>.<subdomain>.<pod namespace>.svc.<cluster domain>". If not specified,
+     * the pod will not have a domainname at all.
+     */
+    private string|null $subdomain = null;
+
+    /**
+     * Optional duration in seconds the pod needs to terminate gracefully. May be
+     * decreased in delete request. Value must be non-negative integer. The value zero
+     * indicates stop immediately via the kill signal (no opportunity to shut down). If
+     * this value is nil, the default grace period will be used instead. The grace
+     * period is the duration in seconds after the processes running in the pod are
+     * sent a termination signal and the time when the processes are forcibly halted
+     * with a kill signal. Set this value longer than the expected cleanup time for
+     * your process. Defaults to 30 seconds.
+     */
+    private int|null $terminationGracePeriodSeconds = null;
+
+    /**
+     * If specified, the pod's tolerations.
+     */
+    private TolerationList $tolerations;
+
+    /**
+     * TopologySpreadConstraints describes how a group of pods ought to spread across
+     * topology domains. Scheduler will schedule pods in a way which abides by the
+     * constraints. All topologySpreadConstraints are ANDed.
+     */
+    private TopologySpreadConstraintList $topologySpreadConstraints;
+
+    /**
+     * List of volumes that can be mounted by containers belonging to the pod. More
+     * info: https://kubernetes.io/docs/concepts/storage/volumes
+     */
+    private VolumeList $volumes;
+
+    public function __construct()
+    {
+        $this->containers = new ContainerList();
+        $this->ephemeralContainers = new EphemeralContainerList();
+        $this->evictionResponders = new EvictionResponderList();
+        $this->hostAliases = new HostAliasList();
+        $this->imagePullSecrets = new LocalObjectReferenceList();
+        $this->initContainers = new ContainerList();
+        $this->nodeSelector = new StringMap();
+        $this->overhead = new StringOrFloatMap();
+        $this->readinessGates = new PodReadinessGateList();
+        $this->resourceClaims = new PodResourceClaimList();
+        $this->schedulingGates = new PodSchedulingGateList();
+        $this->tolerations = new TolerationList();
+        $this->topologySpreadConstraints = new TopologySpreadConstraintList();
+        $this->volumes = new VolumeList();
+    }
+
+    public function affinity(): Affinity
+    {
+        return $this->affinity ??= new Affinity();
+    }
+
+    public function containers(): ContainerList
+    {
+        return $this->containers;
+    }
+
+    public function dnsConfig(): PodDNSConfig
+    {
+        return $this->dnsConfig ??= new PodDNSConfig();
+    }
+
+    public function ephemeralContainers(): EphemeralContainerList
+    {
+        return $this->ephemeralContainers;
+    }
+
+    public function evictionResponders(): EvictionResponderList
+    {
+        return $this->evictionResponders;
+    }
+
+    public function getActiveDeadlineSeconds(): int|null
+    {
+        return $this->activeDeadlineSeconds;
+    }
+
+    public function getAffinity(): Affinity|null
+    {
+        return $this->affinity;
+    }
+
+    public function getAutomountServiceAccountToken(): bool|null
+    {
+        return $this->automountServiceAccountToken;
+    }
+
+    public function getDnsConfig(): PodDNSConfig|null
+    {
+        return $this->dnsConfig;
+    }
+
+    public function getDnsPolicy(): string|null
+    {
+        return $this->dnsPolicy;
+    }
+
+    public function getEnableServiceLinks(): bool|null
+    {
+        return $this->enableServiceLinks;
+    }
+
+    public function getHostIPC(): bool|null
+    {
+        return $this->hostIPC;
+    }
+
+    public function getHostNetwork(): bool|null
+    {
+        return $this->hostNetwork;
+    }
+
+    public function getHostPID(): bool|null
+    {
+        return $this->hostPID;
+    }
+
+    public function getHostUsers(): bool|null
+    {
+        return $this->hostUsers;
+    }
+
+    public function getHostname(): string|null
+    {
+        return $this->hostname;
+    }
+
+    public function getHostnameOverride(): string|null
+    {
+        return $this->hostnameOverride;
+    }
+
+    public function getNodeName(): string|null
+    {
+        return $this->nodeName;
+    }
+
+    public function getOs(): PodOS|null
+    {
+        return $this->os;
+    }
+
+    public function getPreemptionPolicy(): string|null
+    {
+        return $this->preemptionPolicy;
+    }
+
+    public function getPriority(): int|null
+    {
+        return $this->priority;
+    }
+
+    public function getPriorityClassName(): string|null
+    {
+        return $this->priorityClassName;
+    }
+
+    public function getResources(): ResourceRequirements|null
+    {
+        return $this->resources;
+    }
+
+    public function getRestartPolicy(): string|null
+    {
+        return $this->restartPolicy;
+    }
+
+    public function getRuntimeClassName(): string|null
+    {
+        return $this->runtimeClassName;
+    }
+
+    public function getSchedulerName(): string|null
+    {
+        return $this->schedulerName;
+    }
+
+    public function getSchedulingGroup(): PodSchedulingGroup|null
+    {
+        return $this->schedulingGroup;
+    }
+
+    public function getSecurityContext(): PodSecurityContext|null
+    {
+        return $this->securityContext;
+    }
+
+    public function getServiceAccount(): string|null
+    {
+        return $this->serviceAccount;
+    }
+
+    public function getServiceAccountName(): string|null
+    {
+        return $this->serviceAccountName;
+    }
+
+    public function getSetHostnameAsFQDN(): bool|null
+    {
+        return $this->setHostnameAsFQDN;
+    }
+
+    public function getShareProcessNamespace(): bool|null
+    {
+        return $this->shareProcessNamespace;
+    }
+
+    public function getSubdomain(): string|null
+    {
+        return $this->subdomain;
+    }
+
+    public function getTerminationGracePeriodSeconds(): int|null
+    {
+        return $this->terminationGracePeriodSeconds;
+    }
+
+    public function hostAliases(): HostAliasList
+    {
+        return $this->hostAliases;
+    }
+
+    public function imagePullSecrets(): LocalObjectReferenceList
+    {
+        return $this->imagePullSecrets;
+    }
+
+    public function initContainers(): ContainerList
+    {
+        return $this->initContainers;
+    }
+
+    public function nodeSelector(): StringMap
+    {
+        return $this->nodeSelector;
+    }
+
+    public function overhead(): StringOrFloatMap
+    {
+        return $this->overhead;
+    }
+
+    public function readinessGates(): PodReadinessGateList
+    {
+        return $this->readinessGates;
+    }
+
+    public function resourceClaims(): PodResourceClaimList
+    {
+        return $this->resourceClaims;
+    }
+
+    public function resources(): ResourceRequirements
+    {
+        return $this->resources ??= new ResourceRequirements();
+    }
+
+    public function schedulingGates(): PodSchedulingGateList
+    {
+        return $this->schedulingGates;
+    }
+
+    public function schedulingGroup(): PodSchedulingGroup
+    {
+        return $this->schedulingGroup ??= new PodSchedulingGroup();
+    }
+
+    public function securityContext(): PodSecurityContext
+    {
+        return $this->securityContext ??= new PodSecurityContext();
+    }
+
+    public function setActiveDeadlineSeconds(int $activeDeadlineSeconds): self
+    {
+        $this->activeDeadlineSeconds = $activeDeadlineSeconds;
+
+        return $this;
+    }
+
+    public function setAffinity(Affinity $affinity): self
+    {
+        $this->affinity = $affinity;
+
+        return $this;
+    }
+
+    public function setAutomountServiceAccountToken(bool $automountServiceAccountToken): self
+    {
+        $this->automountServiceAccountToken = $automountServiceAccountToken;
+
+        return $this;
+    }
+
+    public function setContainers(ContainerList $containers): self
+    {
+        $this->containers = $containers;
+
+        return $this;
+    }
+
+    public function setDnsConfig(PodDNSConfig $dnsConfig): self
+    {
+        $this->dnsConfig = $dnsConfig;
+
+        return $this;
+    }
+
+    public function setDnsPolicy(string $dnsPolicy): self
+    {
+        $this->dnsPolicy = $dnsPolicy;
+
+        return $this;
+    }
+
+    public function setEnableServiceLinks(bool $enableServiceLinks): self
+    {
+        $this->enableServiceLinks = $enableServiceLinks;
+
+        return $this;
+    }
+
+    public function setEphemeralContainers(EphemeralContainerList $ephemeralContainers): self
+    {
+        $this->ephemeralContainers = $ephemeralContainers;
+
+        return $this;
+    }
+
+    public function setEvictionResponders(EvictionResponderList $evictionResponders): self
+    {
+        $this->evictionResponders = $evictionResponders;
+
+        return $this;
+    }
+
+    public function setHostAliases(HostAliasList $hostAliases): self
+    {
+        $this->hostAliases = $hostAliases;
+
+        return $this;
+    }
+
+    public function setHostIPC(bool $hostIPC): self
+    {
+        $this->hostIPC = $hostIPC;
+
+        return $this;
+    }
+
+    public function setHostNetwork(bool $hostNetwork): self
+    {
+        $this->hostNetwork = $hostNetwork;
+
+        return $this;
+    }
+
+    public function setHostPID(bool $hostPID): self
+    {
+        $this->hostPID = $hostPID;
+
+        return $this;
+    }
+
+    public function setHostUsers(bool $hostUsers): self
+    {
+        $this->hostUsers = $hostUsers;
+
+        return $this;
+    }
+
+    public function setHostname(string $hostname): self
+    {
+        $this->hostname = $hostname;
+
+        return $this;
+    }
+
+    public function setHostnameOverride(string $hostnameOverride): self
+    {
+        $this->hostnameOverride = $hostnameOverride;
+
+        return $this;
+    }
+
+    public function setImagePullSecrets(LocalObjectReferenceList $imagePullSecrets): self
+    {
+        $this->imagePullSecrets = $imagePullSecrets;
+
+        return $this;
+    }
+
+    public function setInitContainers(ContainerList $initContainers): self
+    {
+        $this->initContainers = $initContainers;
+
+        return $this;
+    }
+
+    public function setNodeName(string $nodeName): self
+    {
+        $this->nodeName = $nodeName;
+
+        return $this;
+    }
+
+    public function setNodeSelector(StringMap $nodeSelector): self
+    {
+        $this->nodeSelector = $nodeSelector;
+
+        return $this;
+    }
+
+    public function setOs(PodOS $os): self
+    {
+        $this->os = $os;
+
+        return $this;
+    }
+
+    public function setOverhead(StringOrFloatMap $overhead): self
+    {
+        $this->overhead = $overhead;
+
+        return $this;
+    }
+
+    public function setPreemptionPolicy(string $preemptionPolicy): self
+    {
+        $this->preemptionPolicy = $preemptionPolicy;
+
+        return $this;
+    }
+
+    public function setPriority(int $priority): self
+    {
+        $this->priority = $priority;
+
+        return $this;
+    }
+
+    public function setPriorityClassName(string $priorityClassName): self
+    {
+        $this->priorityClassName = $priorityClassName;
+
+        return $this;
+    }
+
+    public function setReadinessGates(PodReadinessGateList $readinessGates): self
+    {
+        $this->readinessGates = $readinessGates;
+
+        return $this;
+    }
+
+    public function setResourceClaims(PodResourceClaimList $resourceClaims): self
+    {
+        $this->resourceClaims = $resourceClaims;
+
+        return $this;
+    }
+
+    public function setResources(ResourceRequirements $resources): self
+    {
+        $this->resources = $resources;
+
+        return $this;
+    }
+
+    public function setRestartPolicy(string $restartPolicy): self
+    {
+        $this->restartPolicy = $restartPolicy;
+
+        return $this;
+    }
+
+    public function setRuntimeClassName(string $runtimeClassName): self
+    {
+        $this->runtimeClassName = $runtimeClassName;
+
+        return $this;
+    }
+
+    public function setSchedulerName(string $schedulerName): self
+    {
+        $this->schedulerName = $schedulerName;
+
+        return $this;
+    }
+
+    public function setSchedulingGates(PodSchedulingGateList $schedulingGates): self
+    {
+        $this->schedulingGates = $schedulingGates;
+
+        return $this;
+    }
+
+    public function setSchedulingGroup(PodSchedulingGroup $schedulingGroup): self
+    {
+        $this->schedulingGroup = $schedulingGroup;
+
+        return $this;
+    }
+
+    public function setSecurityContext(PodSecurityContext $securityContext): self
+    {
+        $this->securityContext = $securityContext;
+
+        return $this;
+    }
+
+    public function setServiceAccount(string $serviceAccount): self
+    {
+        $this->serviceAccount = $serviceAccount;
+
+        return $this;
+    }
+
+    public function setServiceAccountName(string $serviceAccountName): self
+    {
+        $this->serviceAccountName = $serviceAccountName;
+
+        return $this;
+    }
+
+    public function setSetHostnameAsFQDN(bool $setHostnameAsFQDN): self
+    {
+        $this->setHostnameAsFQDN = $setHostnameAsFQDN;
+
+        return $this;
+    }
+
+    public function setShareProcessNamespace(bool $shareProcessNamespace): self
+    {
+        $this->shareProcessNamespace = $shareProcessNamespace;
+
+        return $this;
+    }
+
+    public function setSubdomain(string $subdomain): self
+    {
+        $this->subdomain = $subdomain;
+
+        return $this;
+    }
+
+    public function setTerminationGracePeriodSeconds(int $terminationGracePeriodSeconds): self
+    {
+        $this->terminationGracePeriodSeconds = $terminationGracePeriodSeconds;
+
+        return $this;
+    }
+
+    public function setTolerations(TolerationList $tolerations): self
+    {
+        $this->tolerations = $tolerations;
+
+        return $this;
+    }
+
+    public function setTopologySpreadConstraints(TopologySpreadConstraintList $topologySpreadConstraints): self
+    {
+        $this->topologySpreadConstraints = $topologySpreadConstraints;
+
+        return $this;
+    }
+
+    public function setVolumes(VolumeList $volumes): self
+    {
+        $this->volumes = $volumes;
+
+        return $this;
+    }
+
+    public function tolerations(): TolerationList
+    {
+        return $this->tolerations;
+    }
+
+    public function topologySpreadConstraints(): TopologySpreadConstraintList
+    {
+        return $this->topologySpreadConstraints;
+    }
+
+    public function volumes(): VolumeList
+    {
+        return $this->volumes;
+    }
+
+    public function jsonSerialize(): ArrayObject
+    {
+        return new ArrayObject([
+            'activeDeadlineSeconds' => $this->activeDeadlineSeconds,
+            'affinity' => $this->affinity,
+            'automountServiceAccountToken' => $this->automountServiceAccountToken,
+            'containers' => $this->containers,
+            'dnsConfig' => $this->dnsConfig,
+            'dnsPolicy' => $this->dnsPolicy,
+            'enableServiceLinks' => $this->enableServiceLinks,
+            'ephemeralContainers' => $this->ephemeralContainers,
+            'evictionResponders' => $this->evictionResponders,
+            'hostAliases' => $this->hostAliases,
+            'hostIPC' => $this->hostIPC,
+            'hostNetwork' => $this->hostNetwork,
+            'hostPID' => $this->hostPID,
+            'hostUsers' => $this->hostUsers,
+            'hostname' => $this->hostname,
+            'hostnameOverride' => $this->hostnameOverride,
+            'imagePullSecrets' => $this->imagePullSecrets,
+            'initContainers' => $this->initContainers,
+            'nodeName' => $this->nodeName,
+            'nodeSelector' => $this->nodeSelector,
+            'os' => $this->os,
+            'overhead' => $this->overhead,
+            'preemptionPolicy' => $this->preemptionPolicy,
+            'priority' => $this->priority,
+            'priorityClassName' => $this->priorityClassName,
+            'readinessGates' => $this->readinessGates,
+            'resourceClaims' => $this->resourceClaims,
+            'resources' => $this->resources,
+            'restartPolicy' => $this->restartPolicy,
+            'runtimeClassName' => $this->runtimeClassName,
+            'schedulerName' => $this->schedulerName,
+            'schedulingGates' => $this->schedulingGates,
+            'schedulingGroup' => $this->schedulingGroup,
+            'securityContext' => $this->securityContext,
+            'serviceAccount' => $this->serviceAccount,
+            'serviceAccountName' => $this->serviceAccountName,
+            'setHostnameAsFQDN' => $this->setHostnameAsFQDN,
+            'shareProcessNamespace' => $this->shareProcessNamespace,
+            'subdomain' => $this->subdomain,
+            'terminationGracePeriodSeconds' => $this->terminationGracePeriodSeconds,
+            'tolerations' => $this->tolerations,
+            'topologySpreadConstraints' => $this->topologySpreadConstraints,
+            'volumes' => $this->volumes,
+        ]);
+    }
+}

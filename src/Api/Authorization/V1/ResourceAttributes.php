@@ -1,0 +1,205 @@
+<?php
+
+declare(strict_types=1);
+
+namespace K8Schema\Api\Authorization\V1;
+
+use ArrayObject;
+use JsonSerializable;
+
+/**
+ * ResourceAttributes includes the authorization attributes available for resource
+ * requests to the Authorizer interface
+ */
+class ResourceAttributes implements JsonSerializable
+{
+    /**
+     * fieldSelector describes the limitation on access based on field.  It can only
+     * limit access, not broaden it.
+     */
+    private FieldSelectorAttributes|null $fieldSelector = null;
+
+    /**
+     * group is the API Group of the Resource.  "*" means all.
+     */
+    private string|null $group = null;
+
+    /**
+     * labelSelector describes the limitation on access based on labels.  It can only
+     * limit access, not broaden it.
+     */
+    private LabelSelectorAttributes|null $labelSelector = null;
+
+    /**
+     * name is the name of the resource being requested for a "get" or deleted for a
+     * "delete". "" (empty) means all.
+     */
+    private string|null $name = null;
+
+    /**
+     * namespace is the namespace of the action being requested.  Currently, there is
+     * no distinction between no namespace and all namespaces "" (empty) is defaulted
+     * for LocalSubjectAccessReviews "" (empty) is empty for cluster-scoped resources
+     * "" (empty) means "all" for namespace scoped resources from a SubjectAccessReview
+     * or SelfSubjectAccessReview
+     */
+    private string|null $namespace = null;
+
+    /**
+     * resource is one of the existing resource types.  "*" means all.
+     */
+    private string|null $resource = null;
+
+    /**
+     * subresource is one of the existing resource types.  "" means none.
+     */
+    private string|null $subresource = null;
+
+    /**
+     * verb is a kubernetes resource API verb, like: get, list, watch, create, update,
+     * delete, proxy.  "*" means all.
+     */
+    private string|null $verb = null;
+
+    /**
+     * version is the API Version of the Resource.  "*" means all.
+     */
+    private string|null $version = null;
+
+    public function __construct()
+    {
+    }
+
+    public function fieldSelector(): FieldSelectorAttributes
+    {
+        return $this->fieldSelector ??= new FieldSelectorAttributes();
+    }
+
+    public function getFieldSelector(): FieldSelectorAttributes|null
+    {
+        return $this->fieldSelector;
+    }
+
+    public function getGroup(): string|null
+    {
+        return $this->group;
+    }
+
+    public function getLabelSelector(): LabelSelectorAttributes|null
+    {
+        return $this->labelSelector;
+    }
+
+    public function getName(): string|null
+    {
+        return $this->name;
+    }
+
+    public function getNamespace(): string|null
+    {
+        return $this->namespace;
+    }
+
+    public function getResource(): string|null
+    {
+        return $this->resource;
+    }
+
+    public function getSubresource(): string|null
+    {
+        return $this->subresource;
+    }
+
+    public function getVerb(): string|null
+    {
+        return $this->verb;
+    }
+
+    public function getVersion(): string|null
+    {
+        return $this->version;
+    }
+
+    public function labelSelector(): LabelSelectorAttributes
+    {
+        return $this->labelSelector ??= new LabelSelectorAttributes();
+    }
+
+    public function setFieldSelector(FieldSelectorAttributes $fieldSelector): self
+    {
+        $this->fieldSelector = $fieldSelector;
+
+        return $this;
+    }
+
+    public function setGroup(string $group): self
+    {
+        $this->group = $group;
+
+        return $this;
+    }
+
+    public function setLabelSelector(LabelSelectorAttributes $labelSelector): self
+    {
+        $this->labelSelector = $labelSelector;
+
+        return $this;
+    }
+
+    public function setName(string $name): self
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    public function setNamespace(string $namespace): self
+    {
+        $this->namespace = $namespace;
+
+        return $this;
+    }
+
+    public function setResource(string $resource): self
+    {
+        $this->resource = $resource;
+
+        return $this;
+    }
+
+    public function setSubresource(string $subresource): self
+    {
+        $this->subresource = $subresource;
+
+        return $this;
+    }
+
+    public function setVerb(string $verb): self
+    {
+        $this->verb = $verb;
+
+        return $this;
+    }
+
+    public function setVersion(string $version): self
+    {
+        $this->version = $version;
+
+        return $this;
+    }
+
+    public function jsonSerialize(): ArrayObject
+    {
+        return new ArrayObject([
+            'fieldSelector' => $this->fieldSelector,
+            'group' => $this->group,
+            'labelSelector' => $this->labelSelector,
+            'name' => $this->name,
+            'namespace' => $this->namespace,
+            'resource' => $this->resource,
+            'subresource' => $this->subresource,
+            'verb' => $this->verb,
+            'version' => $this->version,
+        ]);
+    }
+}

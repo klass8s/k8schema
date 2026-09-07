@@ -1,0 +1,47 @@
+<?php
+
+declare(strict_types=1);
+
+namespace K8Schema\Api\Batch\V1;
+
+use ArrayObject;
+use JsonSerializable;
+
+/**
+ * PodFailurePolicy describes how failed pods influence the backoffLimit.
+ */
+class PodFailurePolicy implements JsonSerializable
+{
+    /**
+     * A list of pod failure policy rules. The rules are evaluated in order. Once a
+     * rule matches a Pod failure, the remaining of the rules are ignored. When no rule
+     * matches the Pod failure, the default handling applies - the counter of pod
+     * failures is incremented and it is checked against the backoffLimit. At most 20
+     * elements are allowed.
+     */
+    private PodFailurePolicyRuleList $rules;
+
+    public function __construct()
+    {
+        $this->rules = new PodFailurePolicyRuleList();
+    }
+
+    public function rules(): PodFailurePolicyRuleList
+    {
+        return $this->rules;
+    }
+
+    public function setRules(PodFailurePolicyRuleList $rules): self
+    {
+        $this->rules = $rules;
+
+        return $this;
+    }
+
+    public function jsonSerialize(): ArrayObject
+    {
+        return new ArrayObject([
+            'rules' => $this->rules,
+        ]);
+    }
+}

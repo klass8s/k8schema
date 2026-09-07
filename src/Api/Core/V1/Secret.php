@@ -1,0 +1,139 @@
+<?php
+
+declare(strict_types=1);
+
+namespace K8Schema\Api\Core\V1;
+
+use ArrayObject;
+use K8Schema\APIResourceInterface;
+use K8Schema\Apimachinery\Pkg\Apis\Meta\V1\ObjectMeta;
+use K8Schema\Collection\StringMap;
+
+/**
+ * Secret holds secret data of a certain type. The total bytes of the values in the
+ * Data field must be less than MaxSecretSize bytes.
+ */
+class Secret implements APIResourceInterface
+{
+    public const string API_VERSION = 'v1';
+    public const string KIND = 'Secret';
+
+    /**
+     * Data contains the secret data. Each key must consist of alphanumeric characters,
+     * '-', '_' or '.'. The serialized form of the secret data is a base64 encoded
+     * string, representing the arbitrary (possibly non-string) data value here.
+     * Described in https://tools.ietf.org/html/rfc4648#section-4
+     */
+    private StringMap $data;
+
+    /**
+     * Immutable, if set to true, ensures that data stored in the Secret cannot be
+     * updated (only object metadata can be modified). If not set to true, the field
+     * can be modified at any time. Defaulted to nil.
+     */
+    private bool|null $immutable = null;
+
+    /**
+     * Standard object's metadata. More info:
+     * https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
+     */
+    private ObjectMeta|null $metadata = null;
+
+    /**
+     * stringData allows specifying non-binary secret data in string form. It is
+     * provided as a write-only input field for convenience. All keys and values are
+     * merged into the data field on write, overwriting any existing values. The
+     * stringData field is never output when reading from the API.
+     */
+    private StringMap $stringData;
+
+    /**
+     * Used to facilitate programmatic handling of secret data. More info:
+     * https://kubernetes.io/docs/concepts/configuration/secret/#secret-types
+     */
+    private string|null $type = null;
+
+    public function __construct()
+    {
+        $this->data = new StringMap();
+        $this->stringData = new StringMap();
+    }
+
+    public function data(): StringMap
+    {
+        return $this->data;
+    }
+
+    public function getImmutable(): bool|null
+    {
+        return $this->immutable;
+    }
+
+    public function getMetadata(): ObjectMeta|null
+    {
+        return $this->metadata;
+    }
+
+    public function getType(): string|null
+    {
+        return $this->type;
+    }
+
+    public function metadata(): ObjectMeta
+    {
+        return $this->metadata ??= new ObjectMeta();
+    }
+
+    public function setData(StringMap $data): self
+    {
+        $this->data = $data;
+
+        return $this;
+    }
+
+    public function setImmutable(bool $immutable): self
+    {
+        $this->immutable = $immutable;
+
+        return $this;
+    }
+
+    public function setMetadata(ObjectMeta $metadata): self
+    {
+        $this->metadata = $metadata;
+
+        return $this;
+    }
+
+    public function setStringData(StringMap $stringData): self
+    {
+        $this->stringData = $stringData;
+
+        return $this;
+    }
+
+    public function setType(string $type): self
+    {
+        $this->type = $type;
+
+        return $this;
+    }
+
+    public function stringData(): StringMap
+    {
+        return $this->stringData;
+    }
+
+    public function jsonSerialize(): ArrayObject
+    {
+        return new ArrayObject([
+            'apiVersion' => self::API_VERSION,
+            'kind' => self::KIND,
+            'data' => $this->data,
+            'immutable' => $this->immutable,
+            'metadata' => $this->metadata,
+            'stringData' => $this->stringData,
+            'type' => $this->type,
+        ]);
+    }
+}
