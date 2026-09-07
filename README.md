@@ -1,0 +1,57 @@
+# tequila/k8schema
+
+PHP classes for the Kubernetes API, generated from the upstream OpenAPI definitions
+(`yannh/kubernetes-json-schema`) by [`tequila/k8schema-generator`](https://github.com/tequila/k8schema-generator).
+The foundation of `tequila/klass8s` and of every manifest app on the platform.
+
+## Versions — one line per Kubernetes minor
+
+| | |
+|---|---|
+| **`vX.Y.Z`** | `X.Y` is the Kubernetes API minor the classes describe; `Z` is this package's own release counter within that minor — bumped whenever a regeneration changes the tree (a newer upstream patch schema or a generator change). It is *not* the upstream patch number. |
+| **Pin** | the minor your clusters run: `"tequila/k8schema": "~1.35.0"`. Patches within the minor arrive with `composer update`. |
+| **Provenance** | every release names the upstream schema it was generated from and the generator commit. |
+
+Branch `main` is the **template** (`bin/`, the tool locks under `tools/`, the code-style
+config, `src/K8SApi.php` with its `SetMe` placeholder). Every minor lives on its own branch
+(`v1.35`) with the generated `src/`; tags `v1.35.N` are cut on that branch.
+
+## How a version is produced — the `Generate` workflow
+
+Versions come from CI, not from a laptop. `.github/workflows/generate.yaml`:
+
+- **On demand**: Actions → *Generate* → *Run workflow*. `minors` = `supported` (the newest
+  four upstream minors) or a list such as `v1.36 v1.37`; `dry_run` generates and reports the
+  diff without pushing or tagging; `force` releases past the guards.
+- **Weekly**: the supported minors. A minor that appeared upstream since the last run gets its
+  branch from the template and its `.0` tag.
+
+Each run, per minor: copy the template into the minor's branch, fetch the newest schema of
+that minor, wipe `src/`, generate, then check — every file compiles, the tree autoloads and
+serializes a `Deployment`, `K8SApi::VERSION` is the minor, code style is clean. **No diff
+against the branch → nothing is pushed, nothing is tagged.** A diff is committed, pushed and
+tagged as the next patch, with a GitHub release whose notes carry the provenance and the
+diffstat. The **shrink guard** holds a regeneration that deletes files or loses more than 3% of
+the lines: it lands as a PR against the minor branch and the run fails, for a human to look at
+(that shape is how a broken generator shows up — e.g. every `status` property gone).
+
+The generator is pinned by `tools/k8schema-generator/composer.lock`. After a generator change:
+
+```bash
+composer update -d tools/k8schema-generator   # then commit the lock on main
+```
+
+and run the workflow — every supported minor regenerates; those whose tree changed get a tag.
+
+## Locally
+
+```bash
+composer install -d tools/k8schema-generator && composer install -d tools/php-cs-fixer
+git checkout v1.35
+bin/generate v1.35            # schema patch from the generator's default map
+bin/generate v1.35 v1.35.8    # a specific upstream schema directory
+git status                    # a clean tree = the branch is current for that schema
+```
+
+`bin/push-to-branch` and `bin/release` are the pre-CI laptop path (they `git add .` and count
+the next tag the same way the workflow does); prefer a `dry_run` of the workflow.
