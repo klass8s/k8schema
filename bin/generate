@@ -1,5 +1,13 @@
 #!/bin/bash
 
+# Regenerates src/ for one Kubernetes minor from the upstream JSON schema.
+#
+#   bin/generate v1.35            # schema patch from the generator's default map (.env)
+#   bin/generate v1.35 v1.35.8    # a specific yannh/kubernetes-json-schema directory
+#
+# The Generate workflow (.github/workflows/generate.yaml) is the way versions are produced;
+# this script is what it runs, and the laptop path for a look before pushing anything.
+
 set -e
 
 # Get the absolute path to the directory containing this script
@@ -8,14 +16,30 @@ PROJECT_ROOT_DIR=$(dirname "$SCRIPT_DIR")
 BINARY_PATH="$PROJECT_ROOT_DIR/tools/k8schema-generator/vendor/bin/k8schema-generator"
 
 if [ -z "$1" ]; then
-  echo "Usage: $0 <K8S_API_VERSION> # major and minor version, e.g 'v1.34'"
+  echo "Usage: $0 <K8S_API_VERSION> [<JSON_SCHEMA_VERSION>] # e.g. 'v1.35' or 'v1.35 v1.35.8'"
   exit 1
 fi
 
 K8S_API_VERSION=$1
+JSON_SCHEMA_VERSION=${2:-}
 SCHEMA_FILE="$PROJECT_ROOT_DIR/var/$K8S_API_VERSION.json"
 
+if [ ! -x "$BINARY_PATH" ]; then
+  echo "Generator not installed: composer install -d $PROJECT_ROOT_DIR/tools/k8schema-generator"
+  exit 1
+fi
+
+# The generator resolves the minor to a schema directory through K8S_JSON_SCHEMA_VERSIONS
+# (a static map in its .env); an explicit patch overrides it for this run.
+if [ -n "$JSON_SCHEMA_VERSION" ]; then
+  export K8S_JSON_SCHEMA_VERSIONS="{\"$K8S_API_VERSION\":\"$JSON_SCHEMA_VERSION\"}"
+fi
+
 "$BINARY_PATH" schema:fetch "$K8S_API_VERSION" "$SCHEMA_FILE"
+
+# A definition retired upstream must disappear: the generator only writes, so the previous
+# tree goes first. K8SApi.php is the template, not a generated class.
+find "$PROJECT_ROOT_DIR/src" -mindepth 1 -not -path "$PROJECT_ROOT_DIR/src/K8SApi.php" -delete
 
 "$BINARY_PATH" generate "$SCHEMA_FILE" --namespace-prefix='K8Schema' --output-dir="$PROJECT_ROOT_DIR/src"
 
