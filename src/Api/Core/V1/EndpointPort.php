@@ -1,0 +1,115 @@
+<?php
+
+declare(strict_types=1);
+
+namespace K8Schema\Api\Core\V1;
+
+use ArrayObject;
+use JsonSerializable;
+
+/**
+ * EndpointPort is a tuple that describes a single port. Deprecated: This API is
+ * deprecated in v1.33+.
+ */
+class EndpointPort implements JsonSerializable
+{
+    /**
+     * The application protocol for this port. This is used as a hint for
+     * implementations to offer richer behavior for protocols that they understand.
+     * This field follows standard Kubernetes label syntax. Valid values are either:
+     *
+     * * Un-prefixed protocol names - reserved for IANA standard service names (as per
+     * RFC-6335 and https://www.iana.org/assignments/service-names).
+     *
+     * * Kubernetes-defined prefixed names:
+     *   * 'kubernetes.io/h2c' - HTTP/2 prior knowledge over cleartext as described in
+     * https://www.rfc-editor.org/rfc/rfc9113.html#name-starting-http-2-with-prior-
+     *   * 'kubernetes.io/ws'  - WebSocket over cleartext as described in
+     * https://www.rfc-editor.org/rfc/rfc6455
+     *   * 'kubernetes.io/wss' - WebSocket over TLS as described in
+     * https://www.rfc-editor.org/rfc/rfc6455
+     *
+     * * Other protocols should use implementation-defined prefixed names such as
+     * mycompany.com/my-custom-protocol.
+     */
+    private string|null $appProtocol = null;
+
+    /**
+     * The name of this port.  This must match the 'name' field in the corresponding
+     * ServicePort. Must be a DNS_LABEL. Optional only if one port is defined.
+     */
+    private string|null $name = null;
+
+    /**
+     * The port number of the endpoint.
+     */
+    private int $port;
+
+    /**
+     * The IP protocol for this port. Must be UDP, TCP, or SCTP. Default is TCP.
+     */
+    private string|null $protocol = null;
+
+    public function __construct(int $port)
+    {
+        $this->port = $port;
+    }
+
+    public function getAppProtocol(): string|null
+    {
+        return $this->appProtocol;
+    }
+
+    public function getName(): string|null
+    {
+        return $this->name;
+    }
+
+    public function getPort(): int
+    {
+        return $this->port;
+    }
+
+    public function getProtocol(): string|null
+    {
+        return $this->protocol;
+    }
+
+    public function setAppProtocol(string $appProtocol): self
+    {
+        $this->appProtocol = $appProtocol;
+
+        return $this;
+    }
+
+    public function setName(string $name): self
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    public function setPort(int $port): self
+    {
+        $this->port = $port;
+
+        return $this;
+    }
+
+    public function setProtocol(string $protocol): self
+    {
+        $this->protocol = $protocol;
+
+        return $this;
+    }
+
+    public function jsonSerialize(): ArrayObject
+    {
+        return new ArrayObject([
+            'appProtocol' => $this->appProtocol,
+            'name' => $this->name,
+            'port' => $this->port,
+            'protocol' => $this->protocol,
+        ]);
+    }
+}

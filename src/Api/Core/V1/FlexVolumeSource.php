@@ -1,0 +1,129 @@
+<?php
+
+declare(strict_types=1);
+
+namespace K8Schema\Api\Core\V1;
+
+use ArrayObject;
+use JsonSerializable;
+use K8Schema\Collection\StringMap;
+
+/**
+ * FlexVolume represents a generic volume resource that is provisioned/attached
+ * using an exec based plugin.
+ */
+class FlexVolumeSource implements JsonSerializable
+{
+    /**
+     * driver is the name of the driver to use for this volume.
+     */
+    private string $driver;
+
+    /**
+     * fsType is the filesystem type to mount. Must be a filesystem type supported by
+     * the host operating system. Ex. "ext4", "xfs", "ntfs". The default filesystem
+     * depends on FlexVolume script.
+     */
+    private string|null $fsType = null;
+
+    /**
+     * options is Optional: this field holds extra command options if any.
+     */
+    private StringMap $options;
+
+    /**
+     * readOnly is Optional: defaults to false (read/write). ReadOnly here will force
+     * the ReadOnly setting in VolumeMounts.
+     */
+    private bool|null $readOnly = null;
+
+    /**
+     * secretRef is Optional: secretRef is reference to the secret object containing
+     * sensitive information to pass to the plugin scripts. This may be empty if no
+     * secret object is specified. If the secret object contains more than one secret,
+     * all secrets are passed to the plugin scripts.
+     */
+    private LocalObjectReference|null $secretRef = null;
+
+    public function __construct(string $driver)
+    {
+        $this->driver = $driver;
+        $this->options = new StringMap();
+    }
+
+    public function getDriver(): string
+    {
+        return $this->driver;
+    }
+
+    public function getFsType(): string|null
+    {
+        return $this->fsType;
+    }
+
+    public function getReadOnly(): bool|null
+    {
+        return $this->readOnly;
+    }
+
+    public function getSecretRef(): LocalObjectReference|null
+    {
+        return $this->secretRef;
+    }
+
+    public function options(): StringMap
+    {
+        return $this->options;
+    }
+
+    public function secretRef(): LocalObjectReference
+    {
+        return $this->secretRef ??= new LocalObjectReference();
+    }
+
+    public function setDriver(string $driver): self
+    {
+        $this->driver = $driver;
+
+        return $this;
+    }
+
+    public function setFsType(string $fsType): self
+    {
+        $this->fsType = $fsType;
+
+        return $this;
+    }
+
+    public function setOptions(StringMap $options): self
+    {
+        $this->options = $options;
+
+        return $this;
+    }
+
+    public function setReadOnly(bool $readOnly): self
+    {
+        $this->readOnly = $readOnly;
+
+        return $this;
+    }
+
+    public function setSecretRef(LocalObjectReference $secretRef): self
+    {
+        $this->secretRef = $secretRef;
+
+        return $this;
+    }
+
+    public function jsonSerialize(): ArrayObject
+    {
+        return new ArrayObject([
+            'driver' => $this->driver,
+            'fsType' => $this->fsType,
+            'options' => $this->options,
+            'readOnly' => $this->readOnly,
+            'secretRef' => $this->secretRef,
+        ]);
+    }
+}

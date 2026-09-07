@@ -1,0 +1,283 @@
+<?php
+
+declare(strict_types=1);
+
+namespace K8Schema\Api\Apps\V1;
+
+use ArrayObject;
+use JsonSerializable;
+use K8Schema\Api\Core\V1\PersistentVolumeClaimList;
+use K8Schema\Api\Core\V1\PodTemplateSpec;
+use K8Schema\Apimachinery\Pkg\Apis\Meta\V1\LabelSelector;
+
+/**
+ * A StatefulSetSpec is the specification of a StatefulSet.
+ */
+class StatefulSetSpec implements JsonSerializable
+{
+    /**
+     * Minimum number of seconds for which a newly created pod should be ready without
+     * any of its container crashing for it to be considered available. Defaults to 0
+     * (pod will be considered available as soon as it is ready)
+     */
+    private int|null $minReadySeconds = null;
+
+    /**
+     * ordinals controls the numbering of replica indices in a StatefulSet. The default
+     * ordinals behavior assigns a "0" index to the first replica and increments the
+     * index by one for each additional replica requested.
+     */
+    private StatefulSetOrdinals|null $ordinals = null;
+
+    /**
+     * persistentVolumeClaimRetentionPolicy describes the lifecycle of persistent
+     * volume claims created from volumeClaimTemplates. By default, all persistent
+     * volume claims are created as needed and retained until manually deleted. This
+     * policy allows the lifecycle to be altered, for example by deleting persistent
+     * volume claims when their stateful set is deleted, or when their pod is scaled
+     * down.
+     */
+    private StatefulSetPersistentVolumeClaimRetentionPolicy|null $persistentVolumeClaimRetentionPolicy = null;
+
+    /**
+     * podManagementPolicy controls how pods are created during initial scale up, when
+     * replacing pods on nodes, or when scaling down. The default policy is
+     * `OrderedReady`, where pods are created in increasing order (pod-0, then pod-1,
+     * etc) and the controller will wait until each pod is ready before continuing.
+     * When scaling down, the pods are removed in the opposite order. The alternative
+     * policy is `Parallel` which will create pods in parallel to match the desired
+     * scale without waiting, and on scale down will delete all pods at once.
+     */
+    private string|null $podManagementPolicy = null;
+
+    /**
+     * replicas is the desired number of replicas of the given Template. These are
+     * replicas in the sense that they are instantiations of the same Template, but
+     * individual replicas also have a consistent identity. If unspecified, defaults to
+     * 1.
+     */
+    private int|null $replicas = null;
+
+    /**
+     * revisionHistoryLimit is the maximum number of revisions that will be maintained
+     * in the StatefulSet's revision history. The revision history consists of all
+     * revisions not represented by a currently applied StatefulSetSpec version. The
+     * default value is 10.
+     */
+    private int|null $revisionHistoryLimit = null;
+
+    /**
+     * selector is a label query over pods that should match the replica count. It must
+     * match the pod template's labels. More info:
+     * https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/#label-selectors
+     */
+    private LabelSelector $selector;
+
+    /**
+     * serviceName is the name of the service that governs this StatefulSet. This
+     * service must exist before the StatefulSet, and is responsible for the network
+     * identity of the set. Pods get DNS/hostnames that follow the pattern:
+     * pod-specific-string.serviceName.default.svc.cluster.local where
+     * "pod-specific-string" is managed by the StatefulSet controller.
+     */
+    private string|null $serviceName = null;
+
+    /**
+     * template is the object that describes the pod that will be created if
+     * insufficient replicas are detected. Each pod stamped out by the StatefulSet will
+     * fulfill this Template, but have a unique identity from the rest of the
+     * StatefulSet. Each pod will be named with the format
+     * <statefulsetname>-<podindex>. For example, a pod in a StatefulSet named "web"
+     * with index number "3" would be named "web-3". The only allowed
+     * template.spec.restartPolicy value is "Always".
+     */
+    private PodTemplateSpec $template;
+
+    /**
+     * updateStrategy indicates the StatefulSetUpdateStrategy that will be employed to
+     * update Pods in the StatefulSet when a revision is made to Template.
+     */
+    private StatefulSetUpdateStrategy|null $updateStrategy = null;
+
+    /**
+     * volumeClaimTemplates is a list of claims that pods are allowed to reference. The
+     * StatefulSet controller is responsible for mapping network identities to claims
+     * in a way that maintains the identity of a pod. Every claim in this list must
+     * have at least one matching (by name) volumeMount in one container in the
+     * template. A claim in this list takes precedence over any volumes in the
+     * template, with the same name.
+     */
+    private PersistentVolumeClaimList $volumeClaimTemplates;
+
+    public function __construct()
+    {
+        $this->selector = new LabelSelector();
+        $this->template = new PodTemplateSpec();
+        $this->volumeClaimTemplates = new PersistentVolumeClaimList();
+    }
+
+    public function getMinReadySeconds(): int|null
+    {
+        return $this->minReadySeconds;
+    }
+
+    public function getOrdinals(): StatefulSetOrdinals|null
+    {
+        return $this->ordinals;
+    }
+
+    public function getPersistentVolumeClaimRetentionPolicy(): StatefulSetPersistentVolumeClaimRetentionPolicy|null
+    {
+        return $this->persistentVolumeClaimRetentionPolicy;
+    }
+
+    public function getPodManagementPolicy(): string|null
+    {
+        return $this->podManagementPolicy;
+    }
+
+    public function getReplicas(): int|null
+    {
+        return $this->replicas;
+    }
+
+    public function getRevisionHistoryLimit(): int|null
+    {
+        return $this->revisionHistoryLimit;
+    }
+
+    public function getServiceName(): string|null
+    {
+        return $this->serviceName;
+    }
+
+    public function getUpdateStrategy(): StatefulSetUpdateStrategy|null
+    {
+        return $this->updateStrategy;
+    }
+
+    public function ordinals(): StatefulSetOrdinals
+    {
+        return $this->ordinals ??= new StatefulSetOrdinals();
+    }
+
+    public function persistentVolumeClaimRetentionPolicy(): StatefulSetPersistentVolumeClaimRetentionPolicy
+    {
+        return $this->persistentVolumeClaimRetentionPolicy ??= new StatefulSetPersistentVolumeClaimRetentionPolicy();
+    }
+
+    public function selector(): LabelSelector
+    {
+        return $this->selector;
+    }
+
+    public function setMinReadySeconds(int $minReadySeconds): self
+    {
+        $this->minReadySeconds = $minReadySeconds;
+
+        return $this;
+    }
+
+    public function setOrdinals(StatefulSetOrdinals $ordinals): self
+    {
+        $this->ordinals = $ordinals;
+
+        return $this;
+    }
+
+    public function setPersistentVolumeClaimRetentionPolicy(
+        StatefulSetPersistentVolumeClaimRetentionPolicy $persistentVolumeClaimRetentionPolicy,
+    ): self {
+        $this->persistentVolumeClaimRetentionPolicy = $persistentVolumeClaimRetentionPolicy;
+
+        return $this;
+    }
+
+    public function setPodManagementPolicy(string $podManagementPolicy): self
+    {
+        $this->podManagementPolicy = $podManagementPolicy;
+
+        return $this;
+    }
+
+    public function setReplicas(int $replicas): self
+    {
+        $this->replicas = $replicas;
+
+        return $this;
+    }
+
+    public function setRevisionHistoryLimit(int $revisionHistoryLimit): self
+    {
+        $this->revisionHistoryLimit = $revisionHistoryLimit;
+
+        return $this;
+    }
+
+    public function setSelector(LabelSelector $selector): self
+    {
+        $this->selector = $selector;
+
+        return $this;
+    }
+
+    public function setServiceName(string $serviceName): self
+    {
+        $this->serviceName = $serviceName;
+
+        return $this;
+    }
+
+    public function setTemplate(PodTemplateSpec $template): self
+    {
+        $this->template = $template;
+
+        return $this;
+    }
+
+    public function setUpdateStrategy(StatefulSetUpdateStrategy $updateStrategy): self
+    {
+        $this->updateStrategy = $updateStrategy;
+
+        return $this;
+    }
+
+    public function setVolumeClaimTemplates(PersistentVolumeClaimList $volumeClaimTemplates): self
+    {
+        $this->volumeClaimTemplates = $volumeClaimTemplates;
+
+        return $this;
+    }
+
+    public function template(): PodTemplateSpec
+    {
+        return $this->template;
+    }
+
+    public function updateStrategy(): StatefulSetUpdateStrategy
+    {
+        return $this->updateStrategy ??= new StatefulSetUpdateStrategy();
+    }
+
+    public function volumeClaimTemplates(): PersistentVolumeClaimList
+    {
+        return $this->volumeClaimTemplates;
+    }
+
+    public function jsonSerialize(): ArrayObject
+    {
+        return new ArrayObject([
+            'minReadySeconds' => $this->minReadySeconds,
+            'ordinals' => $this->ordinals,
+            'persistentVolumeClaimRetentionPolicy' => $this->persistentVolumeClaimRetentionPolicy,
+            'podManagementPolicy' => $this->podManagementPolicy,
+            'replicas' => $this->replicas,
+            'revisionHistoryLimit' => $this->revisionHistoryLimit,
+            'selector' => $this->selector,
+            'serviceName' => $this->serviceName,
+            'template' => $this->template,
+            'updateStrategy' => $this->updateStrategy,
+            'volumeClaimTemplates' => $this->volumeClaimTemplates,
+        ]);
+    }
+}

@@ -1,0 +1,77 @@
+<?php
+
+declare(strict_types=1);
+
+namespace K8Schema\Api\Autoscaling\V2;
+
+use ArrayObject;
+use JsonSerializable;
+
+/**
+ * HorizontalPodAutoscalerBehavior configures the scaling behavior of the target in
+ * both Up and Down directions (scaleUp and scaleDown fields respectively).
+ */
+class HorizontalPodAutoscalerBehavior implements JsonSerializable
+{
+    /**
+     * scaleDown is scaling policy for scaling Down. If not set, the default value is
+     * to allow to scale down to minReplicas pods, with a 300 second stabilization
+     * window (i.e., the highest recommendation for the last 300sec is used).
+     */
+    private HPAScalingRules|null $scaleDown = null;
+
+    /**
+     * scaleUp is scaling policy for scaling Up. If not set, the default value is the
+     * higher of:
+     *   * increase no more than 4 pods per 60 seconds
+     *   * double the number of pods per 60 seconds
+     * No stabilization is used.
+     */
+    private HPAScalingRules|null $scaleUp = null;
+
+    public function __construct()
+    {
+    }
+
+    public function getScaleDown(): HPAScalingRules|null
+    {
+        return $this->scaleDown;
+    }
+
+    public function getScaleUp(): HPAScalingRules|null
+    {
+        return $this->scaleUp;
+    }
+
+    public function scaleDown(): HPAScalingRules
+    {
+        return $this->scaleDown ??= new HPAScalingRules();
+    }
+
+    public function scaleUp(): HPAScalingRules
+    {
+        return $this->scaleUp ??= new HPAScalingRules();
+    }
+
+    public function setScaleDown(HPAScalingRules $scaleDown): self
+    {
+        $this->scaleDown = $scaleDown;
+
+        return $this;
+    }
+
+    public function setScaleUp(HPAScalingRules $scaleUp): self
+    {
+        $this->scaleUp = $scaleUp;
+
+        return $this;
+    }
+
+    public function jsonSerialize(): ArrayObject
+    {
+        return new ArrayObject([
+            'scaleDown' => $this->scaleDown,
+            'scaleUp' => $this->scaleUp,
+        ]);
+    }
+}

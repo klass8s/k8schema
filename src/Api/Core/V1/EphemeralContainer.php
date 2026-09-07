@@ -1,0 +1,597 @@
+<?php
+
+declare(strict_types=1);
+
+namespace K8Schema\Api\Core\V1;
+
+use ArrayObject;
+use JsonSerializable;
+use K8Schema\Collection\StringList;
+
+/**
+ * An EphemeralContainer is a temporary container that you may add to an existing
+ * Pod for user-initiated activities such as debugging. Ephemeral containers have
+ * no resource or scheduling guarantees, and they will not be restarted when they
+ * exit or when a Pod is removed or restarted. The kubelet may evict a Pod if an
+ * ephemeral container causes the Pod to exceed its resource allocation.
+ *
+ * To add an ephemeral container, use the ephemeralcontainers subresource of an
+ * existing Pod. Ephemeral containers may not be removed or restarted.
+ */
+class EphemeralContainer implements JsonSerializable
+{
+    /**
+     * Arguments to the entrypoint. The image's CMD is used if this is not provided.
+     * Variable references $(VAR_NAME) are expanded using the container's environment.
+     * If a variable cannot be resolved, the reference in the input string will be
+     * unchanged. Double $$ are reduced to a single $, which allows for escaping the
+     * $(VAR_NAME) syntax: i.e. "$$(VAR_NAME)" will produce the string literal
+     * "$(VAR_NAME)". Escaped references will never be expanded, regardless of whether
+     * the variable exists or not. Cannot be updated. More info:
+     * https://kubernetes.io/docs/tasks/inject-data-application/define-command-argument-container/#running-a-command-in-a-shell
+     */
+    private StringList $args;
+
+    /**
+     * Entrypoint array. Not executed within a shell. The image's ENTRYPOINT is used if
+     * this is not provided. Variable references $(VAR_NAME) are expanded using the
+     * container's environment. If a variable cannot be resolved, the reference in the
+     * input string will be unchanged. Double $$ are reduced to a single $, which
+     * allows for escaping the $(VAR_NAME) syntax: i.e. "$$(VAR_NAME)" will produce the
+     * string literal "$(VAR_NAME)". Escaped references will never be expanded,
+     * regardless of whether the variable exists or not. Cannot be updated. More info:
+     * https://kubernetes.io/docs/tasks/inject-data-application/define-command-argument-container/#running-a-command-in-a-shell
+     */
+    private StringList $command;
+
+    /**
+     * List of environment variables to set in the container. Cannot be updated.
+     */
+    private EnvVarList $env;
+
+    /**
+     * List of sources to populate environment variables in the container. The keys
+     * defined within a source may consist of any printable ASCII characters except
+     * '='. When a key exists in multiple sources, the value associated with the last
+     * source will take precedence. Values defined by an Env with a duplicate key will
+     * take precedence. Cannot be updated.
+     */
+    private EnvFromSourceList $envFrom;
+
+    /**
+     * Container image name. More info:
+     * https://kubernetes.io/docs/concepts/containers/images
+     */
+    private string|null $image = null;
+
+    /**
+     * Image pull policy. One of Always, Never, IfNotPresent. Defaults to Always if
+     * :latest tag is specified, or IfNotPresent otherwise. Cannot be updated. More
+     * info: https://kubernetes.io/docs/concepts/containers/images#updating-images
+     */
+    private string|null $imagePullPolicy = null;
+
+    /**
+     * Lifecycle is not allowed for ephemeral containers.
+     */
+    private Lifecycle|null $lifecycle = null;
+
+    /**
+     * Probes are not allowed for ephemeral containers.
+     */
+    private Probe|null $livenessProbe = null;
+
+    /**
+     * Name of the ephemeral container specified as a DNS_LABEL. This name must be
+     * unique among all containers, init containers and ephemeral containers.
+     */
+    private string $name;
+
+    /**
+     * Ports are not allowed for ephemeral containers.
+     */
+    private ContainerPortList $ports;
+
+    /**
+     * Probes are not allowed for ephemeral containers.
+     */
+    private Probe|null $readinessProbe = null;
+
+    /**
+     * Resources resize policy for the container.
+     */
+    private ContainerResizePolicyList $resizePolicy;
+
+    /**
+     * Resources are not allowed for ephemeral containers. Ephemeral containers use
+     * spare resources already allocated to the pod.
+     */
+    private ResourceRequirements|null $resources = null;
+
+    /**
+     * Restart policy for the container to manage the restart behavior of each
+     * container within a pod. You cannot set this field on ephemeral containers.
+     */
+    private string|null $restartPolicy = null;
+
+    /**
+     * Represents a list of rules to be checked to determine if the container should be
+     * restarted on exit. You cannot set this field on ephemeral containers.
+     */
+    private ContainerRestartRuleList $restartPolicyRules;
+
+    /**
+     * Optional: SecurityContext defines the security options the ephemeral container
+     * should be run with. If set, the fields of SecurityContext override the
+     * equivalent fields of PodSecurityContext.
+     */
+    private SecurityContext|null $securityContext = null;
+
+    /**
+     * Probes are not allowed for ephemeral containers.
+     */
+    private Probe|null $startupProbe = null;
+
+    /**
+     * Whether this container should allocate a buffer for stdin in the container
+     * runtime. If this is not set, reads from stdin in the container will always
+     * result in EOF. Default is false.
+     */
+    private bool|null $stdin = null;
+
+    /**
+     * Whether the container runtime should close the stdin channel after it has been
+     * opened by a single attach. When stdin is true the stdin stream will remain open
+     * across multiple attach sessions. If stdinOnce is set to true, stdin is opened on
+     * container start, is empty until the first client attaches to stdin, and then
+     * remains open and accepts data until the client disconnects, at which time stdin
+     * is closed and remains closed until the container is restarted. If this flag is
+     * false, a container processes that reads from stdin will never receive an EOF.
+     * Default is false
+     */
+    private bool|null $stdinOnce = null;
+
+    /**
+     * If set, the name of the container from PodSpec that this ephemeral container
+     * targets. The ephemeral container will be run in the namespaces (IPC, PID, etc)
+     * of this container. If not set then the ephemeral container uses the namespaces
+     * configured in the Pod spec.
+     *
+     * The container runtime must implement support for this feature. If the runtime
+     * does not support namespace targeting then the result of setting this field is
+     * undefined.
+     */
+    private string|null $targetContainerName = null;
+
+    /**
+     * Optional: Path at which the file to which the container's termination message
+     * will be written is mounted into the container's filesystem. Message written is
+     * intended to be brief final status, such as an assertion failure message. Will be
+     * truncated by the node if greater than 4096 bytes. The total message length
+     * across all containers will be limited to 12kb. Defaults to /dev/termination-log.
+     * Cannot be updated.
+     */
+    private string|null $terminationMessagePath = null;
+
+    /**
+     * Indicate how the termination message should be populated. File will use the
+     * contents of terminationMessagePath to populate the container status message on
+     * both success and failure. FallbackToLogsOnError will use the last chunk of
+     * container log output if the termination message file is empty and the container
+     * exited with an error. The log output is limited to 2048 bytes or 80 lines,
+     * whichever is smaller. Defaults to File. Cannot be updated.
+     */
+    private string|null $terminationMessagePolicy = null;
+
+    /**
+     * Whether this container should allocate a TTY for itself, also requires 'stdin'
+     * to be true. Default is false.
+     */
+    private bool|null $tty = null;
+
+    /**
+     * volumeDevices is the list of block devices to be used by the container.
+     */
+    private VolumeDeviceList $volumeDevices;
+
+    /**
+     * Pod volumes to mount into the container's filesystem. Subpath mounts are not
+     * allowed for ephemeral containers. Cannot be updated.
+     */
+    private VolumeMountList $volumeMounts;
+
+    /**
+     * Container's working directory. If not specified, the container runtime's default
+     * will be used, which might be configured in the container image. Cannot be
+     * updated.
+     */
+    private string|null $workingDir = null;
+
+    public function __construct(string $name)
+    {
+        $this->args = new StringList();
+        $this->command = new StringList();
+        $this->env = new EnvVarList();
+        $this->envFrom = new EnvFromSourceList();
+        $this->name = $name;
+        $this->ports = new ContainerPortList();
+        $this->resizePolicy = new ContainerResizePolicyList();
+        $this->restartPolicyRules = new ContainerRestartRuleList();
+        $this->volumeDevices = new VolumeDeviceList();
+        $this->volumeMounts = new VolumeMountList();
+    }
+
+    public function args(): StringList
+    {
+        return $this->args;
+    }
+
+    public function command(): StringList
+    {
+        return $this->command;
+    }
+
+    public function env(): EnvVarList
+    {
+        return $this->env;
+    }
+
+    public function envFrom(): EnvFromSourceList
+    {
+        return $this->envFrom;
+    }
+
+    public function getImage(): string|null
+    {
+        return $this->image;
+    }
+
+    public function getImagePullPolicy(): string|null
+    {
+        return $this->imagePullPolicy;
+    }
+
+    public function getLifecycle(): Lifecycle|null
+    {
+        return $this->lifecycle;
+    }
+
+    public function getLivenessProbe(): Probe|null
+    {
+        return $this->livenessProbe;
+    }
+
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
+    public function getReadinessProbe(): Probe|null
+    {
+        return $this->readinessProbe;
+    }
+
+    public function getResources(): ResourceRequirements|null
+    {
+        return $this->resources;
+    }
+
+    public function getRestartPolicy(): string|null
+    {
+        return $this->restartPolicy;
+    }
+
+    public function getSecurityContext(): SecurityContext|null
+    {
+        return $this->securityContext;
+    }
+
+    public function getStartupProbe(): Probe|null
+    {
+        return $this->startupProbe;
+    }
+
+    public function getStdin(): bool|null
+    {
+        return $this->stdin;
+    }
+
+    public function getStdinOnce(): bool|null
+    {
+        return $this->stdinOnce;
+    }
+
+    public function getTargetContainerName(): string|null
+    {
+        return $this->targetContainerName;
+    }
+
+    public function getTerminationMessagePath(): string|null
+    {
+        return $this->terminationMessagePath;
+    }
+
+    public function getTerminationMessagePolicy(): string|null
+    {
+        return $this->terminationMessagePolicy;
+    }
+
+    public function getTty(): bool|null
+    {
+        return $this->tty;
+    }
+
+    public function getWorkingDir(): string|null
+    {
+        return $this->workingDir;
+    }
+
+    public function lifecycle(): Lifecycle
+    {
+        return $this->lifecycle ??= new Lifecycle();
+    }
+
+    public function livenessProbe(): Probe
+    {
+        return $this->livenessProbe ??= new Probe();
+    }
+
+    public function ports(): ContainerPortList
+    {
+        return $this->ports;
+    }
+
+    public function readinessProbe(): Probe
+    {
+        return $this->readinessProbe ??= new Probe();
+    }
+
+    public function resizePolicy(): ContainerResizePolicyList
+    {
+        return $this->resizePolicy;
+    }
+
+    public function resources(): ResourceRequirements
+    {
+        return $this->resources ??= new ResourceRequirements();
+    }
+
+    public function restartPolicyRules(): ContainerRestartRuleList
+    {
+        return $this->restartPolicyRules;
+    }
+
+    public function securityContext(): SecurityContext
+    {
+        return $this->securityContext ??= new SecurityContext();
+    }
+
+    public function setArgs(StringList $args): self
+    {
+        $this->args = $args;
+
+        return $this;
+    }
+
+    public function setCommand(StringList $command): self
+    {
+        $this->command = $command;
+
+        return $this;
+    }
+
+    public function setEnv(EnvVarList $env): self
+    {
+        $this->env = $env;
+
+        return $this;
+    }
+
+    public function setEnvFrom(EnvFromSourceList $envFrom): self
+    {
+        $this->envFrom = $envFrom;
+
+        return $this;
+    }
+
+    public function setImage(string $image): self
+    {
+        $this->image = $image;
+
+        return $this;
+    }
+
+    public function setImagePullPolicy(string $imagePullPolicy): self
+    {
+        $this->imagePullPolicy = $imagePullPolicy;
+
+        return $this;
+    }
+
+    public function setLifecycle(Lifecycle $lifecycle): self
+    {
+        $this->lifecycle = $lifecycle;
+
+        return $this;
+    }
+
+    public function setLivenessProbe(Probe $livenessProbe): self
+    {
+        $this->livenessProbe = $livenessProbe;
+
+        return $this;
+    }
+
+    public function setName(string $name): self
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    public function setPorts(ContainerPortList $ports): self
+    {
+        $this->ports = $ports;
+
+        return $this;
+    }
+
+    public function setReadinessProbe(Probe $readinessProbe): self
+    {
+        $this->readinessProbe = $readinessProbe;
+
+        return $this;
+    }
+
+    public function setResizePolicy(ContainerResizePolicyList $resizePolicy): self
+    {
+        $this->resizePolicy = $resizePolicy;
+
+        return $this;
+    }
+
+    public function setResources(ResourceRequirements $resources): self
+    {
+        $this->resources = $resources;
+
+        return $this;
+    }
+
+    public function setRestartPolicy(string $restartPolicy): self
+    {
+        $this->restartPolicy = $restartPolicy;
+
+        return $this;
+    }
+
+    public function setRestartPolicyRules(ContainerRestartRuleList $restartPolicyRules): self
+    {
+        $this->restartPolicyRules = $restartPolicyRules;
+
+        return $this;
+    }
+
+    public function setSecurityContext(SecurityContext $securityContext): self
+    {
+        $this->securityContext = $securityContext;
+
+        return $this;
+    }
+
+    public function setStartupProbe(Probe $startupProbe): self
+    {
+        $this->startupProbe = $startupProbe;
+
+        return $this;
+    }
+
+    public function setStdin(bool $stdin): self
+    {
+        $this->stdin = $stdin;
+
+        return $this;
+    }
+
+    public function setStdinOnce(bool $stdinOnce): self
+    {
+        $this->stdinOnce = $stdinOnce;
+
+        return $this;
+    }
+
+    public function setTargetContainerName(string $targetContainerName): self
+    {
+        $this->targetContainerName = $targetContainerName;
+
+        return $this;
+    }
+
+    public function setTerminationMessagePath(string $terminationMessagePath): self
+    {
+        $this->terminationMessagePath = $terminationMessagePath;
+
+        return $this;
+    }
+
+    public function setTerminationMessagePolicy(string $terminationMessagePolicy): self
+    {
+        $this->terminationMessagePolicy = $terminationMessagePolicy;
+
+        return $this;
+    }
+
+    public function setTty(bool $tty): self
+    {
+        $this->tty = $tty;
+
+        return $this;
+    }
+
+    public function setVolumeDevices(VolumeDeviceList $volumeDevices): self
+    {
+        $this->volumeDevices = $volumeDevices;
+
+        return $this;
+    }
+
+    public function setVolumeMounts(VolumeMountList $volumeMounts): self
+    {
+        $this->volumeMounts = $volumeMounts;
+
+        return $this;
+    }
+
+    public function setWorkingDir(string $workingDir): self
+    {
+        $this->workingDir = $workingDir;
+
+        return $this;
+    }
+
+    public function startupProbe(): Probe
+    {
+        return $this->startupProbe ??= new Probe();
+    }
+
+    public function volumeDevices(): VolumeDeviceList
+    {
+        return $this->volumeDevices;
+    }
+
+    public function volumeMounts(): VolumeMountList
+    {
+        return $this->volumeMounts;
+    }
+
+    public function jsonSerialize(): ArrayObject
+    {
+        return new ArrayObject([
+            'args' => $this->args,
+            'command' => $this->command,
+            'env' => $this->env,
+            'envFrom' => $this->envFrom,
+            'image' => $this->image,
+            'imagePullPolicy' => $this->imagePullPolicy,
+            'lifecycle' => $this->lifecycle,
+            'livenessProbe' => $this->livenessProbe,
+            'name' => $this->name,
+            'ports' => $this->ports,
+            'readinessProbe' => $this->readinessProbe,
+            'resizePolicy' => $this->resizePolicy,
+            'resources' => $this->resources,
+            'restartPolicy' => $this->restartPolicy,
+            'restartPolicyRules' => $this->restartPolicyRules,
+            'securityContext' => $this->securityContext,
+            'startupProbe' => $this->startupProbe,
+            'stdin' => $this->stdin,
+            'stdinOnce' => $this->stdinOnce,
+            'targetContainerName' => $this->targetContainerName,
+            'terminationMessagePath' => $this->terminationMessagePath,
+            'terminationMessagePolicy' => $this->terminationMessagePolicy,
+            'tty' => $this->tty,
+            'volumeDevices' => $this->volumeDevices,
+            'volumeMounts' => $this->volumeMounts,
+            'workingDir' => $this->workingDir,
+        ]);
+    }
+}

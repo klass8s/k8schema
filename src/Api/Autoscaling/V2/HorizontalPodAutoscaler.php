@@ -1,0 +1,90 @@
+<?php
+
+declare(strict_types=1);
+
+namespace K8Schema\Api\Autoscaling\V2;
+
+use ArrayObject;
+use K8Schema\APIResourceInterface;
+use K8Schema\Apimachinery\Pkg\Apis\Meta\V1\ObjectMeta;
+
+/**
+ * HorizontalPodAutoscaler is the configuration for a horizontal pod autoscaler,
+ * which automatically manages the replica count of any resource implementing the
+ * scale subresource based on the metrics specified.
+ */
+class HorizontalPodAutoscaler implements APIResourceInterface
+{
+    public const string API_VERSION = 'autoscaling/v2';
+    public const string KIND = 'HorizontalPodAutoscaler';
+
+    /**
+     * metadata is the standard object metadata. More info:
+     * https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
+     */
+    private ObjectMeta $metadata;
+
+    /**
+     * spec is the specification for the behaviour of the autoscaler. More info:
+     * https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status.
+     */
+    private HorizontalPodAutoscalerSpec $spec;
+
+    /**
+     * status is the current information about the autoscaler.
+     */
+    private HorizontalPodAutoscalerStatus|null $status = null;
+
+    public function __construct(HorizontalPodAutoscalerSpec $spec)
+    {
+        $this->metadata = new ObjectMeta();
+        $this->spec = $spec;
+    }
+
+    public function getSpec(): HorizontalPodAutoscalerSpec
+    {
+        return $this->spec;
+    }
+
+    public function getStatus(): HorizontalPodAutoscalerStatus|null
+    {
+        return $this->status;
+    }
+
+    public function metadata(): ObjectMeta
+    {
+        return $this->metadata;
+    }
+
+    public function setMetadata(ObjectMeta $metadata): self
+    {
+        $this->metadata = $metadata;
+
+        return $this;
+    }
+
+    public function setSpec(HorizontalPodAutoscalerSpec $spec): self
+    {
+        $this->spec = $spec;
+
+        return $this;
+    }
+
+    public function setStatus(HorizontalPodAutoscalerStatus $status): self
+    {
+        $this->status = $status;
+
+        return $this;
+    }
+
+    public function jsonSerialize(): ArrayObject
+    {
+        return new ArrayObject([
+            'apiVersion' => self::API_VERSION,
+            'kind' => self::KIND,
+            'metadata' => $this->metadata,
+            'spec' => $this->spec,
+            'status' => $this->status,
+        ]);
+    }
+}

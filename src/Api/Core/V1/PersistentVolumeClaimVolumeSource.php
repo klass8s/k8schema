@@ -1,0 +1,66 @@
+<?php
+
+declare(strict_types=1);
+
+namespace K8Schema\Api\Core\V1;
+
+use ArrayObject;
+use JsonSerializable;
+
+/**
+ * PersistentVolumeClaimVolumeSource references the user's PVC in the same
+ * namespace. This volume finds the bound PV and mounts that volume for the pod. A
+ * PersistentVolumeClaimVolumeSource is, essentially, a wrapper around another type
+ * of volume that is owned by someone else (the system).
+ */
+class PersistentVolumeClaimVolumeSource implements JsonSerializable
+{
+    /**
+     * claimName is the name of a PersistentVolumeClaim in the same namespace as the
+     * pod using this volume. More info:
+     * https://kubernetes.io/docs/concepts/storage/persistent-volumes#persistentvolumeclaims
+     */
+    private string $claimName;
+
+    /**
+     * readOnly Will force the ReadOnly setting in VolumeMounts. Default false.
+     */
+    private bool|null $readOnly = null;
+
+    public function __construct(string $claimName)
+    {
+        $this->claimName = $claimName;
+    }
+
+    public function getClaimName(): string
+    {
+        return $this->claimName;
+    }
+
+    public function getReadOnly(): bool|null
+    {
+        return $this->readOnly;
+    }
+
+    public function setClaimName(string $claimName): self
+    {
+        $this->claimName = $claimName;
+
+        return $this;
+    }
+
+    public function setReadOnly(bool $readOnly): self
+    {
+        $this->readOnly = $readOnly;
+
+        return $this;
+    }
+
+    public function jsonSerialize(): ArrayObject
+    {
+        return new ArrayObject([
+            'claimName' => $this->claimName,
+            'readOnly' => $this->readOnly,
+        ]);
+    }
+}
