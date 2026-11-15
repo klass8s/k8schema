@@ -22,12 +22,23 @@
         }
     ],
     "scripts": {
+        "post-install-cmd": [
+            "@tools:install"
+        ],
+        "post-update-cmd": [
+            "@tools:install"
+        ],
         "cs": "./tools/php-cs-fixer/vendor/bin/php-cs-fixer fix",
         "cs:check": "./tools/php-cs-fixer/vendor/bin/php-cs-fixer check",
+        "tools:install": "test \"$COMPOSER_DEV_MODE\" = 0 || (composer install -d tools/php-cs-fixer --no-interaction --no-progress && composer install -d tools/k8schema-generator --no-interaction --no-progress)",
         "tools:update": "composer update -d tools/php-cs-fixer --no-scripts && composer update -d tools/k8schema-generator --no-scripts",
         "generate": "./bin/generate",
         "push:branch": "./bin/push-to-branch",
         "release": "./bin/release"
+    },
+    "scripts-descriptions": {
+        "tools:install": "Install the dev tools (php-cs-fixer, k8schema-generator) from their committed locks — runs after composer install/update, skipped under --no-dev",
+        "tools:update": "Update the dev tools to their newest versions and rewrite their locks (then re-run the checks and commit the locks)"
     },
     "repositories": [
         {
