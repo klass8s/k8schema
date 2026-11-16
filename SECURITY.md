@@ -7,7 +7,7 @@ private vulnerability reporting: the repository's **Security** tab, **Report a v
 (<https://github.com/klass8s/k8schema/security/advisories/new>).
 
 Say what is affected (a generated class, the *Generate* workflow, the scripts under `bin/`), the
-version (`composer show tequila/k8schema`), and the code or the steps that show the problem. The fix
+version (`composer show klass8s/k8schema`), and the code or the steps that show the problem. The fix
 is coordinated in the advisory, and the advisory is published with the releases that carry it.
 
 ## Supported versions

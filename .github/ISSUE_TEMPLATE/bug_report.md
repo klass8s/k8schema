@@ -24,6 +24,6 @@ https://github.com/klass8s/k8schema-generator/issues
 
 **Versions**
 
-- `composer show tequila/k8schema`:
+- `composer show klass8s/k8schema`:
 - `php -v`:
 - Kubernetes version:
