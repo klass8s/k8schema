@@ -1,0 +1,644 @@
+name: Generate
+
+# k8schema versions are produced HERE.
+#
+# One branch and one tag line per Kubernetes minor: branch `v1.35` carries the generated
+# tree, tags `v1.35.N` are the releases consumers pin with `~1.35.0`. A run regenerates a
+# minor from the newest upstream schema of that minor (yannh/kubernetes-json-schema keeps
+# the OpenAPI definitions of every Kubernetes patch release) with the generator pinned by
+# tools/k8schema-generator/composer.lock, and cuts the next patch tag when — and only when
+# — the generated tree differs from the branch. Nothing changed → nothing pushed, nothing
+# tagged: a rerun is a no-op.
+#
+#   manual    Actions → Generate → Run workflow: which minors (a list, or "supported"),
+#             dry run (report, push nothing), force (override the guards)
+#   schedule  weekly — the supported minors (the newest SUPPORTED_MINORS upstream), a new
+#             upstream minor gets its branch and `.0` tag on the first run that sees it
+#   PR        the same pipeline as a dry run over the supported minors — this repo's CI;
+#             the release job never starts
+#
+# The template of every branch is the commit this workflow runs from (main): bin/, the
+# tool locks, the code-style config, K8SApi.php with its `SetMe` placeholder, LICENSE and
+# NOTICE. The workflow cuts its own tags — release-please versions one line per repository,
+# k8schema has one per minor. Every write is the workflow's own GITHUB_TOKEN
+# (github-actions[bot]); no stored secret is involved. Who writes what:
+#
+#   the regenerated commit → the minor branch    the generate job (contents: write); nothing
+#                                                here pushes to main
+#   a held regeneration → regenerate/<minor>     the generate job, and its PR against the minor
+#   the tag vX.Y.N and its GitHub Release        the release job alone (contents: write)
+#
+# Two jobs per minor, split by what each one may do. `generate` runs this repository's code
+# and its dependencies (the tool installs, bin/generate, the checks); when a release is due it
+# leaves a release plan — the tag, the commit, the notes — as an artifact. `release` runs none
+# of this repository's code: it reads the plan as data, checks it, and cuts the tag and the
+# release through the API. Its job-level `if:` keeps it off every pull request and every dry
+# run. Should the job ever hold a stored secret, that has to stay a JOB-level `if:`: Actions
+# hands a stored secret to every job whose definition names it, a step its own `if:` skips
+# included, and only a job that never starts receives nothing.
+# .github/scripts/pr-job-secrets.py holds this file to that.
+#
+# A tag or a release made with GITHUB_TOKEN starts no workflow, and none listens: this file
+# (the minor branches created from main carry a copy) reacts to no tag push, `create` or
+# `release` event.
+#
+# Guards, in order: every generated file must compile (`php -l`), the tree must autoload
+# and serialize a Deployment, K8SApi::VERSION must be the minor, code style must be clean;
+# then the SHRINK GUARD — a regeneration that deletes files or loses more than
+# SHRINK_GUARD_PERCENT of the tree is not released but opened as a PR against the minor
+# branch for a human to look at (the one regression this repo has seen: a generator pinned
+# before "stop ignoring status field" would silently drop every status property).
+
+on:
+    workflow_dispatch:
+        inputs:
+            minors:
+                description: 'Kubernetes minors to (re)generate: "supported" (the newest upstream minors) or a space-separated list, e.g. "v1.36 v1.37"'
+                required: true
+                default: supported
+                type: string
+            dry_run:
+                description: 'Generate and report the diff; push nothing, tag nothing'
+                type: boolean
+                default: false
+            force:
+                description: 'Release even when a guard says no (the shrink guard; a tree unchanged since the last tag)'
+                type: boolean
+                default: false
+    schedule:
+        - cron: '17 6 * * 1'
+    # The repository's CI: a pull request runs the same pipeline as a DRY RUN over the supported
+    # minors — the template, the tool locks and the generator must regenerate every one of them
+    # cleanly before they reach main. Nothing is pushed or tagged from a pull request.
+    pull_request:
+        branches: [main]
+
+# Nothing by default; every job names what it needs.
+permissions: {}
+
+concurrency:
+    group: ${{ github.event_name == 'pull_request' && format('k8schema-generate-pr-{0}', github.event.pull_request.number) || 'k8schema-generate' }}
+    cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+env:
+    SUPPORTED_MINORS: '4'
+    SHRINK_GUARD_PERCENT: '3'
+    # A stalled git transfer FAILS instead of hanging: under 1000 bytes/s for 30 s and
+    # git gives up (2026-10-03: api.github.com frontends accepted TLS and never
+    # answered). actions/checkout hands its process env to git and retries a failed
+    # fetch itself; the pushes below are retried.
+    GIT_HTTP_LOW_SPEED_LIMIT: 1000
+    GIT_HTTP_LOW_SPEED_TIME: 30
+
+jobs:
+    plan:
+        name: Resolve the minors and their upstream schema patches
+        runs-on: ubuntu-latest
+        # A hung run otherwise bills the 360-minute default.
+        timeout-minutes: 5
+        # It reads a public repository (yannh/kubernetes-json-schema); the token only lifts the rate limit.
+        permissions:
+            contents: read
+        outputs:
+            matrix: ${{ steps.plan.outputs.matrix }}
+        steps:
+            - name: Read yannh/kubernetes-json-schema — the newest patch of every minor
+              id: plan
+              env:
+                  GH_TOKEN: ${{ github.token }}
+                  REQUESTED: ${{ inputs.minors || 'supported' }}
+              run: |
+                  set -euo pipefail
+                  # GitHub calls, bounded (2026-10-03: api.github.com frontends accepted TLS and
+                  # never answered): an attempt is cut at 30 s (git: by GIT_HTTP_LOW_SPEED_*), a
+                  # failure that reads transient — no answer, a 5xx or 429, a dropped connection — is
+                  # retried 5, 15 and 30 s later (past the DNS TTL: another frontend), a definitive
+                  # answer (a 4xx, a rejected push) never.
+                  transient() { # <exit code> <stderr file>
+                      case "$1" in 124|137) return 0 ;; esac
+                      ! grep -qiE '(HTTP|returned error:) 4([01][0-9]|2[0-8]|[3-9][0-9])|non-fast-forward|\[rejected\]|remote rejected|Authentication failed|Permission (to|denied)' "$2" \
+                          && grep -qiE 'HTTP (5[0-9]{2}|429)|error: (5[0-9]{2}|429)|Bad Gateway|Service Unavailable|Gateway Time-?out|Internal Server Error|Repository not found|could not read Username|RPC failed|early EOF|unexpected (disconnect|EOF)|hung up unexpectedly|Connection (reset|timed out|refused)|Could not resolve host|no such host|Failed to connect|Operation (timed out|too slow)|unable to access|error connecting to|TLS handshake|i/o timeout|deadline exceeded|GOAWAY|not closed cleanly|": EOF' "$2"
+                  }
+                  retried() { # <what> <cmd…> — prints the stdout of the attempt that succeeded
+                      local what="$1" delay rc out err why; shift
+                      out="$(mktemp)"; err="$(mktemp)"
+                      for delay in 5 15 30 ''; do
+                          rc=0; "$@" >"$out" 2>"$err" || rc=$?
+                          if [ "$rc" -eq 0 ]; then cat "$out"; rm -f "$out" "$err"; return 0; fi
+                          if [ -z "$delay" ] || ! transient "$rc" "$err"; then cat "$err" >&2; rm -f "$out" "$err"; return "$rc"; fi
+                          case "$rc" in 124|137) why="no answer within the attempt's bound" ;; *) why="$(tail -n 1 "$err")" ;; esac
+                          echo "::notice title=GitHub::$what: $why — retrying in ${delay}s" >&2
+                          sleep "$delay"
+                      done
+                  }
+                  gh_bounded() { retried "gh $1 $2" timeout -k 5 30 gh "$@"; }
+                  # One top-level directory per Kubernetes patch release (v1.35.8, …): the newest
+                  # directory of a minor is that minor's schema.
+                  gh_bounded api repos/yannh/kubernetes-json-schema/git/trees/master \
+                      --jq '.tree[] | select(.type == "tree") | .path' \
+                      | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' | sort -V > dirs.txt
+                  awk -F. '{ minor = $1 "." $2; latest[minor] = $0 } END { for (m in latest) print m, latest[m] }' dirs.txt \
+                      | sort -V > latest.txt
+                  if [ "$REQUESTED" = supported ]; then
+                      minors=$(tail -n "$SUPPORTED_MINORS" latest.txt | awk '{ print $1 }')
+                  else
+                      minors=$REQUESTED
+                  fi
+                  matrix='[]'
+                  for minor in $minors; do
+                      if ! printf '%s' "$minor" | grep -qE '^v[0-9]+\.[0-9]+$'; then
+                          echo "::error::'$minor' is not a Kubernetes minor (expected e.g. v1.36)"; exit 1
+                      fi
+                      schema=$(awk -v m="$minor" '$1 == m { print $2 }' latest.txt)
+                      if [ -z "$schema" ]; then
+                          echo "::error::$minor: yannh/kubernetes-json-schema has no schema for it yet"; exit 1
+                      fi
+                      matrix=$(jq -c --arg m "$minor" --arg s "$schema" '. + [{ minor: $m, schema: $s }]' <<< "$matrix")
+                  done
+                  echo "matrix=$matrix" >> "$GITHUB_OUTPUT"
+                  jq -r '.[] | "plan: \(.minor) ← \(.schema)"' <<< "$matrix"
+
+    generate:
+        name: ${{ matrix.minor }} ← ${{ matrix.schema }}
+        needs: plan
+        runs-on: ubuntu-latest
+        # Generation takes seconds; a generator that recurses on a new upstream construct
+        # must fail here, not hold a runner for the six-hour default.
+        timeout-minutes: 15
+        # The minor branch's push and a held regeneration's PR (GITHUB_TOKEN). The tag and the
+        # release are the release job's.
+        permissions:
+            contents: write
+            pull-requests: write
+        strategy:
+            fail-fast: false
+            matrix:
+                include: ${{ fromJSON(needs.plan.outputs.matrix) }}
+        env:
+            MINOR: ${{ matrix.minor }}
+            SCHEMA: ${{ matrix.schema }}
+            DRY_RUN: ${{ (github.event_name == 'pull_request' || inputs.dry_run == true) && 'true' || 'false' }}
+            FORCE: ${{ inputs.force == true && 'true' || 'false' }}
+            GH_TOKEN: ${{ github.token }}
+        steps:
+            # Composer's credentials: every dependency is public, and github.com takes the job's
+            # GITHUB_TOKEN for the API's rate limit alone. A pull request's run holds nothing that can
+            # write outside this repository.
+            - name: Configure Composer auth
+              run: |
+                  set -euo pipefail
+                  echo "COMPOSER_AUTH=$(jq -cn --arg github "$GH_TOKEN" '{"github-oauth": {"github.com": $github}}')" >> "$GITHUB_ENV"
+
+            # The template + every minor branch and tag (the branch tip, the patch counter).
+            - name: Checkout
+              uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+              timeout-minutes: 5
+              with:
+                  fetch-depth: 0
+
+            # Downloads from GitHub: bounded.
+            - name: Setup PHP 8.5 with Composer
+              uses: shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962 # 2.40.0
+              timeout-minutes: 5
+              with:
+                  php-version: '8.5'
+                  tools: composer
+                  coverage: none
+                  ini-values: memory_limit=-1
+
+            - name: Cache Composer downloads
+              uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+              with:
+                  path: ~/.cache/composer/files
+                  key: composer-${{ runner.os }}-${{ hashFiles('tools/**/composer.lock') }}
+                  restore-keys: |
+                      composer-${{ runner.os }}-
+
+            - name: Install the generator and php-cs-fixer from the committed locks
+              run: |
+                  set -euo pipefail
+                  for tool in k8schema-generator php-cs-fixer; do
+                      test -f "tools/$tool/composer.lock" \
+                          || { echo "::error::tools/$tool/composer.lock is not committed — run 'composer update -d tools/$tool' and commit the lock"; exit 1; }
+                      composer -d "tools/$tool" install --no-interaction --no-progress --prefer-dist
+                  done
+                  echo "GENERATOR_REF=$(jq -r '.packages[] | select(.name == "klass8s/k8schema-generator") | .source.reference' tools/k8schema-generator/composer.lock | cut -c1-12)" >> "$GITHUB_ENV"
+
+            - name: Prepare the ${{ matrix.minor }} worktree (template from this commit, src/ from the branch)
+              id: worktree
+              run: |
+                  set -euo pipefail
+                  git config user.name 'github-actions[bot]'
+                  git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+                  if git show-ref --verify --quiet "refs/remotes/origin/$MINOR"; then
+                      git worktree add --quiet wt "origin/$MINOR"
+                      git -C wt checkout --quiet -B "$MINOR" "origin/$MINOR"
+                      echo "new=false" >> "$GITHUB_OUTPUT"
+                  else
+                      git worktree add --quiet -b "$MINOR" wt HEAD
+                      echo "new=true" >> "$GITHUB_OUTPUT"
+                      echo "::notice::$MINOR has no branch yet — created from the template; its first tag will be $MINOR.0"
+                  fi
+                  # The template travels with the workflow's own commit — LICENSE and NOTICE with it, so
+                  # every tag ships the license and the MIT notice of the package k8schema continues; src/K8SApi.php arrives
+                  # with its SetMe placeholder and bin/generate stamps the minor into it.
+                  git -C wt checkout --quiet "$GITHUB_SHA" -- bin composer.json tools .php-cs-fixer.dist.php .editorconfig .gitignore var/.gitignore src/K8SApi.php NOTICE LICENSE
+                  for tool in k8schema-generator php-cs-fixer; do
+                      ln -s "$GITHUB_WORKSPACE/tools/$tool/vendor" "wt/tools/$tool/vendor"
+                  done
+                  {
+                      echo "files_before=$(git -C wt ls-files src | wc -l)"
+                      echo "lines_before=$(git -C wt ls-files src -z | xargs -0 cat | wc -l)"
+                      echo "last_tag=$(git tag -l "$MINOR.*" --sort=-v:refname | head -n 1)"
+                  } >> "$GITHUB_OUTPUT"
+
+            - name: Generate ${{ matrix.minor }} from ${{ matrix.schema }}
+              working-directory: wt
+              run: bin/generate "$MINOR" "$SCHEMA"
+
+            - name: Check the tree — compiles, autoloads, serializes, stamped, code style
+              working-directory: wt
+              run: |
+                  set -euo pipefail
+                  find src -name '*.php' -print0 | xargs -0 -n 100 -P 4 php -l > /dev/null
+                  composer install --no-interaction --no-progress --quiet
+                  # shellcheck disable=SC2016 # PHP variables inside the single-quoted script
+                  php -r '
+                      require "vendor/autoload.php";
+                      if (K8Schema\K8SApi::VERSION !== getenv("MINOR")) { fwrite(STDERR, "K8SApi::VERSION is " . K8Schema\K8SApi::VERSION . PHP_EOL); exit(1); }
+                      $d = new K8Schema\Api\Apps\V1\Deployment();
+                      $d->metadata()->setName("smoke");
+                      $json = json_encode($d, JSON_THROW_ON_ERROR);
+                      if (!str_contains($json, "\"kind\":\"Deployment\"")) { fwrite(STDERR, $json . PHP_EOL); exit(1); }
+                      echo "smoke: Deployment serializes, K8SApi::VERSION = " . K8Schema\K8SApi::VERSION . PHP_EOL;
+                  '
+                  composer cs:check
+
+            - name: Stage and measure the regeneration
+              id: diff
+              working-directory: wt
+              run: |
+                  set -euo pipefail
+                  git add src bin composer.json tools .php-cs-fixer.dist.php .editorconfig .gitignore var/.gitignore NOTICE LICENSE
+                  if git diff --cached --quiet; then changed=false; else changed=true; fi
+                  files_after=$(git ls-files src | wc -l)
+                  lines_after=$(git ls-files src -z | xargs -0 cat | wc -l)
+                  deleted=$(git diff --cached --diff-filter=D --name-only -- src | wc -l)
+                  stat=$(git diff --cached --shortstat -- src | sed 's/^ *//')
+                  shrunk=false
+                  if [ "${{ steps.worktree.outputs.new }}" = false ] && [ "$changed" = true ]; then
+                      floor=$(( ${{ steps.worktree.outputs.lines_before }} * (100 - SHRINK_GUARD_PERCENT) / 100 ))
+                      if [ "$deleted" -gt 0 ] || [ "$lines_after" -lt "$floor" ]; then shrunk=true; fi
+                  fi
+                  {
+                      echo "changed=$changed"
+                      echo "deleted=$deleted"
+                      echo "stat=${stat:-no change}"
+                      echo "shrunk=$shrunk"
+                  } >> "$GITHUB_OUTPUT"
+                  git diff --cached -- src > "$RUNNER_TEMP/$MINOR.patch" || true
+                  {
+                      echo "### $MINOR ← $SCHEMA (generator $GENERATOR_REF)"
+                      echo
+                      echo "- files: ${{ steps.worktree.outputs.files_before }} → $files_after, lines: ${{ steps.worktree.outputs.lines_before }} → $lines_after, deleted files: $deleted"
+                      echo "- src: ${stat:-no change}; last tag: ${{ steps.worktree.outputs.last_tag || 'none' }}"
+                      [ "$shrunk" = true ] && echo "- **shrink guard tripped** (files deleted or more than ${SHRINK_GUARD_PERCENT}% of the lines gone)"
+                      [ "$DRY_RUN" = true ] && echo "- dry run: nothing pushed, nothing tagged"
+                      true
+                  } >> "$GITHUB_STEP_SUMMARY"
+                  git diff --cached --stat -- src | tail -n 1
+
+            # GitHub's artifact service, bounded like the mint: `overwrite: true` makes a second
+            # attempt idempotent (it replaces whatever a stalled first one left).
+            - name: Keep the diff as a run artifact
+              id: upload-first
+              if: steps.diff.outputs.changed == 'true'
+              uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+              timeout-minutes: 2
+              continue-on-error: true
+              with: &upload-patch
+                  name: ${{ matrix.minor }}-regeneration.patch
+                  path: ${{ runner.temp }}/${{ matrix.minor }}.patch
+                  retention-days: 30
+                  overwrite: true
+            - name: Keep the diff as a run artifact (again — the first attempt failed)
+              if: steps.diff.outputs.changed == 'true' && steps.upload-first.outcome != 'success'
+              uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+              timeout-minutes: 5
+              with: *upload-patch
+
+            - name: Hold for review — the shrink guard tripped
+              if: env.DRY_RUN == 'false' && steps.diff.outputs.shrunk == 'true' && env.FORCE == 'false'
+              working-directory: wt
+              run: |
+                  set -euo pipefail
+                  # GitHub calls, bounded (2026-10-03: api.github.com frontends accepted TLS and
+                  # never answered): an attempt is cut at 30 s (git: by GIT_HTTP_LOW_SPEED_*), a
+                  # failure that reads transient — no answer, a 5xx or 429, a dropped connection — is
+                  # retried 5, 15 and 30 s later (past the DNS TTL: another frontend), a definitive
+                  # answer (a 4xx, a rejected push) never.
+                  transient() { # <exit code> <stderr file>
+                      case "$1" in 124|137) return 0 ;; esac
+                      ! grep -qiE '(HTTP|returned error:) 4([01][0-9]|2[0-8]|[3-9][0-9])|non-fast-forward|\[rejected\]|remote rejected|Authentication failed|Permission (to|denied)' "$2" \
+                          && grep -qiE 'HTTP (5[0-9]{2}|429)|error: (5[0-9]{2}|429)|Bad Gateway|Service Unavailable|Gateway Time-?out|Internal Server Error|Repository not found|could not read Username|RPC failed|early EOF|unexpected (disconnect|EOF)|hung up unexpectedly|Connection (reset|timed out|refused)|Could not resolve host|no such host|Failed to connect|Operation (timed out|too slow)|unable to access|error connecting to|TLS handshake|i/o timeout|deadline exceeded|GOAWAY|not closed cleanly|": EOF' "$2"
+                  }
+                  retried() { # <what> <cmd…> — prints the stdout of the attempt that succeeded
+                      local what="$1" delay rc out err why; shift
+                      out="$(mktemp)"; err="$(mktemp)"
+                      for delay in 5 15 30 ''; do
+                          rc=0; "$@" >"$out" 2>"$err" || rc=$?
+                          if [ "$rc" -eq 0 ]; then cat "$out"; rm -f "$out" "$err"; return 0; fi
+                          if [ -z "$delay" ] || ! transient "$rc" "$err"; then cat "$err" >&2; rm -f "$out" "$err"; return "$rc"; fi
+                          case "$rc" in 124|137) why="no answer within the attempt's bound" ;; *) why="$(tail -n 1 "$err")" ;; esac
+                          echo "::notice title=GitHub::$what: $why — retrying in ${delay}s" >&2
+                          sleep "$delay"
+                      done
+                  }
+                  head="regenerate/$MINOR"
+                  git checkout --quiet -B "$head"
+                  git commit --quiet -m "feat($MINOR): Kubernetes API $MINOR from $SCHEMA (held: shrink guard)" \
+                      -m "Generated by the Generate workflow with klass8s/k8schema-generator $GENERATOR_REF; ${{ steps.diff.outputs.stat }}; ${{ steps.diff.outputs.deleted }} file(s) deleted."
+                  # A force-push of the same commit is idempotent; a rejected push is never retried.
+                  retried "git push $head" git push --force --quiet -u origin "$head"
+                  # Checked first on every attempt: a create whose answer never came may have opened it.
+                  # shellcheck disable=SC2329 # invoked through retried
+                  hold() {
+                      local open
+                      open="$(timeout -k 5 30 gh pr list --head "$head" --base "$MINOR" --state open --json number --jq '.[].number')" || return
+                      [ -z "$open" ] || return 0
+                      # shellcheck disable=SC2016 # the backticks in the PR body are Markdown, single-quoted on purpose
+                      timeout -k 5 30 gh pr create --base "$MINOR" --head "$head" \
+                          --title "feat($MINOR): Kubernetes API $MINOR from $SCHEMA — held by the shrink guard" \
+                          --body "$(printf 'The regeneration of `%s` from `%s` (generator `%s`) deletes files or loses more than %s%% of the tree: %s, %s file(s) deleted.\n\nThat is the one regression this repository has seen (a generator that dropped every `status` property), so it is not released automatically. Review the diff; merge it into `%s` and rerun the Generate workflow for `%s` to tag it, or rerun with **force** to release without merging.\n\nRun: %s/%s/actions/runs/%s' "$MINOR" "$SCHEMA" "$GENERATOR_REF" "$SHRINK_GUARD_PERCENT" "${{ steps.diff.outputs.stat }}" "${{ steps.diff.outputs.deleted }}" "$MINOR" "$MINOR" "$GITHUB_SERVER_URL" "$GITHUB_REPOSITORY" "$GITHUB_RUN_ID")"
+                  }
+                  retried "hold $MINOR for review" hold
+                  echo "::error::$MINOR: held for review (PR against $MINOR) — the regeneration shrank the tree"
+                  exit 1
+
+            # The regenerated commit goes to the minor branch here, as GITHUB_TOKEN — the credential
+            # actions/checkout persisted. The tag and the release are the release job's: this job
+            # writes down what they are, the plan, and cuts neither. A dry run commits in the worktree alone, pushes nothing and reports the
+            # release it would have planned.
+            - name: Push the branch and plan the release
+              id: release-plan
+              if: steps.diff.outputs.shrunk == 'false' || env.FORCE == 'true'
+              working-directory: wt
+              run: |
+                  # shellcheck disable=SC2016 # backticks in the release notes are Markdown, quoted
+                  set -euo pipefail
+                  # GitHub calls, bounded (2026-10-03: api.github.com frontends accepted TLS and
+                  # never answered): an attempt is cut at 30 s (git: by GIT_HTTP_LOW_SPEED_*), a
+                  # failure that reads transient — no answer, a 5xx or 429, a dropped connection — is
+                  # retried 5, 15 and 30 s later (past the DNS TTL: another frontend), a definitive
+                  # answer (a 4xx, a rejected push) never.
+                  transient() { # <exit code> <stderr file>
+                      case "$1" in 124|137) return 0 ;; esac
+                      ! grep -qiE '(HTTP|returned error:) 4([01][0-9]|2[0-8]|[3-9][0-9])|non-fast-forward|\[rejected\]|remote rejected|Authentication failed|Permission (to|denied)' "$2" \
+                          && grep -qiE 'HTTP (5[0-9]{2}|429)|error: (5[0-9]{2}|429)|Bad Gateway|Service Unavailable|Gateway Time-?out|Internal Server Error|Repository not found|could not read Username|RPC failed|early EOF|unexpected (disconnect|EOF)|hung up unexpectedly|Connection (reset|timed out|refused)|Could not resolve host|no such host|Failed to connect|Operation (timed out|too slow)|unable to access|error connecting to|TLS handshake|i/o timeout|deadline exceeded|GOAWAY|not closed cleanly|": EOF' "$2"
+                  }
+                  retried() { # <what> <cmd…> — prints the stdout of the attempt that succeeded
+                      local what="$1" delay rc out err why; shift
+                      out="$(mktemp)"; err="$(mktemp)"
+                      for delay in 5 15 30 ''; do
+                          rc=0; "$@" >"$out" 2>"$err" || rc=$?
+                          if [ "$rc" -eq 0 ]; then cat "$out"; rm -f "$out" "$err"; return 0; fi
+                          if [ -z "$delay" ] || ! transient "$rc" "$err"; then cat "$err" >&2; rm -f "$out" "$err"; return "$rc"; fi
+                          case "$rc" in 124|137) why="no answer within the attempt's bound" ;; *) why="$(tail -n 1 "$err")" ;; esac
+                          echo "::notice title=GitHub::$what: $why — retrying in ${delay}s" >&2
+                          sleep "$delay"
+                      done
+                  }
+                  last='${{ steps.worktree.outputs.last_tag }}'
+                  if [ "${{ steps.diff.outputs.changed }}" = true ]; then
+                      git commit --quiet -m "feat($MINOR): Kubernetes API $MINOR from $SCHEMA" \
+                          -m "Generated by the Generate workflow with klass8s/k8schema-generator $GENERATOR_REF (tools/k8schema-generator/composer.lock); ${{ steps.diff.outputs.stat }}."
+                      if [ "$DRY_RUN" = false ]; then
+                          # A fast-forward of the same commit is idempotent (the second push is «up to
+                          # date»); a rejected push is never retried.
+                          retried "git push $MINOR" git push --quiet -u origin "$MINOR"
+                          echo "pushed $MINOR @ $(git rev-parse --short HEAD)"
+                      fi
+                  fi
+                  # Release when src/ moved since the last tag (or there is none). A branch tip that
+                  # differs from its tag only in template files is not a release — unless forced.
+                  if [ -n "$last" ] && git diff --quiet "$last" HEAD -- src && [ "$FORCE" = false ]; then
+                      echo "$MINOR: src/ unchanged since $last — no release"
+                      echo "- release: none ($last stands)" >> "$GITHUB_STEP_SUMMARY"
+                      echo "due=false" >> "$GITHUB_OUTPUT"
+                      exit 0
+                  fi
+                  if [ -z "$last" ]; then patch=0; else patch=$(( ${last##*.} + 1 )); fi
+                  tag="$MINOR.$patch"
+                  sha="$(git rev-parse HEAD)"
+                  plan="$RUNNER_TEMP/release-plan"
+                  mkdir -p "$plan"
+                  {
+                      echo "PHP definitions for Kubernetes API \`$MINOR\` — generated from [yannh/kubernetes-json-schema \`$SCHEMA\`](https://github.com/yannh/kubernetes-json-schema/tree/master/$SCHEMA) (the OpenAPI definitions of Kubernetes $SCHEMA) with klass8s/k8schema-generator \`$GENERATOR_REF\`."
+                      echo
+                      if [ -n "$last" ]; then echo "Since $last: $(git diff --shortstat "$last" HEAD -- src | sed 's/^ *//')."; else echo "The first release of this minor."; fi
+                      echo
+                      echo "Pin it as \`\"klass8s/k8schema\": \"~${MINOR#v}.0\"\`."
+                  } > "$plan/notes.md"
+                  jq -n --arg minor "$MINOR" --arg tag "$tag" --arg sha "$sha" \
+                      --arg message "$tag — Kubernetes API $MINOR from $SCHEMA (generator $GENERATOR_REF)" \
+                      '{minor: $minor, tag: $tag, sha: $sha, message: $message}' > "$plan/release.json"
+                  echo "due=true" >> "$GITHUB_OUTPUT"
+                  if [ "$DRY_RUN" = true ]; then
+                      echo "$MINOR: would release $tag at ${sha:0:12} (dry run: a commit of the worktree alone)"
+                      echo "- release: $tag would be cut (dry run)" >> "$GITHUB_STEP_SUMMARY"
+                  else
+                      echo "$MINOR: $tag planned at ${sha:0:12} — the release job cuts it"
+                      echo "- release: $tag planned at \`${sha:0:12}\`, cut by the release job" >> "$GITHUB_STEP_SUMMARY"
+                  fi
+
+            # The plan, for this minor's release job: release.json (the tag, the commit, the tag's
+            # message) and notes.md. A minor that leaves no plan is not released. The last step of
+            # the job, so a plan exists only where everything before it, the push included,
+            # succeeded. Attempted twice like the diff above. A dry run uploads its plan too, for the
+            # record: no release job starts in a dry run.
+            - name: Hand the release plan to the release job
+              id: plan-upload-first
+              if: steps.release-plan.outputs.due == 'true'
+              uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+              timeout-minutes: 2
+              continue-on-error: true
+              with: &upload-plan
+                  name: release-plan-${{ matrix.minor }}
+                  path: ${{ runner.temp }}/release-plan/
+                  if-no-files-found: error
+                  # As long as the run can be re-run: a re-run release job reads the same plan.
+                  retention-days: 30
+                  overwrite: true
+            - name: Hand the release plan to the release job (again — the first attempt failed)
+              if: steps.release-plan.outputs.due == 'true' && steps.plan-upload-first.outcome != 'success'
+              uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+              timeout-minutes: 5
+              with: *upload-plan
+
+    # The one job that tags. It runs none of this repository's code — no checkout, no install —
+    # and reads the generate leg's plan as data: checked, then acted on through the API with the
+    # workflow's GITHUB_TOKEN, contents: write.
+    release:
+        name: Release ${{ matrix.minor }}
+        needs: [plan, generate]
+        # JOB-level (see the header). Never on a pull request, never in a dry run — on `schedule` inputs.dry_run is
+        # empty, and empty != true. `!cancelled()` in place of the implicit success(): a minor held
+        # by the shrink guard fails its generate leg, and the other minors still release.
+        if: >-
+            !cancelled()
+            && needs.plan.result == 'success'
+            && github.event_name != 'pull_request'
+            && inputs.dry_run != true
+        runs-on: ubuntu-latest
+        timeout-minutes: 10
+        # The tag and the release: the one write this job makes, as GITHUB_TOKEN.
+        permissions:
+            contents: write
+        strategy:
+            fail-fast: false
+            matrix:
+                include: ${{ fromJSON(needs.plan.outputs.matrix) }}
+        env:
+            MINOR: ${{ matrix.minor }}
+        steps:
+            # A pattern that matches nothing downloads nothing and fails nothing — no plan, no
+            # release — while a listing that fails fails the step. Attempted twice like the uploads.
+            - name: The release plan of ${{ matrix.minor }}, if its generate leg left one
+              id: download-first
+              uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+              timeout-minutes: 2
+              continue-on-error: true
+              with: &download-plan
+                  pattern: release-plan-${{ matrix.minor }}
+                  path: ${{ runner.temp }}/release-plan
+                  merge-multiple: true
+            - name: The release plan of ${{ matrix.minor }} (again — the first attempt failed)
+              if: steps.download-first.outcome != 'success'
+              uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+              timeout-minutes: 5
+              with: *download-plan
+
+            # Data from a job that ran this repository's code: no field reaches a shell as code, and
+            # each must have the one shape it can have before anything acts on it.
+            - name: Read and check the plan
+              id: plan
+              run: |
+                  set -euo pipefail
+                  plan="$RUNNER_TEMP/release-plan"
+                  if [ ! -e "$plan/release.json" ]; then
+                      echo "$MINOR: no release plan — nothing to release (src/ unchanged since the last tag, held by the shrink guard, or the generate leg failed)"
+                      echo "due=false" >> "$GITHUB_OUTPUT"
+                      exit 0
+                  fi
+                  fail() { echo "::error::$MINOR: the release plan $1"; exit 1; }
+                  [ -f "$plan/notes.md" ] || fail "has no notes.md"
+                  [ "$(jq -r .minor "$plan/release.json")" = "$MINOR" ] || fail "is not this minor's"
+                  tag="$(jq -r .tag "$plan/release.json")"
+                  sha="$(jq -r .sha "$plan/release.json")"
+                  if ! [[ "$tag" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]] || [ "${tag%.*}" != "$MINOR" ]; then fail "names the tag '$tag'"; fi
+                  [[ "$sha" =~ ^[0-9a-f]{40}$ ]] || fail "names the commit '$sha'"
+                  jq -e '.message | type == "string" and length > 0' "$plan/release.json" > /dev/null || fail "has no tag message"
+                  { echo "due=true"; echo "tag=$tag"; echo "sha=$sha"; } >> "$GITHUB_OUTPUT"
+                  echo "$MINOR: the plan is $tag at $sha"
+
+            - name: Tag ${{ matrix.minor }} and publish the release
+              if: steps.plan.outputs.due == 'true'
+              env:
+                  GH_TOKEN: ${{ github.token }}
+                  TAG: ${{ steps.plan.outputs.tag }}
+                  SHA: ${{ steps.plan.outputs.sha }}
+              run: |
+                  set -euo pipefail
+                  # GitHub calls, bounded (2026-10-03: api.github.com frontends accepted TLS and
+                  # never answered): an attempt is cut at 30 s, a failure that reads transient — no
+                  # answer, a 5xx or 429, a dropped connection — is retried 5, 15 and 30 s later (past
+                  # the DNS TTL: another frontend), a definitive answer (a 4xx) never.
+                  transient() { # <exit code> <stderr file>
+                      case "$1" in 124|137) return 0 ;; esac
+                      ! grep -qiE '(HTTP|returned error:) 4([01][0-9]|2[0-8]|[3-9][0-9])|non-fast-forward|\[rejected\]|remote rejected|Authentication failed|Permission (to|denied)' "$2" \
+                          && grep -qiE 'HTTP (5[0-9]{2}|429)|error: (5[0-9]{2}|429)|Bad Gateway|Service Unavailable|Gateway Time-?out|Internal Server Error|Repository not found|could not read Username|RPC failed|early EOF|unexpected (disconnect|EOF)|hung up unexpectedly|Connection (reset|timed out|refused)|Could not resolve host|no such host|Failed to connect|Operation (timed out|too slow)|unable to access|error connecting to|TLS handshake|i/o timeout|deadline exceeded|GOAWAY|not closed cleanly|": EOF' "$2"
+                  }
+                  retried() { # <what> <cmd…> — prints the stdout of the attempt that succeeded
+                      local what="$1" delay rc out err why; shift
+                      out="$(mktemp)"; err="$(mktemp)"
+                      for delay in 5 15 30 ''; do
+                          rc=0; "$@" >"$out" 2>"$err" || rc=$?
+                          if [ "$rc" -eq 0 ]; then cat "$out"; rm -f "$out" "$err"; return 0; fi
+                          if [ -z "$delay" ] || ! transient "$rc" "$err"; then cat "$err" >&2; rm -f "$out" "$err"; return "$rc"; fi
+                          case "$rc" in 124|137) why="no answer within the attempt's bound" ;; *) why="$(tail -n 1 "$err")" ;; esac
+                          echo "::notice title=GitHub::$what: $why — retrying in ${delay}s" >&2
+                          sleep "$delay"
+                      done
+                  }
+                  plan="$RUNNER_TEMP/release-plan"
+                  # The tag goes on what the minor branch carries: the generate leg pushed the plan's
+                  # commit as the branch's head. A plan for any other commit is stale (rerun the
+                  # workflow) or not this workflow's.
+                  head="$(retried "the head of $MINOR" timeout -k 5 30 gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/$MINOR" --jq .object.sha)"
+                  if [ "$head" != "$SHA" ]; then
+                      echo "::error::$MINOR: the plan tags $SHA, the branch is at $head — rerun the workflow"
+                      exit 1
+                  fi
+                  # An annotated tag, tagged by github-actions[bot] like every tag this workflow has
+                  # cut: the tag object, then its ref. Checked first on every attempt: a create whose
+                  # answer never came may have made it.
+                  # shellcheck disable=SC2329 # invoked through retried
+                  cut() {
+                      local probe rc=0 type target object
+                      probe="$(timeout -k 5 30 gh api "repos/$GITHUB_REPOSITORY/git/ref/tags/$TAG" --jq '.object.type + " " + .object.sha' 2>&1)" || rc=$?
+                      if [ "$rc" -eq 0 ]; then
+                          read -r type target <<< "$probe"
+                          if [ "$type" = tag ]; then
+                              target="$(timeout -k 5 30 gh api "repos/$GITHUB_REPOSITORY/git/tags/$target" --jq .object.sha)" || return
+                          fi
+                          if [ "$target" = "$SHA" ]; then echo "$TAG already points at $SHA"; return 0; fi
+                          echo "$TAG already exists and points at $target, not at $SHA" >&2
+                          return 1
+                      fi
+                      case "$probe" in *"HTTP 404"*) ;; *) printf '%s\n' "$probe" >&2; return "$rc" ;; esac
+                      object="$(timeout -k 5 30 gh api "repos/$GITHUB_REPOSITORY/git/tags" \
+                          -f tag="$TAG" -f object="$SHA" -f type=commit \
+                          -f message="$(jq -r .message "$plan/release.json")" \
+                          -f 'tagger[name]=github-actions[bot]' \
+                          -f 'tagger[email]=41898282+github-actions[bot]@users.noreply.github.com' \
+                          --jq .sha)" || return
+                      timeout -k 5 30 gh api "repos/$GITHUB_REPOSITORY/git/refs" -f ref="refs/tags/$TAG" -f sha="$object" --jq .ref
+                  }
+                  retried "tag $TAG" cut
+                  # Then the release. Checked first on every attempt: a create whose answer never came
+                  # may have published it.
+                  # shellcheck disable=SC2329 # invoked through retried
+                  publish() {
+                      local probe rc=0
+                      probe="$(timeout -k 5 30 gh api "repos/$GITHUB_REPOSITORY/releases/tags/$TAG" --jq .html_url 2>&1)" || rc=$?
+                      if [ "$rc" -eq 0 ]; then echo "$TAG is already published: $probe"; return 0; fi
+                      case "$probe" in *"HTTP 404"*) ;; *) printf '%s\n' "$probe" >&2; return "$rc" ;; esac
+                      timeout -k 5 30 gh api "repos/$GITHUB_REPOSITORY/releases" \
+                          -f tag_name="$TAG" -f target_commitish="$MINOR" -f name="$TAG" \
+                          -f body="$(cat "$plan/notes.md")" --jq .html_url
+                  }
+                  retried "release $TAG" publish
+                  echo "released $TAG"
+                  { echo "### $MINOR"; echo; echo "- release: **$TAG** at \`${SHA:0:12}\`"; } >> "$GITHUB_STEP_SUMMARY"
+
+    # What the release job's `if:` is for, held on every pull request: no job a pull request can
+    # start names a stored secret (.github/scripts/pr-job-secrets.py says how it reads a job).
+    # The workflow holds none today; the check keeps it that way when one is added.
+    pr-secrets:
+        name: A pull request's jobs name no stored secret
+        if: github.event_name == 'pull_request'
+        runs-on: ubuntu-latest
+        timeout-minutes: 5
+        permissions:
+            contents: read
+        steps:
+            - name: Checkout
+              uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+              timeout-minutes: 5
+              with:
+                  persist-credentials: false
+            - name: The check's own cases, then this repository's workflows
+              run: |
+                  set -euo pipefail
+                  .github/scripts/pr-job-secrets.test.sh
+                  .github/scripts/pr-job-secrets.py .github/workflows/*.yaml

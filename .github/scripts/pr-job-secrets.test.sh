@@ -35,7 +35,7 @@ jobs:
             - if: github.event_name != 'pull_request'
               run: echo "$KEY"
               env:
-                  KEY: ${{ secrets.TEQUILA_APP_PRIVATE_KEY }}
+                  KEY: ${{ secrets.RELEASE_APP_PRIVATE_KEY }}
     # Kept off a pull request, and the anchor's owner: passes.
     release:
         if: github.event_name != 'pull_request'
@@ -43,8 +43,8 @@ jobs:
         steps:
             - uses: actions/create-github-app-token@v3
               with: &app
-                  client-id: ${{ secrets.TEQUILA_APP_CLIENT_ID }}
-                  private-key: ${{ secrets.TEQUILA_APP_PRIVATE_KEY }}
+                  client-id: ${{ secrets.RELEASE_APP_CLIENT_ID }}
+                  private-key: ${{ secrets.RELEASE_APP_PRIVATE_KEY }}
     # The same secret through an alias.
     through-an-alias:
         runs-on: ubuntu-latest
@@ -57,7 +57,7 @@ jobs:
         if: github.event_name != 'pull_request' || always()
         runs-on: ubuntu-latest
         steps:
-            - run: echo "${{ secrets.TEQUILA_APP_CLIENT_ID }}"
+            - run: echo "${{ secrets.RELEASE_APP_CLIENT_ID }}"
     # The step's if: is not the job's.
     step-level-only:
         runs-on: ubuntu-latest
@@ -73,7 +73,7 @@ expect delivers.yaml 1 skipped-step through-an-alias disjunction step-level-only
 cat > "$tmp/workflow-env.yaml" <<'YAML'
 on: pull_request
 env:
-    KEY: ${{ secrets.TEQUILA_APP_PRIVATE_KEY }}
+    KEY: ${{ secrets.RELEASE_APP_PRIVATE_KEY }}
 jobs:
     any-job:
         runs-on: ubuntu-latest
@@ -90,7 +90,7 @@ jobs:
         if: github.event_name != 'pull_request'
         runs-on: ubuntu-latest
         steps:
-            - run: echo "${{ secrets.TEQUILA_APP_CLIENT_ID }}"
+            - run: echo "${{ secrets.RELEASE_APP_CLIENT_ID }}"
 YAML
 expect target.yaml 1 wrong-event
 
@@ -116,7 +116,7 @@ jobs:
     plain-text:
         runs-on: ubuntu-latest
         steps:
-            - run: .github/scripts/pr-job-secrets.py secrets.TEQUILA_APP_PRIVATE_KEY
+            - run: .github/scripts/pr-job-secrets.py secrets.RELEASE_APP_PRIVATE_KEY
     release:
         if: >-
             !cancelled()
@@ -125,17 +125,17 @@ jobs:
             && inputs.dry_run != true
         runs-on: ubuntu-latest
         steps:
-            - run: echo "${{ secrets.TEQUILA_APP_PRIVATE_KEY }}"
+            - run: echo "${{ secrets.RELEASE_APP_PRIVATE_KEY }}"
     only-on-schedule:
         if: ${{ (github.event_name == 'schedule') && (always()) }}
         runs-on: ubuntu-latest
         steps:
-            - run: echo "${{ secrets.TEQUILA_APP_PRIVATE_KEY }}"
+            - run: echo "${{ secrets.RELEASE_APP_PRIVATE_KEY }}"
     never:
         if: false
         runs-on: ubuntu-latest
         steps:
-            - run: echo "${{ secrets.TEQUILA_APP_PRIVATE_KEY }}"
+            - run: echo "${{ secrets.RELEASE_APP_PRIVATE_KEY }}"
 YAML
 expect keeps-off.yaml 0
 
@@ -147,7 +147,7 @@ jobs:
     release:
         runs-on: ubuntu-latest
         steps:
-            - run: echo "${{ secrets.TEQUILA_APP_PRIVATE_KEY }}"
+            - run: echo "${{ secrets.RELEASE_APP_PRIVATE_KEY }}"
 YAML
 expect no-pull-request.yaml 0
 
