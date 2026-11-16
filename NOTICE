@@ -1,10 +1,10 @@
 # Third-party notices
 
-`tequila/k8schema` continues an open-source package published under the MIT License:
+`klass8s/k8schema` continues an open-source package published under the MIT License:
 
 - `dealroadshow/k8s-resources`
 
-`tequila/k8schema` renamed it and regenerates it with `tequila/k8schema-generator`. The package
+`klass8s/k8schema` renamed it and regenerates it with `klass8s/k8schema-generator`. The package
 declared the MIT License in its `composer.json` and shipped no license file of its own; the notice
 below is the MIT License as its publisher, Finsight Group Inc, issued it for its sibling packages.
 The portions that come from that package remain under it.

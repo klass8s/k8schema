@@ -1,14 +1,22 @@
 {
-    "name": "tequila/k8schema",
+    "name": "klass8s/k8schema",
     "description": "PHP class definitions of Kubernetes API resources",
     "type": "library",
-    "license": "proprietary",
+    "license": "MIT",
+    "support": {
+        "issues": "https://github.com/klass8s/k8schema/issues",
+        "source": "https://github.com/klass8s/k8schema",
+        "security": "https://github.com/klass8s/k8schema/security/policy"
+    },
     "minimum-stability": "dev",
     "prefer-stable": true,
     "require": {
         "php": ">=8.5",
         "ext-json": "*",
         "composer/semver": "^3.4"
+    },
+    "replace": {
+        "tequila/k8schema": "self.version"
     },
     "autoload": {
         "psr-4": {
@@ -39,11 +47,5 @@
     "scripts-descriptions": {
         "tools:install": "Install the dev tools (php-cs-fixer, k8schema-generator) from their committed locks — runs after composer install/update, skipped under --no-dev",
         "tools:update": "Update the dev tools to their newest versions and rewrite their locks (then re-run the checks and commit the locks)"
-    },
-    "repositories": [
-        {
-            "type": "composer",
-            "url": "https://composer.tequila.dev/"
-        }
-    ]
+    }
 }
