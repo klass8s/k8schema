@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "44facb7f44a84401f92b2cb9e220e81e",
+    "content-hash": "d923c03b90ceff0076c2ad25783274ba",
     "packages": [
         {
             "name": "clue/stream-filter",
@@ -190,6 +190,87 @@
                 }
             ],
             "time": "2026-11-12T15:57:42+00:00"
+        },
+        {
+            "name": "klass8s/k8schema-generator",
+            "version": "dev-main",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/klass8s/k8schema-generator.git",
+                "reference": "8ec567e16a9e840b5644d77fef2a6218056291ea"
+            },
+            "require": {
+                "composer-runtime-api": "^2.2",
+                "ext-ctype": "*",
+                "ext-iconv": "*",
+                "ext-json": "*",
+                "guzzlehttp/psr7": "^2.0",
+                "knplabs/github-api": "^3.0",
+                "nette/php-generator": "^4.2",
+                "php": ">=8.5",
+                "symfony/console": ">=8.0",
+                "symfony/dotenv": ">=8.0",
+                "symfony/flex": "^2.10",
+                "symfony/framework-bundle": ">=8.0",
+                "symfony/http-client": ">=8.0",
+                "symfony/runtime": "8.1.*",
+                "symfony/string": ">=8.0",
+                "symfony/yaml": ">=8.0"
+            },
+            "conflict": {
+                "symfony/symfony": "*"
+            },
+            "replace": {
+                "symfony/polyfill-ctype": "*",
+                "symfony/polyfill-iconv": "*",
+                "symfony/polyfill-php72": "*",
+                "symfony/polyfill-php73": "*",
+                "symfony/polyfill-php74": "*",
+                "symfony/polyfill-php80": "*",
+                "symfony/polyfill-php81": "*",
+                "symfony/polyfill-php82": "*",
+                "tequila/k8schema-generator": "self.version"
+            },
+            "default-branch": true,
+            "bin": [
+                "bin/k8schema-generator"
+            ],
+            "type": "application",
+            "extra": {
+                "symfony": {
+                    "allow-contrib": true,
+                    "require": "8.1.*"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Klass8s\\K8SchemaGenerator\\": "src/"
+                }
+            },
+            "scripts": {
+                "cs": [
+                    "./tools/php-cs-fixer/vendor/bin/php-cs-fixer fix"
+                ],
+                "cs:check": [
+                    "./tools/php-cs-fixer/vendor/bin/php-cs-fixer check"
+                ]
+            },
+            "license": [
+                "MIT"
+            ],
+            "description": "Generates PHP classes from Kubernetes API schema definitions",
+            "support": {
+                "issues": "https://github.com/klass8s/k8schema-generator/issues",
+                "source": "https://github.com/klass8s/k8schema-generator",
+                "security": "https://github.com/klass8s/k8schema-generator/security/policy"
+            },
+            "time": "2026-11-16T12:00:00+00:00",
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/klass8s/k8schema-generator/zipball/8ec567e16a9e840b5644d77fef2a6218056291ea",
+                "reference": "8ec567e16a9e840b5644d77fef2a6218056291ea",
+                "shasum": ""
+            }
         },
         {
             "name": "knplabs/github-api",
@@ -3913,92 +3994,13 @@
                 }
             ],
             "time": "2026-11-04T08:39:20+00:00"
-        },
-        {
-            "name": "tequila/k8schema-generator",
-            "version": "dev-main",
-            "source": {
-                "type": "git",
-                "url": "git@github.com:tequila/k8schema-generator.git",
-                "reference": "e8a566aa1b149d80d97adc4da9792c4378103258"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://composer.tequila.dev/dist/tequila/k8schema-generator/e8a566aa1b149d80d97adc4da9792c4378103258.zip",
-                "reference": "e8a566aa1b149d80d97adc4da9792c4378103258",
-                "shasum": ""
-            },
-            "require": {
-                "composer-runtime-api": "^2.2",
-                "ext-ctype": "*",
-                "ext-iconv": "*",
-                "ext-json": "*",
-                "guzzlehttp/psr7": "^2.0",
-                "knplabs/github-api": "^3.0",
-                "nette/php-generator": "^4.2",
-                "php": ">=8.5",
-                "symfony/console": ">=8.0",
-                "symfony/dotenv": ">=8.0",
-                "symfony/flex": "^2.10",
-                "symfony/framework-bundle": ">=8.0",
-                "symfony/http-client": ">=8.0",
-                "symfony/runtime": "8.1.*",
-                "symfony/string": ">=8.0",
-                "symfony/yaml": ">=8.0"
-            },
-            "conflict": {
-                "symfony/symfony": "*"
-            },
-            "replace": {
-                "symfony/polyfill-ctype": "*",
-                "symfony/polyfill-iconv": "*",
-                "symfony/polyfill-php72": "*",
-                "symfony/polyfill-php73": "*",
-                "symfony/polyfill-php74": "*",
-                "symfony/polyfill-php80": "*",
-                "symfony/polyfill-php81": "*",
-                "symfony/polyfill-php82": "*"
-            },
-            "default-branch": true,
-            "bin": [
-                "bin/k8schema-generator"
-            ],
-            "type": "application",
-            "extra": {
-                "symfony": {
-                    "allow-contrib": true,
-                    "require": "8.1.*"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Tequila\\K8S\\SchemaGenerator\\": "src/"
-                }
-            },
-            "scripts": {
-                "cs": [
-                    "./tools/php-cs-fixer/vendor/bin/php-cs-fixer fix"
-                ],
-                "cs:check": [
-                    "./tools/php-cs-fixer/vendor/bin/php-cs-fixer check"
-                ]
-            },
-            "license": [
-                "proprietary"
-            ],
-            "description": "Generates PHP classes from Kubernetes API schema definitions",
-            "support": {
-                "source": "https://github.com/tequila/k8schema-generator/tree/main",
-                "issues": "https://github.com/tequila/k8schema-generator/issues"
-            },
-            "time": "2026-11-17T07:49:59+00:00"
         }
     ],
     "packages-dev": [],
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
-        "tequila/k8schema-generator": 20
+        "klass8s/k8schema-generator": 20
     },
     "prefer-stable": true,
     "prefer-lowest": false,

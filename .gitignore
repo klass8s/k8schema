@@ -4,4 +4,3 @@
 /.idea
 .phpunit.cache
 /tools/*/vendor
-/.claude/settings.local.json
