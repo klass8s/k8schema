@@ -40,7 +40,7 @@ final readonly class K8SApi
      * Both sides normalized: {@see Comparator} compares normalized versions only, and
      * `self::VERSION` is the minor as Kubernetes spells it (`v1.35`) — passed raw, every
      * helper answered wrong on every version (`versionIsEqualTo('1.35')` was false on
-     * 1.35.7; klass8s probed with `method_exists` instead; tequila/k8schema#3).
+     * 1.35.7, and Klass8s probed with `method_exists` instead).
      */
     private static function normalizeVersion(string $version): string
     {
